@@ -1,0 +1,19 @@
+AXIOMATLAS — GA4 ANALYTICS UPDATE
+
+Existing Netlify website: https://axiomatlas.netlify.app/
+Measurement ID: G-G9NPE8LWSM
+
+1. Extract the AxiomAtlas-GA4-Ready-to-Deploy.zip file.
+2. Netlify > EXISTING axiomatlas site > Deploys: upload the extracted folder
+   with index.html and sitemap.xml at the top level. Do not create a new site.
+3. After Published, open the homepage and a calculator page in the browser.
+4. Open Google Analytics > Reports > Realtime and visit your site.
+   It may take a few minutes; browser ad blockers and privacy choices may block measurement.
+5. Verify Search Console file has been preserved:
+   https://axiomatlas.netlify.app/google3d4d24a07fe849ba.html
+6. Verify sitemap remains at:
+   https://axiomatlas.netlify.app/sitemap.xml
+
+Source builds: Run `python scripts/rebuild.py` from the repository root.
+Google Analytics privacy disclosure is updated at /privacy/.
+If serving EU/UK visitors, implement applicable cookie consent/Google Consent Mode as needed.

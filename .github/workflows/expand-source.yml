@@ -1,0 +1,33 @@
+name: Expand uploaded complete project
+on:
+  push:
+    paths:
+      - ".github/workflows/expand-source.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  expand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and unpack complete AxiomAtlas project
+        run: |
+          base64 --decode .github-transfer/source.tar.xz.b64 > /tmp/axiomatlas.tar.xz
+          echo "af098b79c3a520cec9c91ffbeb9cda782cb4d8693daecb1f458b4ce141952853  /tmp/axiomatlas.tar.xz" | sha256sum -c -
+          tar -xJf /tmp/axiomatlas.tar.xz -C .
+          test -f site/index.html
+          test -f site/sitemap.xml
+          test -f source/build.py
+          test -f site/google3d4d24a07fe849ba.html
+          test -f site/assets/app.js
+          test "$(find site/tools -name index.html | wc -l)" -ge 130
+          rm -f .github-transfer/source.tar.xz.b64
+          rm -f .github/workflows/import-existing-site.yml scripts/import_public.py
+      - name: Commit expanded site and editable source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Import complete AxiomAtlas source and production website"
+          git push origin HEAD:main

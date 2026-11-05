@@ -1,0 +1,1 @@
+{"name": "AxiomAtlas - All-in-One Calculators", "short_name": "AxiomAtlas", "description": "Free mathematical and scientific calculators", "start_url": "/", "display": "standalone", "background_color": "#f8f9fd", "theme_color": "#151530", "icons": [{"src": "/assets/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}]}

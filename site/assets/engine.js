@@ -20,7 +20,21 @@ export const CONSTANTS = {
   eps0: { value: 8.8541878188e-12, unit: 'F/m', name: 'Vacuum electric permittivity ε₀' },
   mu0: { value: 1.25663706127e-6, unit: 'H/m', name: 'Vacuum magnetic permeability μ₀' },
   ke: { value: 8.9875517923e9, unit: 'N·m²/C²', name: 'Coulomb constant k_e = 1/(4πε₀)' },
-  sigmaSB: { value: 5.670374419e-8, unit: 'W/(m²·K⁴)', name: 'Stefan-Boltzmann constant σ' }
+  sigmaSB: { value: 5.670374419e-8, unit: 'W/(m²·K⁴)', name: 'Stefan-Boltzmann constant σ' },
+  sigma_SB: { value: 5.670374419e-8, unit: 'W/(m²·K⁴)', name: 'Stefan-Boltzmann constant σ' },
+  k_B: { value: 1.380649e-23, unit: 'J/K', name: 'Boltzmann constant k_B' },
+  b_wien: { value: 2.897771955e-3, unit: 'm·K', name: 'Wien displacement constant b' },
+  AU: { value: 149597870700, unit: 'm', name: 'Astronomical Unit (IAU 2012)' },
+  ly: { value: 9460730472580800, unit: 'm', name: 'Julian light-year (IAU)' },
+  pc: { value: (149597870700 * 648000) / Math.PI, unit: 'm', name: 'Parsec (IAU 2015)' },
+  M_sun: { value: 1.98847e30, unit: 'kg', name: 'Solar mass M_☉ (IAU 2015)' },
+  R_sun: { value: 6.957e8, unit: 'm', name: 'Nominal solar radius R_☉ (IAU 2015)' },
+  L_sun: { value: 3.828e26, unit: 'W', name: 'Nominal solar luminosity L_☉ (IAU 2015)' },
+  T_sun: { value: 5772, unit: 'K', name: 'Nominal solar effective temperature T_☉' },
+  M_earth: { value: 5.97217e24, unit: 'kg', name: 'Earth mass M_⊕' },
+  R_earth: { value: 6.3710e6, unit: 'm', name: 'Earth mean radius R_⊕' },
+  M_jup: { value: 1.89813e27, unit: 'kg', name: 'Jupiter mass M_J' },
+  R_jup: { value: 6.9911e7, unit: 'm', name: 'Jupiter mean radius R_J' }
 };
 
 export function erf(x) {
@@ -922,20 +936,20 @@ export function integrate(ast, a, b, n = 1000, options = {}) {
 }
 
 export const unitGroups = {
-  Length: { m: 1, km: 1000, cm: 0.01, mm: 0.001, 'µm': 1e-6, nm: 1e-9, mi: 1609.344, yd: 0.9144, ft: 0.3048, in: 0.0254, 'nautical mi': 1852, AU: 149597870700, 'light-year': 9.4607304725808e15 },
-  Mass: { kg: 1, g: 0.001, mg: 1e-6, 'µg': 1e-9, 'metric ton': 1000, lb: 0.45359237, oz: 0.028349523125, st: 6.35029318, 'short ton': 907.18474 },
+  Length: { m: 1, km: 1000, cm: 0.01, mm: 0.001, 'µm': 1e-6, nm: 1e-9, mi: 1609.344, yd: 0.9144, ft: 0.3048, in: 0.0254, 'nautical mi': 1852, AU: 149597870700, ly: 9460730472580800, 'light-year': 9460730472580800, pc: (149597870700 * 648000) / Math.PI, kpc: ((149597870700 * 648000) / Math.PI) * 1e3, Mpc: ((149597870700 * 648000) / Math.PI) * 1e6, 'R_☉': 6.957e8, 'R_⊕': 6.3710e6, 'R_J': 6.9911e7 },
+  Mass: { kg: 1, g: 0.001, mg: 1e-6, 'µg': 1e-9, 'metric ton': 1000, lb: 0.45359237, oz: 0.028349523125, st: 6.35029318, 'short ton': 907.18474, 'M_☉': 1.98847e30, 'M_⊕': 5.97217e24, 'M_J': 1.89813e27 },
   Area: { 'm²': 1, 'km²': 1e6, 'cm²': 1e-4, 'mm²': 1e-6, 'ft²': 0.09290304, 'in²': 0.00064516, 'yd²': 0.83612736, acre: 4046.8564224, hectare: 10000 },
   Volume: { L: 1, mL: 0.001, 'm³': 1000, 'cm³': 0.001, 'mm³': 1e-6, 'US gal': 3.785411784, 'US qt': 0.946352946, 'US pt': 0.473176473, 'US cup': 0.2365882365, 'US fl oz': 0.02957352956, 'UK gal': 4.54609, 'ft³': 28.316846592, 'in³': 0.016387064 },
-  Speed: { 'm/s': 1, 'km/h': 1 / 3.6, mph: 0.44704, knot: 0.5144444444, 'ft/s': 0.3048, 'cm/s': 0.01 },
+  Speed: { 'm/s': 1, 'km/s': 1000, 'km/h': 1 / 3.6, mph: 0.44704, knot: 0.5144444444, 'ft/s': 0.3048, 'cm/s': 0.01 },
   Acceleration: { 'm/s²': 1, 'cm/s²': 0.01, 'ft/s²': 0.3048, 'g₀': 9.80665 },
-  Time: { s: 1, ms: 0.001, 'µs': 1e-6, ns: 1e-9, min: 60, h: 3600, day: 86400, week: 604800, year: 31557600 },
+  Time: { s: 1, ms: 0.001, 'µs': 1e-6, ns: 1e-9, min: 60, h: 3600, day: 86400, days: 86400, week: 604800, year: 31557600, years: 31557600, Myr: 31557600e6, Gyr: 31557600e9 },
   Temperature: { '°C': 1, '°F': 1, K: 1, C: 1, F: 1 },
   Pressure: { Pa: 1, kPa: 1000, MPa: 1e6, GPa: 1e9, bar: 1e5, mbar: 100, atm: 101325, psi: 6894.757293178, torr: 133.322368421, mmHg: 133.322387415 },
   Energy: { J: 1, kJ: 1000, MJ: 1e6, mJ: 0.001, cal: 4.184, kcal: 4184, Wh: 3600, kWh: 3.6e6, eV: 1.602176634e-19, keV: 1.602176634e-16, MeV: 1.602176634e-13, BTU: 1055.05585262, 'ft·lbf': 1.35581794833 },
-  Power: { W: 1, mW: 0.001, kW: 1000, MW: 1e6, GW: 1e9, hp: 745.69987158, 'BTU/h': 0.29307107 },
+  Power: { W: 1, mW: 0.001, kW: 1000, MW: 1e6, GW: 1e9, hp: 745.69987158, 'BTU/h': 0.29307107, 'L_☉': 3.828e26 },
   Data: { bit: 1, B: 8, kB: 8000, MB: 8e6, GB: 8e9, TB: 8e12, PB: 8e15, KiB: 8192, MiB: 8388608, GiB: 8589934592, TiB: 8796093022208 },
   DataRate: { bps: 1, Kbps: 1e3, Mbps: 1e6, Gbps: 1e9, 'B/s': 8, 'kB/s': 8e3, 'MB/s': 8e6, 'GB/s': 8e9, 'KiB/s': 8192, 'MiB/s': 8388608 },
-  Angle: { rad: 1, '°': Math.PI / 180, grad: Math.PI / 200, turn: Math.PI * 2, arcmin: Math.PI / 10800, arcsec: Math.PI / 648000 },
+  Angle: { rad: 1, '°': Math.PI / 180, deg: Math.PI / 180, grad: Math.PI / 200, turn: Math.PI * 2, arcmin: Math.PI / 10800, arcsec: Math.PI / 648000, mas: Math.PI / 648000000 },
   Frequency: { Hz: 1, mHz: 0.001, kHz: 1e3, MHz: 1e6, GHz: 1e9, THz: 1e12, rpm: 1 / 60, 'rad/s': 1 / (2 * Math.PI) },
   Force: { N: 1, mN: 0.001, kN: 1000, MN: 1e6, lbf: 4.44822161526, dyne: 1e-5, kgf: 9.80665 },
   Density: { 'kg/m³': 1, 'g/cm³': 1000, 'g/mL': 1000, 'kg/L': 1000, 'lb/ft³': 16.01846337396, 'lb/in³': 27679.90471 },

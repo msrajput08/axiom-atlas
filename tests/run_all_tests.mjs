@@ -24,6 +24,12 @@ import {
   chiSquareCdf, chiSquareInv, fDistCdf, poissonDist, oneWayAnova,
   calcNpvIrr, calcXirr, calcBondValuation, calcBlackScholes
 } from '../site/assets/linalg_stats_finance.js';
+import {
+  ASTRO_CONSTANTS, CELESTIAL_BODIES, COSMO_PRESETS,
+  computeCosmology, solveKeplerOrbit, computeBlackbodyRadiation,
+  computeHabitableZone, calendarToJulianDate, julianDateToCalendar,
+  computeSiderealTime, computeCelestialSeparation
+} from '../site/assets/astronomy.js';
 
 const rootDir = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const catalog = JSON.parse(fs.readFileSync(path.join(rootDir, 'site/assets/catalog.json'), 'utf8'));
@@ -92,8 +98,8 @@ function test(suite, name, fn) {
 // ============================================================================
 // SUITE 1: IMPLEMENTATION INVENTORY & REGISTRY RECONCILIATION
 // ============================================================================
-test('Suite 1: Inventory & Registry Reconciliation', '1.1 Verify exactly 8 primary categories and 66 subcategories with 0 empty subcategories', () => {
-  checkEqual(catalog.categories.length, 8, 'Must have exactly 8 primary categories');
+test('Suite 1: Inventory & Registry Reconciliation', '1.1 Verify all 9 primary categories and 74 subcategories with 0 empty subcategories', () => {
+  checkEqual(catalog.categories.length, 9, 'Must have 9 primary categories including Astronomy & Astrophysics');
   const expectedCats = [
     ['Mathematics', 8],
     ['Algebra', 8],
@@ -102,7 +108,8 @@ test('Suite 1: Inventory & Registry Reconciliation', '1.1 Verify exactly 8 prima
     ['Physics & Engineering', 13],
     ['Statistics & Probability', 8],
     ['Finance', 8],
-    ['Converters & Everyday Tools', 5]
+    ['Converters & Everyday Tools', 5],
+    ['Astronomy & Astrophysics', 8]
   ];
   let subCount = 0;
   for (let i = 0; i < expectedCats.length; i++) {
@@ -115,15 +122,15 @@ test('Suite 1: Inventory & Registry Reconciliation', '1.1 Verify exactly 8 prima
       checkOk(canonInSub.length >= 1, `Subcategory "${name} › ${sub}" must have at least 1 canonical calculator`);
     }
   }
-  checkEqual(subCount, 66, 'Total subcategories across 8 primary categories must equal 66');
+  checkEqual(subCount, 74, 'Total subcategories across 9 primary categories must equal 74');
 });
 
-test('Suite 1: Inventory & Registry Reconciliation', '1.2 Verify 231 canonical calculators, 69 legacy compatibility aliases, and 300 total routes', () => {
+test('Suite 1: Inventory & Registry Reconciliation', '1.2 Verify 314 canonical calculators, 69 legacy compatibility aliases, and 383 total routes', () => {
   const all = catalog.tools;
   const canon = all.filter(t => !t.isAlias);
   const aliases = all.filter(t => t.isAlias);
-  checkEqual(all.length, 300, 'Total tool routes must be 300');
-  checkEqual(canon.length, 231, 'Canonical calculators must be 231');
+  checkEqual(all.length, 383, 'Total tool routes must be 383');
+  checkEqual(canon.length, 314, 'Canonical calculators must be 314');
   checkEqual(aliases.length, 69, 'Legacy compatibility aliases must be 69');
 
   const expectedCategoryRouteBreakdown = [
@@ -131,10 +138,11 @@ test('Suite 1: Inventory & Registry Reconciliation', '1.2 Verify 231 canonical c
     ['Algebra', 21, 0, 21],
     ['Calculus & Graphing', 38, 0, 38],
     ['Geometry & Trigonometry', 8, 21, 29],
-    ['Physics & Engineering', 81, 11, 92],
+    ['Physics & Engineering', 78, 11, 89],
     ['Statistics & Probability', 20, 1, 21],
     ['Finance', 23, 10, 33],
-    ['Converters & Everyday Tools', 27, 10, 37]
+    ['Converters & Everyday Tools', 27, 10, 37],
+    ['Astronomy & Astrophysics', 86, 0, 86]
   ];
   let sumC = 0, sumA = 0, sumT = 0;
   for (const [catName, expC, expA, expT] of expectedCategoryRouteBreakdown) {
@@ -148,9 +156,9 @@ test('Suite 1: Inventory & Registry Reconciliation', '1.2 Verify 231 canonical c
     sumA += cAli.length;
     sumT += cTools.length;
   }
-  checkEqual(sumC, 231, 'Sum of per-category canonical counts must equal 231');
+  checkEqual(sumC, 314, 'Sum of per-category canonical counts must equal 314');
   checkEqual(sumA, 69, 'Sum of per-category alias counts must equal 69');
-  checkEqual(sumT, 300, 'Sum of per-category total route counts must equal 300');
+  checkEqual(sumT, 383, 'Sum of per-category total route counts must equal 383');
 
   const slugSet = new Set();
   for (const t of all) {
@@ -188,7 +196,7 @@ test('Suite 1: Inventory & Registry Reconciliation', '1.3 Verify all 136 origina
   const newCanon = catalog.tools.filter(t => !t.isAlias && !allOrig.has(t.slug));
   checkEqual(keptCanon.length, 67, '67 original calculators retained as canonical');
   checkEqual(convertedAlias.length, 69, '69 original calculators preserved as legacy compatibility aliases');
-  checkEqual(newCanon.length, 164, '164 newly added canonical calculators');
+  checkEqual(newCanon.length, 247, '247 newly added canonical calculators (164 STEM/Finance + 83 Astronomy & Astrophysics)');
 });
 
 test('Suite 1: Inventory & Registry Reconciliation', '1.4 Verify all 21 consolidated suites and their target modes exist', () => {
@@ -773,7 +781,7 @@ test('Suite 5: Calculator-Level DOM & Explain Calculation Audit', '5.1 Execute a
     }
     toolsVerified++;
   }
-  checkEqual(toolsVerified, 300, 'All 300 tool routes verified');
+  checkEqual(toolsVerified, 383, 'All 383 tool routes verified');
   checkOk(modesVerified >= 280, `Verified ${modesVerified} calculator modes`);
 });
 
@@ -1019,8 +1027,8 @@ test('Suite 6: Static Site, SEO & URL Compatibility', '6.1 Verify all 325 genera
   const indexHtml = fs.readFileSync(path.join(rootDir, 'site/index.html'), 'utf8');
   checkOk(!indexHtml.includes('adsbygoogle'), 'AdSense script must be removed');
   checkOk(!indexHtml.includes('"url": null'), 'JSON-LD url must not be null');
-  checkOk(indexHtml.includes('66 domain-specific subcategories'), 'Homepage must state exact 66 subcategories count');
-  checkOk(indexHtml.includes('231+'), 'Homepage must display 231+ canonical calculators');
+  checkOk(indexHtml.includes('74 domain-specific subcategories'), 'Homepage must state exact 74 subcategories count');
+  checkOk(indexHtml.includes('314+'), 'Homepage must display 314+ canonical calculators');
 
   const html404 = fs.readFileSync(path.join(rootDir, 'site/404.html'), 'utf8');
   checkOk(html404.includes('noindex,follow'), '404.html must use noindex,follow');
@@ -1060,10 +1068,116 @@ test('Suite 6: Static Site, SEO & URL Compatibility', '6.1 Verify all 325 genera
   // Verify sitemap.xml and _redirects
   const sitemap = fs.readFileSync(path.join(rootDir, 'site/sitemap.xml'), 'utf8');
   const locCount = (sitemap.match(/<loc>/g) || []).length;
-  checkEqual(locCount, 242, 'Sitemap must contain 242 canonical indexable URLs (3 core + 8 categories + 231 canonical tools)');
+  checkEqual(locCount, 326, 'Sitemap must contain 326 canonical indexable URLs (3 core + 9 categories + 314 canonical tools)');
+  for (const t of catalog.tools) {
+    const p = path.join(rootDir, 'site/tools', t.slug, 'index.html');
+    const txt = fs.readFileSync(p, 'utf8');
+    checkOk(txt.includes('id="edu-guide"'), `Tool page ${t.slug} must include redesigned #edu-guide explanation section`);
+    checkOk(txt.includes('class="edu-sec edu-overview"') && txt.includes('class="edu-sec edu-formula"') && txt.includes('class="edu-var-table"') && txt.includes('class="edu-how-list"') && txt.includes('id="edu-example-details"') && txt.includes('class="edu-assumptions-list"'), `Tool page ${t.slug} must include all 6 structured explanation sections`);
+  }
 
   const redirects = fs.readFileSync(path.join(rootDir, 'site/_redirects'), 'utf8').trim().split('\n');
   checkEqual(redirects.length, 13, '12 legacy category 301 rules + 1 /tools/* 200 rule');
+});
+
+
+// ============================================================================
+// SUITE 7: ASTRONOMY & ASTROPHYSICS SCIENTIFIC BENCHMARKS & VALIDATION
+// ============================================================================
+test('Suite 7: Astronomy & Astrophysics Benchmarks', '7.1 Orbital Mechanics & Kepler Equation Numerical Solver', () => {
+  // Earth around Sun (a = 1 AU, e = 0.01671, M = 1 M_sun)
+  const earthOrb = solveKeplerOrbit(ASTRO_CONSTANTS.M_sun, ASTRO_CONSTANTS.AU, 0.01671, 45);
+  approxEqual(earthOrb.periodDays, 365.256, 1e-3, 0.1, 'Earth sidereal orbital period ~365.256 days');
+  // Verify Kepler equation residual E - e*sin(E) = M_rad
+  const E_rad = (earthOrb.eccentricAnomalyDeg * Math.PI) / 180;
+  const M_rad = (45 * Math.PI) / 180;
+  approxEqual(E_rad - 0.01671 * Math.sin(E_rad), M_rad, 1e-12, 1e-12, 'Kepler equation residual for Earth');
+
+  // High-eccentricity Halley comet test (e = 0.96714)
+  const halley = solveKeplerOrbit(ASTRO_CONSTANTS.M_sun, 17.834 * ASTRO_CONSTANTS.AU, 0.96714, 15);
+  const Eh = (halley.eccentricAnomalyDeg * Math.PI) / 180;
+  approxEqual(Eh - 0.96714 * Math.sin(Eh), (15 * Math.PI) / 180, 1e-12, 1e-12, 'Kepler equation residual for Halley comet');
+  checkOk(halley.vp > halley.va, 'Periapsis velocity must exceed apoapsis velocity');
+
+  checkThrows(() => solveKeplerOrbit(ASTRO_CONSTANTS.M_sun, ASTRO_CONSTANTS.AU, 1.0, 45), /eccentricity/);
+  checkThrows(() => solveKeplerOrbit(-10, ASTRO_CONSTANTS.AU, 0.1, 45), /positive/);
+});
+
+test('Suite 7: Astronomy & Astrophysics Benchmarks', '7.2 Planetary Science, Celestial Body Presets & Kopparapu Habitable Zone', () => {
+  // Kopparapu et al. (2014) Solar Habitable Zone (L = 1 L_sun, T_eff = 5772 K)
+  const hzSun = computeHabitableZone(1.0, 5772);
+  approxEqual(hzSun.runawayGH.distAU, 0.9504, 1e-2, 1e-2, 'Sun conservative inner HZ (Runaway GH) ~0.95 AU');
+  approxEqual(hzSun.maxGH.distAU, 1.676, 1e-2, 1e-2, 'Sun conservative outer HZ (Max GH) ~1.68 AU');
+  checkOk(hzSun.recentVenus.distAU < hzSun.runawayGH.distAU, 'Optimistic inner edge must lie inside conservative inner edge');
+  checkOk(hzSun.earlyMars.distAU > hzSun.maxGH.distAU, 'Optimistic outer edge must lie outside conservative outer edge');
+
+  // Verify NASA celestial body dataset completeness
+  checkEqual(Object.keys(CELESTIAL_BODIES).length, 11);
+  approxEqual(CELESTIAL_BODIES.earth.densityKgM3, 5514, 1e-4);
+
+  // Test Celestial Body Preset selector in DOM on planetary-density-calculator
+  vRoot.dataset.tool = 'planetary-density-calculator';
+  delete vRoot.dataset.mode;
+  appMod.renderTool();
+  const presetSel = vCalcApp.querySelector('#celestial-preset-select');
+  checkOk(presetSel, 'planetary-density-calculator must render Celestial Body Preset selector');
+  presetSel.value = 'jupiter';
+  presetSel.dispatchChange();
+  checkOk(!vResDisp.innerHTML.includes('calc-error'), 'Selecting Jupiter preset must compute valid planetary density');
+});
+
+test('Suite 7: Astronomy & Astrophysics Benchmarks', '7.3 Stellar Astrophysics & Planck Blackbody Radiation Law', () => {
+  // Solar temperature T = 5772 K at lambda = 500 nm
+  const bb = computeBlackbodyRadiation(5772, 500);
+  approxEqual(bb.lambdaPeakNm, (ASTRO_CONSTANTS.b_wien / 5772) * 1e9, 1e-9);
+  approxEqual(bb.totalExitance, ASTRO_CONSTANTS.sigma_SB * (5772 ** 4), 1e-9);
+  checkOk(bb.B_lambda_nm > 2.5e4 && bb.B_lambda_nm < 2.7e4, 'Solar Planck spectral radiance at 500 nm ~2.636e4 W·sr⁻¹·m⁻²·nm⁻¹');
+  checkThrows(() => computeBlackbodyRadiation(0, 500), /positive/);
+  checkThrows(() => computeBlackbodyRadiation(5772, -10), /positive/);
+});
+
+test('Suite 7: Astronomy & Astrophysics Benchmarks', '7.4 Numerical ΛCDM Cosmology Integrator & Etherington Reciprocity', () => {
+  // Planck 2018 at z = 1.0 (H0 = 67.4, OmegaM = 0.315, OmegaL = 0.685)
+  const cosmo1 = computeCosmology(1.0, 67.4, 0.315, 0.685);
+  approxEqual(cosmo1.a, 0.5, 1e-12);
+  // Verify exact Etherington distance-duality relation: D_L(z) = (1+z)^2 D_A(z)
+  approxEqual(cosmo1.DL_Mpc, 4 * cosmo1.DA_Mpc, 1e-12, 1e-9, 'Etherington reciprocity D_L = (1+z)^2 D_A at z=1');
+  checkOk(cosmo1.DC_Mpc > 3350 && cosmo1.DC_Mpc < 3430, 'Planck 2018 comoving distance at z=1 is ~3395.6 Mpc');
+  checkOk(cosmo1.lookbackGyr > 7.85 && cosmo1.lookbackGyr < 8.05, 'Planck 2018 lookback time at z=1 is ~7.93 Gyr');
+  checkOk(cosmo1.ageUniverseGyr > 13.7 && cosmo1.ageUniverseGyr < 13.9, 'Planck 2018 age of Universe t_0 is ~13.787 Gyr');
+  checkOk(Math.abs(cosmo1.linearDeviationPct) > 25, 'Linear Hubble law must deviate by >25% from exact ΛCDM D_C at z=1');
+
+  // Verify z = 0 boundary gives 0 distance and 0 lookback time
+  const cosmo0 = computeCosmology(0, 67.4, 0.315, 0.685);
+  checkEqual(cosmo0.DC_Mpc, 0);
+  checkEqual(cosmo0.lookbackGyr, 0);
+  checkThrows(() => computeCosmology(-1.5, 67.4, 0.315, 0.685), /greater than −1/);
+});
+
+test('Suite 7: Astronomy & Astrophysics Benchmarks', '7.5 Black Holes, Relativity, Telescopes, Exoplanets & Astronomical Time/Coordinates', () => {
+  // 1. Schwarzschild radius of 1 M_sun: 2*G*M_sun/c^2 ≈ 2953.34 m
+  const rsSun = (2 * ASTRO_CONSTANTS.G * ASTRO_CONSTANTS.M_sun) / (ASTRO_CONSTANTS.c ** 2);
+  approxEqual(rsSun, 2953.339, 1e-5);
+
+  // 2. J2000.0 epoch: 2000-01-01 12:00:00 UTC -> JD = 2451545.0, MJD = 51544.5
+  const j2000 = calendarToJulianDate(2000, 1, 1, 12, 0, 0);
+  checkEqual(j2000.JD, 2451545.0);
+  checkEqual(j2000.MJD, 51544.5);
+  const invCal = julianDateToCalendar(2451545.0);
+  checkEqual(invCal.year, 2000);
+  checkEqual(invCal.month, 1);
+  checkEqual(invCal.day, 1);
+  checkEqual(invCal.hour, 12);
+
+  // 3. Sidereal time at J2000.0 Greenwich (JD = 2451545.0, lon = 0) -> GMST = 280.46061837°
+  const st0 = computeSiderealTime(2451545.0, 0, 0);
+  approxEqual(st0.gmstDeg, 280.46061837, 1e-8);
+
+  // 4. Celestial separation: identical coordinates = 0°, antipodal poles = 180°
+  const sep0 = computeCelestialSeparation(100, 25, 100, 25);
+  checkEqual(sep0.sepDeg, 0);
+  const sepPoles = computeCelestialSeparation(0, 90, 0, -90);
+  approxEqual(sepPoles.sepDeg, 180, 1e-12);
 });
 
 console.log('\n====================================================================');

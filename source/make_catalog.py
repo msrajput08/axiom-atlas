@@ -143,6 +143,23 @@ CATEGORIES = [
             "Academic Tools",
             "Daily Life Calculations"
         ]
+    },
+    {
+        "name": "Astronomy & Astrophysics",
+        "slug": "astronomy-astrophysics",
+        "icon": "orbit",
+        "glyph": "✦",
+        "description": "Orbital mechanics, planetary science, stellar astrophysics, numerical ΛCDM cosmology, black holes & relativity, telescopes, exoplanets and celestial coordinates",
+        "subcategories": [
+            "Orbital Mechanics & Celestial Motion",
+            "Planetary Science",
+            "Stellar Astrophysics",
+            "Cosmology",
+            "Black Holes & Relativity",
+            "Observational Astronomy & Telescopes",
+            "Exoplanets",
+            "Astronomy Converters & Reference Tools"
+        ]
     }
 ]
 
@@ -1131,24 +1148,29 @@ f('Physics & Engineering', 'Work & Energy', 'work-energy-theorem-calculator', 'W
   'Net work W_net (ΔKE)|0.5*m*(vf^2-vi^2)|J;Initial KE|0.5*m*vi^2|J;Final KE|0.5*m*vf^2|J;Average net force (W_net / d)|0.5*m*(vf^2-vi^2)/d|N',
   'W_net = ΔKE = ½ m v_f² − ½ m v_i² = F_net · d', '', 'work energy theorem delta KE net work')
 
-f('Physics & Engineering', 'Mechanics', 'circular-orbit-calculator', 'Circular Orbit Calculator',
-  'Calculate circular orbital speed, orbital period, and centripetal acceleration around a central mass M.',
-  'M|Central mass M|5.972e24|kg;r|Orbital radius r (from center)|6.771e6|m',
-  'Orbital speed v_orb|sqrt(6.6743e-11*M/r)|m/s;Orbital speed (km/s)|sqrt(6.6743e-11*M/r)/1000|km/s;Orbital period T|2*pi*sqrt(r^3/(6.6743e-11*M))|s;Orbital period (minutes)|2*pi*sqrt(r^3/(6.6743e-11*M))/60|min;Gravitational acceleration g(r)|6.6743e-11*M/r^2|m/s²',
-  'v_orb = √(GM / r);  T = 2π√(r³ / GM)', 'Default values correspond to Low Earth Orbit (~400 km altitude).',
-  'circular orbit velocity satellite speed orbital mechanics')
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'circular-orbit-calculator', 'Circular Orbit Calculator',
+  'Calculate circular orbital velocity, orbital period, centripetal gravitational acceleration, and specific orbital energy around a central mass M.',
+  'M|Central body mass M|5.97217e24|kg;r|Orbital radius r (from center)|6.771e6|m',
+  'Orbital speed v_orb|sqrt(6.6743e-11*M/r)|m/s;Orbital speed (km/s)|sqrt(6.6743e-11*M/r)/1000|km/s;Orbital period T|2*pi*sqrt(r^3/(6.6743e-11*M))|s;Orbital period (minutes)|2*pi*sqrt(r^3/(6.6743e-11*M))/60|min;Gravitational acceleration g(r)|6.6743e-11*M/r^2|m/s²;Specific orbital energy ε|-6.6743e-11*M/(2*r)|J/kg',
+  'v_c = √(GM / r);  T = 2π√(r³ / GM);  ε = −GM / (2r)',
+  'Assumes a spherical central mass M >> m and an unperturbed circular trajectory (eccentricity e = 0). Defaults correspond to Low Earth Orbit (~400 km altitude).',
+  'circular orbit velocity satellite speed orbital mechanics leo')
 
-f('Physics & Engineering', 'Mechanics', 'escape-velocity-calculator', 'Escape Velocity Calculator',
-  'Calculate minimum escape velocity v_e = √(2GM/R) from the surface or orbit of a celestial body.',
-  'M|Body mass M|5.972e24|kg;R|Radius from center R|6.371e6|m',
-  'Escape velocity (m/s)|sqrt(2*6.6743e-11*M/R)|m/s;Escape velocity (km/s)|sqrt(2*6.6743e-11*M/R)/1000|km/s;Surface gravity g|6.6743e-11*M/R^2|m/s²;Circular orbit speed (v_e/√2)|sqrt(6.6743e-11*M/R)|m/s',
-  'v_e = √(2GM / R)', 'Neglects atmospheric drag and planetary rotation.', 'escape velocity gravitational escape speed')
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'escape-velocity-calculator', 'Escape Velocity Calculator',
+  'Calculate minimum gravitational escape velocity v_e = √(2GM/R), circular orbit speed, and specific escape energy from the surface or altitude of a celestial body.',
+  'M|Central body mass M|5.97217e24|kg;R|Radial distance from center R|6.371e6|m',
+  'Escape velocity (m/s)|sqrt(2*6.6743e-11*M/R)|m/s;Escape velocity (km/s)|sqrt(2*6.6743e-11*M/R)/1000|km/s;Surface gravity g|6.6743e-11*M/R^2|m/s²;Circular orbit speed (v_e/√2)|sqrt(6.6743e-11*M/R)|m/s;Specific escape energy (½v_e²)|6.6743e-11*M/R|J/kg',
+  'v_e = √(2GM / R) = √2 · v_c',
+  'Derived from conservation of mechanical energy (K + U = 0 at infinity). Neglects atmospheric drag, radiation pressure, and rotational boost.',
+  'escape velocity gravitational escape speed parabolic velocity')
 
-f('Physics & Engineering', 'Mechanics', 'orbital-period-calculator', 'Orbital Period Calculator (Kepler’s Third Law)',
-  'Compute orbital period T from semi-major axis a and system masses (M₁ + M₂) using Kepler’s Third Law.',
-  'a|Semi-major axis a|1.4959787e11|m;M1|Primary mass M₁|1.9885e30|kg;M2|Secondary mass M₂|5.972e24|kg',
-  'Orbital period (seconds)|2*pi*sqrt(a^3/(6.6743e-11*(M1+M2)))|s;Orbital period (days)|2*pi*sqrt(a^3/(6.6743e-11*(M1+M2)))/86400|days;Orbital period (Julian years)|2*pi*sqrt(a^3/(6.6743e-11*(M1+M2)))/31557600|years',
-  'T = 2π √[a³ / (G(M₁ + M₂))]', 'Defaults represent the Earth–Sun orbit (1 AU).', 'orbital period keplers third law semi-major axis')
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'orbital-period-calculator', 'Orbital Period Calculator',
+  'Compute two-body orbital period T, mean motion n, and mean orbital speed from semi-major axis a and system masses (M₁ + M₂).',
+  'a|Semi-major axis a|1.495978707e11|m;M1|Central body mass M₁|1.98847e30|kg;M2|Orbiting body mass M₂|5.97217e24|kg',
+  'Orbital period (seconds)|2*pi*sqrt(a^3/(6.6743e-11*(M1+M2)))|s;Orbital period (days)|2*pi*sqrt(a^3/(6.6743e-11*(M1+M2)))/86400|days;Orbital period (Julian years)|2*pi*sqrt(a^3/(6.6743e-11*(M1+M2)))/31557600|years;Mean orbital speed (2πa/T)|sqrt(6.6743e-11*(M1+M2)/a)|m/s',
+  'T = 2π √[a³ / (G(M₁ + M₂))]',
+  'Valid for any closed Keplerian orbit (0 ≤ e < 1). Explicitly includes both central mass M₁ and orbiting mass M₂.',
+  'orbital period keplers third law semi-major axis celestial mechanics')
 
 f('Physics & Engineering', 'Mechanics', 'gravitational-potential-calculator', 'Gravitational Potential Calculator',
   'Calculate gravitational potential V = −GM/r, gravitational potential energy U = −GMm/r, and binding energy.',
@@ -2220,6 +2242,730 @@ f('Converters & Everyday Tools', 'Daily Life Calculations', 'tile-calculator', '
   'floor|Total floor area|15|m²;tilew|Tile width|0.6|m;tileh|Tile length|0.6|m;waste|Waste allowance|10|%',
   'Tiles required (with waste)|ceil(floor/(tilew*tileh)*(1+waste/100));Exact net tiles|ceil(floor/(tilew*tileh));Single tile area|tilew*tileh|m²',
   'Tiles = ⌈(Floor Area / Tile Area) × (1 + Waste/100)⌉', '', 'tile calculator flooring tiles wastage')
+
+
+# ==============================================================================
+# 9. ASTRONOMY & ASTROPHYSICS (8 SUBCATEGORIES, 86 CANONICAL CALCULATORS)
+# ==============================================================================
+
+# --- A. Orbital Mechanics & Celestial Motion (9 New + 3 Upgraded = 12) ---
+m('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'orbital-velocity-calculator', 'Orbital Velocity Calculator',
+  'Calculate instantaneous orbital speed using the general Vis-Viva equation v = √[GM(2/r − 1/a)] or circular orbit speed v_c = √(GM/r).',
+  [
+      {'id': 'vis_viva', 'label': 'Vis-Viva Elliptical / General Orbit', 'fields': 'M|Central body mass M|5.97217e24|kg;r|Instantaneous radial distance r|6.771e6|m;a|Semi-major axis a|7.0e6|m',
+       'outputs': 'Orbital velocity v|sqrt(G*M*(2/r-1/a))|m/s;Orbital velocity (km/s)|sqrt(G*M*(2/r-1/a))/1000|km/s;Local escape velocity √(2GM/r)|sqrt(2*G*M/r)|m/s;Specific orbital energy ε|-G*M/(2*a)|J/kg',
+       'formula': 'v = √[GM · (2/r − 1/a)]'},
+      {'id': 'circular', 'label': 'Circular Orbit (r = a)', 'fields': 'M|Central body mass M|5.97217e24|kg;r|Orbital radius r|6.771e6|m',
+       'outputs': 'Circular orbital speed v_c|sqrt(G*M/r)|m/s;Circular speed (km/s)|sqrt(G*M/r)/1000|km/s;Local escape speed v_e|sqrt(2*G*M/r)|m/s;Orbital period T|2*pi*sqrt(r^3/(G*M))|s',
+       'formula': 'v_c = √(GM / r)'}
+  ],
+  'v = √[GM · (2/r − 1/a)]',
+  'Requires r > 0 and r < 2a for bound elliptical orbits. Assumes point-mass two-body gravitation with orbiting mass m ≪ M.',
+  'orbital velocity calculator vis viva equation orbital speed satellite velocity')
+
+m('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'keplers-third-law-calculator', "Kepler's Third Law Calculator",
+  'Solve Kepler’s Third Law T² = (4π² / [G(M₁ + M₂)]) a³ for orbital period T, semi-major axis a, or total system mass M₁ + M₂.',
+  [
+      {'id': 'solve_period', 'label': 'Find Orbital Period T (from a, M₁, M₂)', 'fields': 'a|Semi-major axis a|1.495978707e11|m;M1|Central body mass M₁|1.98847e30|kg;M2|Orbiting body mass M₂|5.97217e24|kg',
+       'outputs': 'Orbital period T (seconds)|2*pi*sqrt(a^3/(G*(M1+M2)))|s;Orbital period (days)|2*pi*sqrt(a^3/(G*(M1+M2)))/86400|days;Orbital period (Julian years)|2*pi*sqrt(a^3/(G*(M1+M2)))/31557600|years',
+       'formula': 'T = 2π √[a³ / (G(M₁ + M₂))]'},
+      {'id': 'solve_sma', 'label': 'Find Semi-Major Axis a (from T, M₁, M₂)', 'fields': 'T|Orbital period T|31557600|s;M1|Central body mass M₁|1.98847e30|kg;M2|Orbiting body mass M₂|5.97217e24|kg',
+       'outputs': 'Semi-major axis a (meters)|(G*(M1+M2)*T^2/(4*pi^2))^(1/3)|m;Semi-major axis (km)|(G*(M1+M2)*T^2/(4*pi^2))^(1/3)/1000|km;Semi-major axis (AU)|(G*(M1+M2)*T^2/(4*pi^2))^(1/3)/AU|AU',
+       'formula': 'a = [G(M₁ + M₂) T² / (4π²)]^(1/3)'},
+      {'id': 'solve_mass', 'label': 'Find Total System Mass M₁ + M₂ (from a, T)', 'fields': 'a|Semi-major axis a|1.495978707e11|m;T|Orbital period T|31557600|s',
+       'outputs': 'Total system mass (kg)|4*pi^2*a^3/(G*T^2)|kg;Total mass (Solar masses M_☉)|(4*pi^2*a^3/(G*T^2))/M_sun|M_☉;Total mass (Earth masses M_⊕)|(4*pi^2*a^3/(G*T^2))/M_earth|M_⊕',
+       'formula': 'M₁ + M₂ = 4π² a³ / (G T²)'}
+  ],
+  'T² = [4π² / (G(M₁ + M₂))] · a³',
+  'Newtonian generalization of Kepler’s Third Law including both primary mass M₁ and secondary mass M₂.',
+  'keplers third law calculator orbital period semi major axis system mass')
+
+s('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'elliptical-orbit-calculator', 'Elliptical Orbit Calculator',
+  'Solve Kepler’s Equation M = E − e sin(E) numerically and compute periapsis, apoapsis, orbital speeds, anomalies, and specific energy/angular momentum.',
+  'astro_elliptical',
+  'M_anom = E − e·sin(E);  r = a(1 − e·cos E);  v = √[μ(2/r − 1/a)]',
+  'Uses Newton–Raphson iteration to solve Kepler’s transcendental equation to machine precision (< 10⁻¹³ rad) for 0 ≤ e < 1.',
+  'elliptical orbit calculator kepler equation solver periapsis apoapsis true anomaly')
+
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'orbital-energy-calculator', 'Orbital Energy Calculator',
+  'Calculate specific orbital energy ε, total mechanical energy E, kinetic energy K, and gravitational potential energy U of an orbiting body.',
+  'M|Central body mass M|5.97217e24|kg;m|Orbiting body mass m|1000|kg;r|Current radial distance r|6.771e6|m;a|Semi-major axis a|7.0e6|m',
+  'Specific orbital energy ε|-G*M/(2*a)|J/kg;Total orbital energy E|-G*M*m/(2*a)|J;Gravitational potential energy U|-G*M*m/r|J;Kinetic energy K|G*M*m*(1/r-1/(2*a))|J;Orbital speed v|sqrt(G*M*(2/r-1/a))|m/s',
+  'ε = −GM / (2a) = v²/2 − GM/r;  E = m · ε = K + U',
+  'Negative total energy (E < 0) indicates a bound elliptical/circular orbit; E = 0 is parabolic escape; E > 0 is unbound hyperbolic.',
+  'orbital energy calculator specific mechanical energy kinetic potential virial')
+
+m('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'orbital-eccentricity-calculator', 'Orbital Eccentricity Calculator',
+  'Calculate orbital eccentricity e, semi-major axis a, semi-minor axis b, and focal distance c from apsis distances or orbital axes.',
+  [
+      {'id': 'from_apses', 'label': 'From Periapsis (r_p) & Apoapsis (r_a)', 'fields': 'rp|Periapsis distance r_p|1.47095e11|m;ra|Apoapsis distance r_a|1.52100e11|m',
+       'outputs': 'Orbital eccentricity e|(ra-rp)/(ra+rp);Semi-major axis a|(ra+rp)/2|m;Semi-minor axis b|sqrt(ra*rp)|m;Semi-latus rectum p|2*ra*rp/(ra+rp)|m;Linear eccentricity c|(ra-rp)/2|m',
+       'formula': 'e = (r_a − r_p) / (r_a + r_p);  a = (r_a + r_p) / 2;  b = √(r_a · r_p)'},
+      {'id': 'from_axes', 'label': 'From Semi-Major (a) & Semi-Minor (b) Axes', 'fields': 'a|Semi-major axis a|1.49598e11|m;b|Semi-minor axis b|1.49577e11|m',
+       'outputs': 'Orbital eccentricity e|sqrt(1-(b/a)^2);Periapsis r_p = a(1−e)|a*(1-sqrt(1-(b/a)^2))|m;Apoapsis r_a = a(1+e)|a*(1+sqrt(1-(b/a)^2))|m;Semi-latus rectum p = b²/a|b^2/a|m',
+       'formula': 'e = √(1 − b² / a²)'}
+  ],
+  'e = (r_a − r_p) / (r_a + r_p)',
+  'Requires 0 < r_p ≤ r_a (or 0 < b ≤ a) for closed elliptical orbits (0 ≤ e < 1).',
+  'orbital eccentricity calculator periapsis apoapsis semi major axis')
+
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'synodic-period-calculator', 'Synodic Period Calculator',
+  'Calculate the synodic period T_syn between two coplanar orbiting bodies from their sidereal orbital periods T₁ and T₂.',
+  'T1|Body 1 sidereal period T₁|365.256|days;T2|Body 2 sidereal period T₂|686.980|days',
+  'Synodic period (days)|1/abs(1/T1-1/T2)|days;Synodic period (Julian years)|(1/abs(1/T1-1/T2))/365.25|years;Relative angular rate|360*abs(1/T1-1/T2)|°/day',
+  '1 / T_syn = |1 / T₁ − 1 / T₂|  ⇒  T_syn = (T₁ · T₂) / |T₁ − T₂|',
+  'Requires T₁ ≠ T₂ and coplanar prograde orbits in the same direction around the central body (defaults: Earth and Mars).',
+  'synodic period calculator opposition conjunction planetary alignment')
+
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'hill-sphere-calculator', 'Hill Sphere Calculator',
+  'Estimate the gravitational Hill sphere radius r_H within which a planet or moon dominates satellite orbits over a central star/planet.',
+  'a|Semi-major axis a|1.495978707e11|m;e|Orbital eccentricity e|0.01671;m|Secondary (planet) mass m|5.97217e24|kg;M|Primary (star) mass M|1.98847e30|kg',
+  'Hill sphere radius r_H (meters)|a*(1-e)*(m/(3*M))^(1/3)|m;Hill sphere radius (km)|a*(1-e)*(m/(3*M))^(1/3)/1000|km;Hill sphere radius (AU)|a*(1-e)*(m/(3*M))^(1/3)/AU|AU;Stable prograde satellite limit (~r_H/3)|a*(1-e)*(m/(3*M))^(1/3)/3000|km',
+  'r_H ≈ a(1 − e) · [m / (3M)]^(1/3)',
+  'Three-body perturbation approximation valid when secondary mass m ≪ M. Long-term stable prograde orbits typically lie within 0.33 to 0.5 r_H.',
+  'hill sphere calculator hill radius roche lobe gravitational sphere of influence')
+
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'roche-limit-calculator', 'Roche Limit Calculator',
+  'Calculate both the rigid-body and fluid-body Roche tidal disruption limits for a satellite orbiting a primary body.',
+  'RM|Primary body radius R_M|6.371e6|m;rhoM|Primary mean density ρ_M|5514|kg/m³;rhom|Satellite mean density ρ_m|3344|kg/m³',
+  'Rigid-body Roche limit d_rigid|1.26*RM*(rhoM/rhom)^(1/3)|m;Rigid Roche limit (km)|1.26*RM*(rhoM/rhom)^(1/3)/1000|km;Fluid-body Roche limit d_fluid|2.44*RM*(rhoM/rhom)^(1/3)|m;Fluid Roche limit (km)|2.44*RM*(rhoM/rhom)^(1/3)/1000|km;Fluid limit in primary radii (d_fluid/R_M)|2.44*(rhoM/rhom)^(1/3)',
+  'd_rigid = 1.26 · R_M (ρ_M / ρ_m)^(1/3);  d_fluid = 2.44 · R_M (ρ_M / ρ_m)^(1/3)',
+  'Assumes satellite is held together solely by self-gravity (negligible tensile strength). Fluid limit accounts for tidal elongation.',
+  'roche limit calculator tidal disruption radius rigid fluid satellite rings')
+
+f('Astronomy & Astrophysics', 'Orbital Mechanics & Celestial Motion', 'two-body-gravitational-parameter-calculator', 'Two-Body Gravitational Parameter Calculator',
+  'Compute the standard gravitational parameter μ = G(M₁ + M₂), reduced mass, and barycenter distances for a two-body system.',
+  'M1|Primary mass M₁|5.97217e24|kg;M2|Secondary mass M₂|7.346e22|kg;a|Separation / semi-major axis a|3.844e8|m',
+  'Combined gravitational parameter μ|G*(M1+M2)|m³/s²;Primary parameter μ₁ = GM₁|G*M1|m³/s²;Secondary parameter μ₂ = GM₂|G*M2|m³/s²;Reduced mass m_red|M1*M2/(M1+M2)|kg;Primary barycenter offset r₁|a*M2/(M1+M2)|m;Secondary barycenter offset r₂|a*M1/(M1+M2)|m',
+  'μ = G(M₁ + M₂);  m_red = (M₁M₂)/(M₁ + M₂);  r₁ = a · M₂/(M₁ + M₂)',
+  'Defaults correspond to the Earth–Moon system (barycenter lies ~4,671 km from Earth’s center, inside Earth’s radius).',
+  'two body gravitational parameter mu reduced mass barycenter calculator')
+
+# --- B. Planetary Science (10 Canonical Tools) ---
+m('Astronomy & Astrophysics', 'Planetary Science', 'planetary-mass-calculator', 'Planetary Mass Calculator',
+  'Determine planetary mass M from surface gravity and radius, bulk density and radius, or an orbiting moon’s period and semi-major axis.',
+  [
+      {'id': 'from_gravity', 'label': 'From Surface Gravity (g) & Radius (R)', 'fields': 'g|Surface gravity g|9.798|m/s²;R|Planetary radius R|6.371e6|m',
+       'outputs': 'Planetary mass M (kg)|g*R^2/G|kg;Mass in Earth masses (M_⊕)|(g*R^2/G)/M_earth|M_⊕;Mass in Jupiter masses (M_J)|(g*R^2/G)/M_jup|M_J;Mean density ρ|3*g/(4*pi*G*R)|kg/m³',
+       'formula': 'M = g · R² / G'},
+      {'id': 'from_density', 'label': 'From Mean Density (ρ) & Radius (R)', 'fields': 'rho|Mean bulk density ρ|5514|kg/m³;R|Planetary radius R|6.371e6|m',
+       'outputs': 'Planetary mass M (kg)|(4/3)*pi*R^3*rho|kg;Mass in Earth masses (M_⊕)|((4/3)*pi*R^3*rho)/M_earth|M_⊕;Surface gravity g|(4/3)*pi*G*R*rho|m/s²',
+       'formula': 'M = (4/3) π R³ ρ'},
+      {'id': 'from_moon', 'label': 'From Satellite Orbit (a, T)', 'fields': 'a|Moon semi-major axis a|3.844e8|m;T|Moon orbital period T|2360591|s',
+       'outputs': 'System mass M (kg)|4*pi^2*a^3/(G*T^2)|kg;Mass in Earth masses (M_⊕)|(4*pi^2*a^3/(G*T^2))/M_earth|M_⊕;Mass in Solar masses (M_☉)|(4*pi^2*a^3/(G*T^2))/M_sun|M_☉',
+       'formula': 'M ≈ 4π² a³ / (G T²)'}
+  ],
+  'M = gR² / G = (4/3)πR³ρ = 4π²a³ / (GT²)',
+  'Assumes spherical symmetry. Select any Solar System planet preset above or enter custom body parameters.',
+  'planetary mass calculator planet mass from gravity density moon orbit')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'planetary-density-calculator', 'Planetary Density Calculator',
+  'Calculate a planet’s bulk mean density ρ, volume V, and uncompressed comparison from its mass M and mean radius R.',
+  'M|Planetary mass M|5.97217e24|kg;R|Planetary mean radius R|6.371e6|m',
+  'Bulk density (kg/m³)|M/((4/3)*pi*R^3)|kg/m³;Bulk density (g/cm³)|(M/((4/3)*pi*R^3))/1000|g/cm³;Relative to Earth density (5514 kg/m³)|(M/((4/3)*pi*R^3))/5514;Planetary volume V|(4/3)*pi*R^3|m³;Surface gravity g|G*M/R^2|m/s²',
+  'ρ = M / [(4/3)π R³]',
+  'Bulk density reflects both composition (iron core vs. silicate mantle vs. volatiles) and gravitational self-compression.',
+  'planetary density calculator bulk density planet volume g/cm3')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'surface-gravity-calculator', 'Surface Gravity Calculator',
+  'Compute Newtonian surface gravity g = GM/R² and effective equatorial gravity accounting for planetary rotation.',
+  'M|Planetary mass M|5.97217e24|kg;R|Planetary radius R|6.371e6|m;Prot|Rotation period P_rot|23.9345|h',
+  'Newtonian surface gravity g|G*M/R^2|m/s²;Gravity in Earth g₀ (9.80665 m/s²)|(G*M/R^2)/g0|g₀;Centrifugal equatorial relief ω²R|(2*pi/(Prot*3600))^2*R|m/s²;Effective equatorial gravity g_eff|G*M/R^2-(2*pi/(Prot*3600))^2*R|m/s²;Escape velocity v_e|sqrt(2*G*M/R)|m/s',
+  'g = GM / R²;  g_eff(eq) = GM / R² − (2π / P_rot)² R',
+  'Centrifugal relief reduces apparent weight at the equator relative to the poles (by ~0.034 m/s² on Earth and ~2.25 m/s² on Jupiter).',
+  'surface gravity calculator planet gravity g0 equatorial centrifugal')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'planetary-escape-velocity-calculator', 'Planetary Escape Velocity Calculator',
+  'Calculate planetary surface escape speed v_e, circular skimmer speed, and ratio to Earth escape velocity (11.186 km/s).',
+  'M|Planetary mass M|5.97217e24|kg;R|Planetary radius R|6.371e6|m',
+  'Surface escape velocity v_e|sqrt(2*G*M/R)|m/s;Escape velocity (km/s)|sqrt(2*G*M/R)/1000|km/s;Ratio to Earth v_e (11,186 m/s)|sqrt(2*G*M/R)/11186;Surface circular speed v_c|sqrt(G*M/R)|m/s;Surface gravity g|G*M/R^2|m/s²',
+  'v_e = √(2GM / R) = √(2gR)',
+  'Select a Solar System body preset or enter custom mass and radius. Neglects atmospheric drag.',
+  'planetary escape velocity calculator planet escape speed surface gravity')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'planetary-radius-volume-calculator', 'Planetary Radius and Volume Calculator',
+  'Compute volumetric mean radius, oblateness (flattening), volume, and surface area for an oblate spheroid or spherical planet.',
+  'Req|Equatorial radius R_eq|6.3781e6|m;Rpol|Polar radius R_pol|6.3568e6|m',
+  'Volumetric mean radius R_m|(Req^2*Rpol)^(1/3)|m;Arithmetic mean radius (2R_eq+R_pol)/3|(2*Req+Rpol)/3|m;Oblateness / flattening f|(Req-Rpol)/Req;Spheroid volume V|(4/3)*pi*Req^2*Rpol|m³;Equivalent sphere surface area|4*pi*(Req^2*Rpol)^(2/3)|m²',
+  'R_m = (R_eq² · R_pol)^(1/3);  V = (4/3)π R_eq² R_pol;  f = (R_eq − R_pol) / R_eq',
+  'Rapidly rotating gas giants exhibit significant oblateness (Jupiter f ≈ 0.0649, Saturn f ≈ 0.0980, Earth f ≈ 0.00335).',
+  'planetary radius volume calculator oblate spheroid flattening equatorial polar')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'planetary-atmospheric-scale-height-calculator', 'Planetary Atmospheric Scale Height Calculator',
+  'Calculate isothermal atmospheric scale height H = R_gas·T / (M_mol·g) and atmospheric pressure P(z) at altitude z.',
+  'T|Atmospheric temperature T|255|K;Mmol|Mean molar mass M_mol|0.02897|kg/mol;g|Surface gravity g|9.80665|m/s²;P0|Surface pressure P₀|101325|Pa;z|Altitude z|10000|m',
+  'Atmospheric scale height H (meters)|Rgas*T/(Mmol*g)|m;Scale height H (km)|Rgas*T/(Mmol*g)/1000|km;Pressure at altitude P(z)|P0*exp(-z/(Rgas*T/(Mmol*g)))|Pa;Density / pressure fraction e^(−z/H)|exp(-z/(Rgas*T/(Mmol*g)))',
+  'H = (R_gas · T) / (M_mol · g) = (k_B · T) / (μ · m_u · g);  P(z) = P₀ · exp(−z / H)',
+  'Assumes an ideal gas in hydrostatic equilibrium at uniform temperature T. Earth’s troposphere/stratosphere mean scale height is ~8.5 km (M_mol = 0.02897 kg/mol).',
+  'atmospheric scale height calculator barometric formula planetary atmosphere')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'surface-temperature-estimator', 'Surface Temperature Estimator',
+  'Estimate both a planet’s airless radiative equilibrium temperature T_eq and its greenhouse-adjusted mean surface temperature T_surf.',
+  'Lstar|Host star luminosity L_★|3.828e26|W;d|Orbital distance d|1.495978707e11|m;AB|Bond albedo A_B (0 to 1)|0.306;tauIR|Effective infrared optical depth τ_IR|0.86',
+  'Equilibrium temperature T_eq (airless)|((Lstar*(1-AB))/(16*pi*sigmaSB*d^2))^(1/4)|K;Actual surface temperature T_surf (with greenhouse)|((Lstar*(1-AB))/(16*pi*sigmaSB*d^2))^(1/4)*(1+0.75*tauIR)^(1/4)|K;Surface temperature (°C)|((Lstar*(1-AB))/(16*pi*sigmaSB*d^2))^(1/4)*(1+0.75*tauIR)^(1/4)-273.15|°C;Greenhouse warming ΔT = T_surf − T_eq|((Lstar*(1-AB))/(16*pi*sigmaSB*d^2))^(1/4)*((1+0.75*tauIR)^(1/4)-1)|K;Absorbed stellar flux|(Lstar*(1-AB))/(4*pi*d^2*4)|W/m²',
+  'T_eq = [L_★(1 − A_B) / (16π σ d²)]^(1/4);  T_surf = T_eq · (1 + ¾ τ_IR)^(1/4)',
+  'Clearly distinguishes airless blackbody equilibrium temperature (Earth T_eq ≈ 254 K) from Eddington grey-atmosphere greenhouse surface temperature (Earth T_surf ≈ 288 K at τ_IR ≈ 0.86; Venus τ_IR > 140).',
+  'surface temperature estimator planetary greenhouse effect equilibrium temperature')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'planetary-rotation-calculator', 'Planetary Rotation Calculator',
+  'Compute planetary angular velocity ω, equatorial tangential speed, centrifugal acceleration, rotational kinetic energy, and synchronous orbit radius.',
+  'Prot|Sidereal rotation period P_rot|86164.0905|s;Req|Equatorial radius R_eq|6.3781e6|m;M|Planetary mass M|5.97217e24|kg;C|Moment of inertia factor C = I/(MR²)|0.3307',
+  'Angular velocity ω|2*pi/Prot|rad/s;Equatorial tangential speed v_eq|2*pi*Req/Prot|m/s;Centrifugal acceleration at equator|(2*pi/Prot)^2*Req|m/s²;Rotational kinetic energy K_rot|0.5*C*M*Req^2*(2*pi/Prot)^2|J;Synchronous orbit radius a_sync|(G*M*Prot^2/(4*pi^2))^(1/3)|m',
+  'ω = 2π / P_rot;  v_eq = ω R_eq;  K_rot = ½ (C M R_eq²) ω²;  a_sync = [GM P_rot² / (4π²)]^(1/3)',
+  'Defaults represent Earth (sidereal day 86,164.09 s, v_eq ≈ 465.1 m/s, geostationary radius a_sync ≈ 42,164 km).',
+  'planetary rotation calculator equatorial speed geostationary synchronous orbit')
+
+f('Astronomy & Astrophysics', 'Planetary Science', 'planetary-equilibrium-temperature-calculator', 'Planetary Equilibrium Temperature Calculator',
+  'Calculate radiative equilibrium temperature T_eq of a Solar System planet or exoplanet from stellar temperature, radius, orbital distance, Bond albedo, and heat redistribution factor.',
+  'Tstar|Stellar effective temperature T_★|5772|K;Rstar|Stellar radius R_★|6.957e8|m;a|Orbital semi-major axis a|1.495978707e11|m;AB|Bond albedo A_B (0 to 1)|0.306;f|Heat redistribution factor f (1=global, 2=dayside)|1',
+  'Equilibrium temperature T_eq (K)|Tstar*sqrt(Rstar/(2*a))*((1-AB)/f)^(1/4)|K;Equilibrium temperature (°C)|Tstar*sqrt(Rstar/(2*a))*((1-AB)/f)^(1/4)-273.15|°C;Incident stellar irradiance S|sigmaSB*Tstar^4*(Rstar/a)^2|W/m²;Insolation relative to Earth (S/S_⊕)|(sigmaSB*Tstar^4*(Rstar/a)^2)/1361',
+  'T_eq = T_★ · √(R_★ / (2a)) · [(1 − A_B) / f]^(1/4)',
+  'Assumes radiative balance without internal heat or atmospheric greenhouse warming. Set f = 1 for fast rotators (4π reradiation) or f = 2 for tidally locked dayside-only reradiation.',
+  'planetary equilibrium temperature calculator exoplanet temperature bond albedo')
+C[-1]['secondarySubcategories'] = ['Exoplanets']
+
+s('Astronomy & Astrophysics', 'Planetary Science', 'habitable-zone-estimator', 'Habitable Zone Estimator',
+  'Calculate conservative (Runaway to Maximum Greenhouse) and optimistic (Recent Venus to Early Mars) circumstellar habitable zone boundaries using Kopparapu et al. (2014).',
+  'astro_habitable_zone',
+  'd = √(L_★ / S_eff);  S_eff(T_★) = S_eff☉ + a·ΔT + b·ΔT² + c·ΔT³ + d·ΔT⁴',
+  'Uses Kopparapu et al. (2013, 2014) 1D radiative-convective climate model parametrizations for 2,600 K ≤ T_eff ≤ 7,200 K.',
+  'habitable zone estimator goldilocks zone kopparapu exoplanet habitability')
+C[-1]['secondarySubcategories'] = ['Exoplanets']
+
+# --- C. Stellar Astrophysics (12 Canonical Tools) ---
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'stellar-luminosity-calculator', 'Stellar Luminosity Calculator',
+  'Calculate total bolometric stellar luminosity L from stellar radius R and effective surface temperature T_eff via the Stefan–Boltzmann law.',
+  'R|Stellar radius R|6.957e8|m;Teff|Effective temperature T_eff|5772|K',
+  'Luminosity L (Watts)|4*pi*R^2*sigmaSB*Teff^4|W;Luminosity in Solar units (L/L_☉)|(4*pi*R^2*sigmaSB*Teff^4)/L_sun|L_☉;Surface radiant flux σT_eff⁴|sigmaSB*Teff^4|W/m²;Absolute bolometric magnitude M_bol|4.74-2.5*log((4*pi*R^2*sigmaSB*Teff^4)/L_sun)',
+  'L = 4π R² σ T_eff⁴;  L / L_☉ = (R / R_☉)² (T_eff / T_☉)⁴',
+  'Models the photosphere as an ideal spherical blackbody radiator (IAU 2015 nominal solar reference: L_☉ = 3.828 × 10²⁶ W, M_bol,☉ = 4.74).',
+  'stellar luminosity calculator star brightness stefan boltzmann solar luminosity')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'stefan-boltzmann-law-calculator', 'Stefan-Boltzmann Law Calculator',
+  'Compute radiant exitance (power per unit area j* = εσT⁴) and total thermal power radiated by a body of surface area A and emissivity ε.',
+  'T|Absolute temperature T|5772|K;A|Radiating surface area A|1|m²;eps|Emissivity ε (0 to 1)|1',
+  'Radiant exitance j* = εσT⁴|eps*sigmaSB*T^4|W/m²;Total radiated power P = A·εσT⁴|A*eps*sigmaSB*T^4|W;Wien peak wavelength λ_max|(b_wien/T)*1e9|nm',
+  'j* = ε · σ · T⁴;  P = A · ε · σ · T⁴  (σ = 5.670374419 × 10⁻⁸ W·m⁻²·K⁻⁴)',
+  'Requires T > 0 K and 0 < ε ≤ 1 (ε = 1 for an ideal blackbody).',
+  'stefan boltzmann law calculator blackbody radiant flux thermal radiation')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'stellar-radius-calculator', 'Stellar Radius Calculator',
+  'Determine stellar photospheric radius R from bolometric luminosity L and effective surface temperature T_eff.',
+  'L|Stellar luminosity L|3.828e26|W;Teff|Effective temperature T_eff|5772|K',
+  'Stellar radius R (meters)|sqrt(L/(4*pi*sigmaSB*Teff^4))|m;Stellar radius (km)|sqrt(L/(4*pi*sigmaSB*Teff^4))/1000|km;Radius in Solar radii (R/R_☉)|sqrt(L/(4*pi*sigmaSB*Teff^4))/R_sun|R_☉;Photospheric surface area|L/(sigmaSB*Teff^4)|m²',
+  'R = √[L / (4π σ T_eff⁴)]',
+  'Derived by inverting the Stefan–Boltzmann luminosity relation under the assumption of a spherical blackbody photosphere.',
+  'stellar radius calculator star size luminosity effective temperature')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'stellar-surface-temperature-calculator', 'Stellar Surface Temperature Calculator',
+  'Calculate a star’s effective photospheric temperature T_eff and Wien peak wavelength from its luminosity L and radius R.',
+  'L|Stellar luminosity L|3.828e26|W;R|Stellar radius R|6.957e8|m',
+  'Effective temperature T_eff|(L/(4*pi*R^2*sigmaSB))^(1/4)|K;Temperature ratio (T_eff / T_☉)|((L/(4*pi*R^2*sigmaSB))^(1/4))/T_sun;Wien peak wavelength λ_max|(b_wien/((L/(4*pi*R^2*sigmaSB))^(1/4)))*1e9|nm;Surface radiant exitance|L/(4*pi*R^2)|W/m²',
+  'T_eff = [L / (4π R² σ)]^(1/4)',
+  'Effective temperature is the temperature of a blackbody of radius R that radiates the same total bolometric power L.',
+  'stellar surface temperature calculator effective temperature star color')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'apparent-magnitude-calculator', 'Apparent Magnitude Calculator',
+  'Calculate apparent magnitude m from absolute magnitude M, distance d (in parsecs), and interstellar extinction A_V.',
+  'M|Absolute magnitude M|4.83;d|Distance d (parsecs)|10|pc;AV|Interstellar extinction A_V (mag)|0',
+  'Apparent magnitude m|M+5*log(d/10)+AV;Distance modulus μ = m − M|5*log(d/10)+AV;Flux ratio relative to m = 0 (Vega)|10^(-0.4*(M+5*log(d/10)+AV));Distance in light-years|d*3.261563777|ly',
+  'm = M + 5 log₁₀(d_pc / 10) + A_V',
+  'Apparent magnitude measures observed brightness from Earth (smaller/more negative numbers are brighter; naked-eye limit in dark skies is m ≈ +6.5).',
+  'apparent magnitude calculator absolute magnitude distance parsecs extinction')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'absolute-magnitude-calculator', 'Absolute Magnitude Calculator',
+  'Calculate intrinsic absolute magnitude M and stellar luminosity ratio from apparent magnitude m, distance d (parsecs), and extinction A_V.',
+  'm|Apparent magnitude m|-1.46;d|Distance d (parsecs)|2.637|pc;AV|Interstellar extinction A_V (mag)|0',
+  'Absolute magnitude M|m-5*log(d/10)-AV;Intrinsic distance modulus μ₀|5*log(d/10);Luminosity ratio (L / L_☉,V)|10^(0.4*(4.83-(m-5*log(d/10)-AV)));Parallax p = 1/d|1/d|arcsec',
+  'M = m − 5 log₁₀(d_pc / 10) − A_V',
+  'Absolute magnitude M is defined as the apparent magnitude a source would have if viewed at a standard distance of 10 parsecs (32.616 ly) with zero extinction. Defaults represent Sirius A.',
+  'absolute magnitude calculator intrinsic brightness distance modulus')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'distance-modulus-calculator', 'Distance Modulus Calculator',
+  'Compute astronomical distance d in parsecs and light-years from apparent magnitude m, absolute magnitude M, and interstellar extinction A_V.',
+  'm|Apparent magnitude m|12.5;M|Absolute magnitude M|4.83;AV|Interstellar extinction A_V (mag)|0.2',
+  'Observed distance modulus (m − M)|m-M;Extinction-corrected modulus μ₀ = m − M − A_V|m-M-AV;True distance d (parsecs)|10^((m-M-AV+5)/5)|pc;True distance (light-years)|10^((m-M-AV+5)/5)*3.261563777|ly;Apparent distance (ignoring extinction)|10^((m-M+5)/5)|pc',
+  'μ₀ = m − M − A_V = 5 log₁₀(d_pc) − 5  ⇒  d_pc = 10^((m − M − A_V + 5) / 5)',
+  'Neglecting dust extinction A_V > 0 causes an observer to overestimate the true distance to the star.',
+  'distance modulus calculator m-M parsecs light years stellar distance')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'stellar-parallax-calculator', 'Stellar Parallax Calculator',
+  'Convert annual trigonometric parallax angle p (in arcseconds) into distance in parsecs, light-years, Astronomical Units, and meters.',
+  'p|Parallax angle p|0.7685|arcsec',
+  'Distance d (parsecs)|1/p|pc;Distance (light-years)|(1/p)*3.261563777|ly;Distance (Astronomical Units)|(1/p)*206264.806247|AU;Distance (meters)|(1/p)*pc|m;Parallax in milliarcseconds (mas)|p*1000|mas',
+  'd (pc) = 1 / p (arcsec)',
+  'Defaults correspond to Proxima Centauri (p = 0.7685″ = 768.5 mas → d ≈ 1.301 pc ≈ 4.244 ly). Valid in the small-angle regime.',
+  'stellar parallax calculator parsec arcsecond distance proxima centauri')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'main-sequence-lifetime-estimator', 'Main Sequence Lifetime Estimator',
+  'Estimate a main-sequence star’s hydrogen-burning lifetime t_MS, mass–luminosity ratio L/L_☉, and nuclear mass-consumption rate from its mass M/M_☉.',
+  'Ms|Stellar mass (in Solar masses M/M_☉)|1.0;alpha|Mass–luminosity exponent α (L ∝ M^α)|3.5',
+  'Estimated luminosity (L / L_☉)|Ms^alpha|L_☉;Main-sequence lifetime (years)|1e10*Ms^(1-alpha)|years;Main-sequence lifetime (Gyr)|10*Ms^(1-alpha)|Gyr;Luminosity in Watts|L_sun*Ms^alpha|W;Nuclear mass-energy conversion rate (L/c²)|(L_sun*Ms^alpha)/c^2|kg/s',
+  'L / L_☉ ≈ (M / M_☉)^α;  t_MS ≈ t_☉ · (M / M_☉)^(1 − α)  (t_☉ ≈ 10¹⁰ yr)',
+  'Approximation assumes ~10% of core hydrogen mass is fused via pp-chain/CNO cycle. Typical exponents: α ≈ 2.3 (M < 0.43 M_☉), α ≈ 3.5–4.0 (0.43 ≤ M ≤ 20 M_☉), α → 1 (Eddington limit M > 50 M_☉).',
+  'main sequence lifetime estimator stellar mass luminosity relation star lifespan')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'stellar-flux-calculator', 'Stellar Flux Calculator',
+  'Compute bolometric radiant flux (irradiance) F = L / (4πd²) and radiation pressure at distance d from a star of luminosity L.',
+  'L|Stellar luminosity L|3.828e26|W;d|Distance from star d|1.495978707e11|m',
+  'Radiant flux / irradiance F|L/(4*pi*d^2)|W/m²;Flux relative to Solar Constant (1361 W/m²)|(L/(4*pi*d^2))/1361;Absorbed radiation pressure (F/c)|L/(4*pi*d^2*c)|Pa;Perfectly reflected radiation pressure (2F/c)|2*L/(4*pi*d^2*c)|Pa',
+  'F = L / (4π d²);  P_rad = F / c',
+  'Follows the inverse-square law in optically thin space (neglecting interstellar dust absorption).',
+  'stellar flux calculator inverse square law solar irradiance radiation pressure')
+
+f('Astronomy & Astrophysics', 'Stellar Astrophysics', 'wiens-displacement-law-calculator', "Wien's Displacement Law Calculator",
+  'Calculate the peak emission wavelength λ_max and peak frequency ν_max of a blackbody spectrum from temperature T.',
+  'T|Blackbody temperature T|5772|K',
+  'Peak wavelength λ_max (nanometers)|(b_wien/T)*1e9|nm;Peak wavelength (micrometers)|(b_wien/T)*1e6|µm;Peak wavelength (meters)|b_wien/T|m;Frequency-distribution peak ν_max|2.821439372*kB*T/h|Hz;Photon energy at λ_max (eV)|(h*c/(b_wien/T))/1.602176634e-19|eV',
+  'λ_max = b / T  (b = 2.897771955 × 10⁻³ m·K);  ν_max = 2.821439 · k_B T / h',
+  'Note that λ_max · ν_max ≠ c because B_λ(λ,T) and B_ν(ν,T) are differential distributions with respect to different variables (dλ vs. dν).',
+  'wiens displacement law calculator peak wavelength blackbody temperature')
+
+s('Astronomy & Astrophysics', 'Stellar Astrophysics', 'blackbody-radiation-calculator', 'Blackbody Radiation Calculator',
+  'Evaluate exact Planck spectral radiance B_λ(λ, T) and B_ν(ν, T), Wien peak, Stefan–Boltzmann exitance, and compare against Rayleigh–Jeans and Wien approximations.',
+  'astro_blackbody',
+  'B_λ(λ, T) = (2hc² / λ⁵) · [exp(hc / (λ k_B T)) − 1]⁻¹',
+  'Exact quantum Planck distribution valid across all wavelengths and temperatures.',
+  'blackbody radiation calculator planck law spectral radiance rayleigh jeans wien')
+
+# --- D. Cosmology (10 Canonical Tools) ---
+f('Astronomy & Astrophysics', 'Cosmology', 'hubbles-law-calculator', "Hubble's Law Calculator",
+  'Calculate low-redshift recession velocity v = H₀d, linear redshift estimate z ≈ v/c, Hubble time 1/H₀, and Hubble radius c/H₀.',
+  'H0|Hubble constant H₀ (km/s/Mpc)|67.4;d|Proper / comoving distance d (Mpc)|100',
+  'Recession velocity v = H₀·d|H0*d|km/s;Linear redshift approximation z ≈ v/c|(H0*d)/(c/1000);Hubble distance d_H = c/H₀|(c/1000)/H0|Mpc;Hubble time t_H = 1/H₀|(pc*1e6/(H0*1000))/31557600/1e9|Gyr',
+  'v = H₀ · d;  d_H = c / H₀;  t_H = 1 / H₀',
+  'IMPORTANT LIMITATION: Linear Hubble’s law v = H₀d and d ≈ cz/H₀ are first-order Taylor approximations valid only at low redshift (z ≪ 0.1, d ≪ 400 Mpc). For z ≥ 0.1, use the numerical ΛCDM Redshift-Distance Calculator.',
+  'hubbles law calculator recession velocity hubble constant expansion of universe')
+
+f('Astronomy & Astrophysics', 'Cosmology', 'cosmological-redshift-calculator', 'Cosmological Redshift Calculator',
+  'Calculate redshift z, cosmic scale factor a = 1/(1+z), relativistic Doppler velocity, and CMB temperature at epoch z from observed and rest-frame wavelengths.',
+  'lobs|Observed wavelength λ_obs|656.28|nm;lemit|Rest-frame emitted wavelength λ_emit|486.13|nm',
+  'Redshift z|(lobs-lemit)/lemit;Scale factor a = 1/(1+z)|lemit/lobs;Wavelength stretch factor (1+z)|lobs/lemit;Relativistic Doppler speed v_rel/c|((lobs/lemit)^2-1)/((lobs/lemit)^2+1);CMB temperature at z (T₀ = 2.72548 K)|2.72548*(lobs/lemit)|K;Surface brightness dimming factor (1+z)⁴|(lobs/lemit)^4',
+  'z = (λ_obs − λ_emit) / λ_emit = (1 / a) − 1',
+  'Cosmological redshift arises from the metric expansion of space (1 + z = a₀/a(t_emit)), not motion through static flat spacetime.',
+  'cosmological redshift calculator wavelength shift scale factor doppler')
+
+s('Astronomy & Astrophysics', 'Cosmology', 'redshift-distance-calculator', 'Redshift-Distance Calculator',
+  'Compute exact ΛCDM Comoving, Transverse, Luminosity, Angular Diameter, and Light-Travel distances via numerical Gauss–Legendre integration over configurable (H₀, Ω_m, Ω_Λ) parameters.',
+  'astro_cosmology',
+  'D_C(z) = (c/H₀) ∫₀ᶻ dz′ / E(z′);  E(z) = √[Ω_r(1+z)⁴ + Ω_m(1+z)³ + Ω_k(1+z)² + Ω_Λ]',
+  'Uses 8-point composite Gauss–Legendre quadrature in logarithmic redshift coordinates. Contrasts exact ΛCDM distances against the linear cz/H₀ approximation.',
+  'redshift distance calculator cosmology lcdm comoving luminosity angular diameter')
+
+s('Astronomy & Astrophysics', 'Cosmology', 'lookback-time-estimator', 'Lookback Time Estimator',
+  'Numerically integrate cosmological lookback time t_L(z), cosmic age at redshift t(z), and present age of the Universe t₀ for configurable ΛCDM parameters.',
+  'astro_cosmology',
+  't_L(z) = (1/H₀) ∫₀ᶻ dz′ / [(1 + z′) E(z′)]',
+  'Integrates the Friedmann–Lemaître–Robertson–Walker (FLRW) time-redshift relation across radiation, matter, curvature, and dark energy epochs.',
+  'lookback time estimator age of universe redshift cosmology calculator')
+
+f('Astronomy & Astrophysics', 'Cosmology', 'scale-factor-calculator', 'Scale Factor Calculator',
+  'Relate cosmological redshift z to the dimensionless FLRW cosmic scale factor a(t) = 1/(1+z) and compute matter, radiation, and CMB temperature scaling.',
+  'z|Cosmological redshift z|1.5',
+  'Cosmic scale factor a = 1/(1+z)|1/(1+z);Linear size ratio a₀/a = 1+z|1+z;Matter density scaling ρ_m(z)/ρ_m,0 = (1+z)³|(1+z)^3;Radiation energy density scaling (1+z)⁴|(1+z)^4;CMB temperature T_CMB(z) = 2.72548(1+z)|2.72548*(1+z)|K',
+  'a(t) / a₀ = 1 / (1 + z);  ρ_m ∝ a⁻³;  ρ_r ∝ a⁻⁴;  T_CMB ∝ a⁻¹',
+  'Normalized to present-day scale factor a₀ = 1 at z = 0.',
+  'cosmic scale factor calculator redshift matter radiation density scaling')
+
+f('Astronomy & Astrophysics', 'Cosmology', 'hubble-parameter-calculator', 'Hubble Parameter Calculator',
+  'Evaluate the redshift-dependent Hubble expansion rate H(z) = H₀E(z), Hubble time 1/H(z), Hubble radius c/H(z), and deceleration parameter q(z).',
+  'z|Redshift z|1.0;H0|Present Hubble constant H₀ (km/s/Mpc)|67.4;OmegaM|Matter density parameter Ω_m,0|0.315;OmegaL|Dark energy parameter Ω_Λ,0|0.685',
+  'Dimensionless expansion rate E(z)|sqrt(OmegaM*(1+z)^3+(1-OmegaM-OmegaL)*(1+z)^2+OmegaL);Hubble parameter H(z)|H0*sqrt(OmegaM*(1+z)^3+(1-OmegaM-OmegaL)*(1+z)^2+OmegaL)|km/s/Mpc;Hubble radius R_H(z) = c/H(z)|(c/1000)/(H0*sqrt(OmegaM*(1+z)^3+(1-OmegaM-OmegaL)*(1+z)^2+OmegaL))|Mpc;Deceleration parameter q(z)|(0.5*OmegaM*(1+z)^3-OmegaL)/(OmegaM*(1+z)^3+(1-OmegaM-OmegaL)*(1+z)^2+OmegaL)',
+  'H(z) = H₀ √[Ω_m,0(1+z)³ + Ω_k,0(1+z)² + Ω_Λ,0];  q(z) = [½Ω_m,0(1+z)³ − Ω_Λ,0] / E(z)²',
+  'A negative deceleration parameter (q < 0, occurring at z < 0.63 in Planck 2018 ΛCDM) indicates accelerating cosmic expansion.',
+  'hubble parameter calculator H(z) deceleration parameter friedmann equation')
+
+s('Astronomy & Astrophysics', 'Cosmology', 'luminosity-distance-calculator', 'Luminosity Distance Calculator',
+  'Compute cosmological luminosity distance D_L(z) = (1+z)D_M(z), distance modulus μ(z), and flux dilution via numerical ΛCDM integration.',
+  'astro_cosmology',
+  'D_L(z) = (1 + z) D_M(z);  μ(z) = 5 log₁₀(D_L / 10 pc)',
+  'Accounts for both photon energy redshift (1+z) and time-dilation arrival-rate reduction (1+z), plus spatial curvature Ω_k.',
+  'luminosity distance calculator standard candle supernova distance modulus')
+
+s('Astronomy & Astrophysics', 'Cosmology', 'comoving-distance-calculator', 'Comoving Distance Calculator',
+  'Compute line-of-sight comoving distance D_C(z), transverse comoving distance D_M(z), and all-sky comoving volume V_C(z) in ΛCDM cosmology.',
+  'astro_cosmology',
+  'D_C(z) = (c/H₀) ∫₀ᶻ dz′ / E(z′);  V_C(z) = (4π/3) D_M(z)³',
+  'Comoving distance factors out cosmic expansion so that two galaxies moving with the Hubble flow maintain a constant comoving separation.',
+  'comoving distance calculator comoving volume transverse comoving distance')
+
+s('Astronomy & Astrophysics', 'Cosmology', 'angular-diameter-distance-calculator', 'Angular Diameter Distance Calculator',
+  'Compute cosmological angular diameter distance D_A(z) = D_M(z)/(1+z) and physical transverse scale (kpc per arcsecond) at redshift z.',
+  'astro_cosmology',
+  'D_A(z) = D_M(z) / (1 + z);  Physical scale = D_A(z) · (π / 648000)',
+  'In flat ΛCDM, D_A(z) reaches a maximum near z ≈ 1.6 (~1,790 Mpc, ~8.68 kpc/arcsec); objects at higher redshift appear larger in angular size.',
+  'angular diameter distance calculator kpc per arcsecond galaxy angular size')
+
+f('Astronomy & Astrophysics', 'Cosmology', 'critical-density-calculator', 'Critical Density Calculator',
+  'Calculate the cosmological critical mass-energy density ρ_c = 3H² / (8πG) required for a spatially flat (Ω_k = 0) FLRW universe.',
+  'H0|Hubble parameter H (km/s/Mpc)|67.4',
+  'Critical density ρ_c (kg/m³)|3*(H0*1000/(pc*1e6))^2/(8*pi*G)|kg/m³;Critical density (g/cm³)|(3*(H0*1000/(pc*1e6))^2/(8*pi*G))/1000|g/cm³;Critical density (M_☉ / Mpc³)|(3*(H0*1000/(pc*1e6))^2/(8*pi*G))*(pc*1e6)^3/M_sun|M_☉/Mpc³;Equivalent hydrogen atoms per m³|(3*(H0*1000/(pc*1e6))^2/(8*pi*G))/m_p|m⁻³;Critical energy density ρ_c·c²|(3*(H0*1000/(pc*1e6))^2/(8*pi*G))*c^2|J/m³',
+  'ρ_c = 3 H² / (8π G)',
+  'For Planck 2018 H₀ = 67.4 km/s/Mpc, ρ_c,0 ≈ 8.53 × 10⁻²⁷ kg/m³ (≈ 5.1 protons per cubic meter).',
+  'critical density calculator cosmology flat universe friedmann density')
+
+# --- E. Black Holes & Relativity (10 Canonical Tools) ---
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'schwarzschild-radius-calculator', 'Schwarzschild Radius Calculator',
+  'Calculate the event horizon Schwarzschild radius R_s = 2GM/c², photon sphere radius, ISCO radius, and Hawking temperature of a non-rotating black hole.',
+  'M|Mass M|1.98847e30|kg',
+  'Schwarzschild radius R_s (meters)|2*G*M/c^2|m;Schwarzschild radius (km)|(2*G*M/c^2)/1000|km;Photon sphere radius (1.5 R_s)|3*G*M/c^2|m;Innermost stable circular orbit R_ISCO (3 R_s)|6*G*M/c^2|m;Hawking temperature T_H|hbar*c^3/(8*pi*G*M*kB)|K;Mass in Solar masses (M/M_☉)|M/M_sun|M_☉',
+  'R_s = 2GM / c²;  R_photon = 1.5 R_s;  R_ISCO = 3 R_s;  T_H = ℏc³ / (8π G M k_B)',
+  'Exact solution for an uncharged, non-rotating (J = 0, Q = 0) spherically symmetric Schwarzschild black hole in General Relativity.',
+  'schwarzschild radius calculator event horizon photon sphere isco hawking temperature')
+
+m('Astronomy & Astrophysics', 'Black Holes & Relativity', 'black-hole-mass-calculator', 'Black Hole Mass Calculator',
+  'Determine black hole mass M from its Schwarzschild event horizon radius R_s, Hawking temperature T_H, or a companion star’s Keplerian orbit.',
+  [
+      {'id': 'from_rs', 'label': 'From Schwarzschild Radius (R_s)', 'fields': 'Rs|Schwarzschild radius R_s|2953.4|m',
+       'outputs': 'Black hole mass M (kg)|Rs*c^2/(2*G)|kg;Mass in Solar masses (M_☉)|(Rs*c^2/(2*G))/M_sun|M_☉;Mass in Earth masses (M_⊕)|(Rs*c^2/(2*G))/M_earth|M_⊕;Horizon surface area A = 4πR_s²|4*pi*Rs^2|m²',
+       'formula': 'M = (c² · R_s) / (2G)'},
+      {'id': 'from_hawking', 'label': 'From Hawking Temperature (T_H)', 'fields': 'TH|Hawking temperature T_H|6.17e-8|K',
+       'outputs': 'Black hole mass M (kg)|hbar*c^3/(8*pi*G*kB*TH)|kg;Mass in Solar masses (M_☉)|(hbar*c^3/(8*pi*G*kB*TH))/M_sun|M_☉;Schwarzschild radius R_s|2*G*(hbar*c^3/(8*pi*G*kB*TH))/c^2|m',
+       'formula': 'M = ℏc³ / (8π G k_B T_H)'},
+      {'id': 'from_orbit', 'label': 'From Companion Star Orbit (a, T)', 'fields': 'a|Star orbital semi-major axis a|1.5e14|m;T|Star orbital period T|5.0e8|s',
+       'outputs': 'Black hole mass M (kg)|4*pi^2*a^3/(G*T^2)|kg;Mass in Solar masses (M_☉)|(4*pi^2*a^3/(G*T^2))/M_sun|M_☉;Schwarzschild radius R_s|2*G*(4*pi^2*a^3/(G*T^2))/c^2|m',
+       'formula': 'M = 4π² a³ / (G T²)'}
+  ],
+  'M = c² R_s / (2G) = ℏc³ / (8π G k_B T_H)',
+  'Assumes a non-rotating Schwarzschild metric. For spinning Kerr black holes, the outer event horizon lies between GM/c² and 2GM/c².',
+  'black hole mass calculator event horizon hawking temperature sgr a*')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'black-hole-density-estimator', 'Black Hole Density Estimator',
+  'Calculate the effective coordinate-volume density ρ_BH = M / (4/3 π R_s³) inside the Schwarzschild event horizon and compare against water and nuclear density.',
+  'M|Black hole mass (in Solar masses M/M_☉)|1.0',
+  'Effective horizon density (kg/m³)|3*c^6/(32*pi*G^3*(M*M_sun)^2)|kg/m³;Effective density (g/cm³)|(3*c^6/(32*pi*G^3*(M*M_sun)^2))/1000|g/cm³;Ratio to liquid water (1000 kg/m³)|(3*c^6/(32*pi*G^3*(M*M_sun)^2))/1000;Schwarzschild radius R_s|2*G*(M*M_sun)/c^2|m;Euclidean horizon volume (4/3)πR_s³|(4/3)*pi*(2*G*(M*M_sun)/c^2)^3|m³',
+  'ρ_eff = M / [(4/3)π R_s³] = 3c⁶ / (32π G³ M²) ∝ 1 / M²',
+  'IMPORTANT SCIENTIFIC NOTE: A black hole’s mass is concentrated at the central singularity, not uniformly distributed inside R_s. Because R_s ∝ M, this formal Euclidean volume density scales as M⁻²: a 1 M_☉ black hole has ρ_eff ≈ 1.85 × 10¹⁹ kg/m³, whereas a supermassive 1.36 × 10⁸ M_☉ black hole has ρ_eff ≈ 1,000 kg/m³ (the density of water).',
+  'black hole density estimator schwarzschild volume density supermassive black hole')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'gravitational-time-dilation-calculator', 'Gravitational Time Dilation Calculator',
+  'Compute exact Schwarzschild gravitational time dilation dτ/dt_∞ = √(1 − R_s/r), gravitational redshift z_grav, and compare with the weak-field Newtonian approximation.',
+  'M|Gravitating mass M|1.98847e30|kg;r|Radial coordinate r (must be > R_s)|6.957e8|m;dt|Coordinate time interval Δt_∞ (distant observer)|3600|s',
+  'Proper time factor √(1 − 2GM/(rc²))|sqrt(1-2*G*M/(r*c^2));Local proper time elapsed Δτ|dt*sqrt(1-2*G*M/(r*c^2))|s;Time lag (Δt_∞ − Δτ)|dt*(1-sqrt(1-2*G*M/(r*c^2)))|s;Gravitational redshift z_grav|1/sqrt(1-2*G*M/(r*c^2))-1;Weak-field Newtonian approx z ≈ GM/(rc²)|G*M/(r*c^2);Schwarzschild radius R_s|2*G*M/c^2|m',
+  'dτ / dt_∞ = √(1 − 2GM / (r c²)) = √(1 − R_s / r);  z_grav = (1 − R_s / r)^(−1/2) − 1',
+  'Valid strictly outside the event horizon (r > R_s = 2GM/c²) for a stationary clock at Schwarzschild coordinate r.',
+  'gravitational time dilation calculator general relativity schwarzschild redshift')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'lorentz-factor-calculator', 'Lorentz Factor Calculator',
+  'Compute the special-relativistic Lorentz factor γ = 1/√(1 − v²/c²), normalized speed β = v/c, and rapidity φ = artanh(β).',
+  'v|Relative velocity v|2.0e8|m/s',
+  'Normalized velocity β = v/c|v/c;Lorentz factor γ = 1/√(1−β²)|1/sqrt(1-(v/c)^2);Time dilation / length factor (1/γ)|sqrt(1-(v/c)^2);Rapidity φ = artanh(β)|0.5*ln((1+v/c)/(1-v/c));Kinetic-to-rest energy ratio (γ − 1)|1/sqrt(1-(v/c)^2)-1',
+  'β = v / c;  γ = 1 / √(1 − β²);  φ = ½ ln[(1 + β) / (1 − β)]',
+  'Requires 0 ≤ |v| < c (c = 299,792,458 m/s). Massive particles cannot reach or exceed c in flat Minkowski spacetime.',
+  'lorentz factor calculator special relativity gamma beta rapidity')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'time-dilation-calculator', 'Time Dilation Calculator',
+  'Calculate special-relativistic moving-clock time dilation Δt = γ·Δτ between two inertial reference frames.',
+  'dtau|Proper time interval Δτ (rest frame of clock)|10|s;v|Relative velocity v|2.4e8|m/s',
+  'Dilated coordinate time Δt = γ·Δτ|dtau/sqrt(1-(v/c)^2)|s;Lorentz factor γ|1/sqrt(1-(v/c)^2);Time difference (Δt − Δτ)|dtau*(1/sqrt(1-(v/c)^2)-1)|s;Velocity fraction β = v/c|v/c',
+  'Δt = Δτ / √(1 − v² / c²) = γ · Δτ',
+  'Applies to constant-velocity inertial frames in Special Relativity (neglecting gravitational potential differences).',
+  'time dilation calculator special relativity twin paradox proper time')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'length-contraction-calculator', 'Length Contraction Calculator',
+  'Calculate Lorentz–FitzGerald length contraction L = L₀√(1 − v²/c²) along the axis of relative motion.',
+  'L0|Proper length L₀ (rest frame)|100|m;v|Relative velocity v|2.4e8|m/s',
+  'Contracted length L = L₀/γ|L0*sqrt(1-(v/c)^2)|m;Length reduction (L₀ − L)|L0*(1-sqrt(1-(v/c)^2))|m;Percentage contraction|100*(1-sqrt(1-(v/c)^2))|%;Lorentz factor γ|1/sqrt(1-(v/c)^2)',
+  'L = L₀ · √(1 − v² / c²) = L₀ / γ',
+  'Contraction occurs exclusively parallel to the direction of relative velocity v; transverse dimensions remain unchanged.',
+  'length contraction calculator lorentz contraction special relativity')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'relativistic-energy-calculator', 'Relativistic Energy Calculator',
+  'Compute rest mass-energy E₀ = mc², total relativistic energy E = γmc², relativistic kinetic energy K_rel = (γ−1)mc², and compare with classical ½mv².',
+  'm|Rest mass m|1.0|kg;v|Velocity v|2.0e8|m/s',
+  'Rest energy E₀ = mc²|m*c^2|J;Total relativistic energy E = γmc²|m*c^2/sqrt(1-(v/c)^2)|J;Relativistic kinetic energy K_rel = (γ−1)mc²|m*c^2*(1/sqrt(1-(v/c)^2)-1)|J;Classical kinetic energy ½mv² (comparison)|0.5*m*v^2|J;Lorentz factor γ|1/sqrt(1-(v/c)^2)',
+  'E₀ = m c²;  E = γ m c²;  K_rel = (γ − 1) m c²',
+  'At v = 2.0 × 10⁸ m/s (0.667c), classical ½mv² underestimates true kinetic energy by more than 25%.',
+  'relativistic energy calculator e=mc2 kinetic energy special relativity')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'relativistic-momentum-calculator', 'Relativistic Momentum Calculator',
+  'Calculate relativistic linear momentum p = γmv, compare with classical momentum mv, and verify the invariant energy-momentum relation E² = (pc)² + (mc²)².',
+  'm|Rest mass m|1.6726219e-27|kg;v|Velocity v|2.5e8|m/s',
+  'Relativistic momentum p = γmv|m*v/sqrt(1-(v/c)^2)|kg·m/s;Classical momentum p_class = mv|m*v|kg·m/s;Lorentz factor γ|1/sqrt(1-(v/c)^2);Total energy E = √[(pc)² + (mc²)²]|m*c^2/sqrt(1-(v/c)^2)|J;de Broglie wavelength λ = h/p|h/(m*v/sqrt(1-(v/c)^2))|m',
+  'p = γ m v = m v / √(1 − v² / c²);  E² = (pc)² + (mc²)²',
+  'Defaults represent a relativistic proton at v = 2.5 × 10⁸ m/s (β ≈ 0.834, γ ≈ 1.81).',
+  'relativistic momentum calculator gamma mv de broglie wavelength')
+
+f('Astronomy & Astrophysics', 'Black Holes & Relativity', 'escape-velocity-event-horizon-calculator', 'Escape Velocity and Event Horizon Calculator',
+  'Compare coordinate escape speed √(2GM/r) with the speed of light c, Schwarzschild radius R_s = 2GM/c², and compactness ratio R_s/r.',
+  'M|Mass of compact object M|1.98847e30|kg;r|Radial distance r|10000|m',
+  'Schwarzschild event horizon R_s|2*G*M/c^2|m;Compactness ratio R_s / r = 2GM/(rc²)|(2*G*M)/(r*c^2);Coordinate escape speed √(2GM/r)|sqrt(2*G*M/r)|m/s;Escape speed as fraction of light (v_e / c)|sqrt(2*G*M/r)/c;Photon sphere radius (1.5 R_s)|3*G*M/c^2|m',
+  'v_e / c = √(2GM / (r c²)) = √(R_s / r)',
+  'Defaults represent a 1 M_☉ neutron star (r = 10 km, R_s ≈ 2.95 km, v_e ≈ 0.543c). When r ≤ R_s, even light cannot escape.',
+  'escape velocity event horizon calculator compactness neutron star black hole')
+
+# --- F. Observational Astronomy & Telescopes (13 Canonical Tools) ---
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'telescope-magnification-calculator', 'Telescope Magnification Calculator',
+  'Calculate angular magnification M = (F_tel × B) / F_ep, exit pupil, and practical magnification limits from telescope focal length, aperture, and eyepiece.',
+  'Ftel|Telescope focal length F_tel|1200|mm;Fep|Eyepiece focal length F_ep|10|mm;D|Telescope aperture D|200|mm;B|Barlow / reducer factor B|1',
+  'Magnification M|(Ftel*B)/Fep|×;Effective focal length F_eff|Ftel*B|mm;Exit pupil d_ep = D / M|D/((Ftel*B)/Fep)|mm;Max useful magnification (~2×D_mm)|2*D|×;Min useful magnification (D_mm / 7)|D/7|×',
+  'M = (F_tel × B) / F_ep;  d_ep = D / M',
+  'Magnifications above ~2× per mm of aperture (50× per inch) yield empty magnification limited by diffraction and atmospheric seeing.',
+  'telescope magnification calculator eyepiece barlow exit pupil')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'telescope-focal-ratio-calculator', 'Telescope Focal Ratio Calculator',
+  'Calculate optical focal ratio (f-number N = F / D), Airy disk linear diameter at the focal plane, and photographic exposure speed.',
+  'F|Telescope focal length F|1000|mm;D|Aperture diameter D|200|mm;lam|Wavelength λ (green = 550 nm)|550|nm',
+  'Focal ratio N = F / D (f/#)|F/D;Airy disk diameter at focal plane (2.44 λ N)|2.44*(lam*1e-3)*(F/D)|µm;Plate scale (arcsec/mm)|206264.806/F|arcsec/mm;Clear aperture area|pi*(D/2)^2|mm²',
+  'N = F / D;  d_Airy = 2.44 · λ · N',
+  'Fast systems (f/4–f/5) provide wide fields and high focal-plane surface irradiance; slow systems (f/10–f/15) provide large image scales for planetary work.',
+  'telescope focal ratio calculator f number airy disk diameter')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'telescope-resolution-calculator', 'Telescope Resolution Calculator',
+  'Compare diffraction-limited Rayleigh and Dawes angular resolution against atmospheric seeing and compute the Fried coherence length r₀.',
+  'D|Telescope aperture D|200|mm;lam|Observation wavelength λ|550|nm;seeing|Atmospheric seeing FWHM|1.5|arcsec',
+  'Rayleigh diffraction limit θ_R|(1.21966989*(lam*1e-9)/(D*1e-3))*206264.806|arcsec;Dawes empirical limit R_D|115.82/D|arcsec;Effective seeing-limited resolution|max((1.21966989*(lam*1e-9)/(D*1e-3))*206264.806,seeing)|arcsec;Fried atmospheric coherence diameter r₀|0.98*(lam*1e-9)/(seeing/206264.806)*100|cm',
+  'θ_Rayleigh = 1.22 λ / D;  R_Dawes = 115.82″ / D_mm;  r₀ ≈ 0.98 λ / θ_seeing',
+  'For ground-based telescopes without adaptive optics, long-exposure resolution is capped by atmospheric turbulence when D > r₀ (typically r₀ ≈ 7–15 cm at 550 nm).',
+  'telescope resolution calculator seeing limit fried parameter rayleigh dawes')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'dawes-limit-calculator', 'Dawes Limit Calculator',
+  'Calculate the empirical Dawes resolving limit R = 115.82 / D_mm (arcseconds) for separating equal-brightness visual double stars.',
+  'D|Telescope aperture diameter D|150|mm',
+  'Dawes limit (arcseconds)|115.82/D|arcsec;Dawes limit (milliarcseconds)|115820/D|mas;Dawes limit (degrees)|(115.82/D)/3600|°;Aperture in inches|D/25.4|in',
+  'R_Dawes = 115.82″ / D (mm) = 4.56″ / D (in)',
+  'Formulated empirically by William Rutter Dawes (1867) for human photopic vision (λ ≈ 550 nm) observing two 6th-magnitude stars of equal brightness.',
+  'dawes limit calculator double star resolution telescope aperture')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'rayleigh-criterion-calculator', 'Rayleigh Criterion Calculator',
+  'Compute the physical diffraction Rayleigh criterion θ = 1.21967 λ / D for a circular aperture at any wavelength.',
+  'D|Aperture diameter D|200|mm;lam|Wavelength λ|550|nm',
+  'Rayleigh angle θ (arcseconds)|(1.21966989*(lam*1e-9)/(D*1e-3))*206264.806247|arcsec;Rayleigh angle (microradians)|(1.21966989*(lam*1e-9)/(D*1e-3))*1e6|µrad;Rayleigh angle (radians)|1.21966989*(lam*1e-9)/(D*1e-3)|rad;First Airy dark ring radius (arcsec)|(1.21966989*(lam*1e-9)/(D*1e-3))*206264.806247|arcsec',
+  'θ_Rayleigh = 1.21966989 · (λ / D)  [first zero of Bessel function J₁(x) at x = 3.8317]',
+  'Corresponds to the angular separation where the central maximum of one Airy diffraction pattern falls on the first dark ring of the second.',
+  'rayleigh criterion calculator diffraction limit airy disk bessel function')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'angular-resolution-calculator', 'Angular Resolution Calculator',
+  'Calculate diffraction-limited angular resolution θ = 1.22 λ / D and minimum resolved physical feature size at distance d across optical, IR, or radio wavelengths.',
+  'lam|Wavelength λ|5.5e-7|m;D|Aperture or interferometer baseline D|2.4|m;d|Target distance d|3.844e8|m',
+  'Angular resolution θ (arcseconds)|(1.21966989*lam/D)*206264.806247|arcsec;Angular resolution (radians)|1.21966989*lam/D|rad;Minimum resolved linear feature size at d|d*(1.21966989*lam/D)|m;Resolved feature size (km)|d*(1.21966989*lam/D)/1000|km',
+  'θ = 1.22 λ / D;  L_min = d · θ',
+  'Defaults represent a 2.4 m space telescope (Hubble class) observing the Moon (d = 384,400 km), resolving surface features ~88 m across.',
+  'angular resolution calculator diffraction resolving power interferometer baseline')
+
+m('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'field-of-view-calculator', 'Field of View Calculator',
+  'Calculate True Field of View (TFOV) for visual eyepieces or rectangular camera sensors attached to a telescope.',
+  [
+      {'id': 'eyepiece', 'label': 'Visual Eyepiece (AFOV & Focal Lengths)', 'fields': 'Ftel|Telescope focal length F_tel|1000|mm;Fep|Eyepiece focal length F_ep|20|mm;AFOV|Eyepiece Apparent FOV|68|°',
+       'outputs': 'True Field of View TFOV (degrees)|AFOV/(Ftel/Fep)|°;True Field of View (arcminutes)|(AFOV/(Ftel/Fep))*60|arcmin;Magnification M|Ftel/Fep|×;Full Moon widths fit (0.5° each)|(AFOV/(Ftel/Fep))/0.5',
+       'formula': 'TFOV ≈ AFOV / M = (AFOV × F_ep) / F_tel'},
+      {'id': 'sensor', 'label': 'Camera Sensor (Sensor Width × Height)', 'fields': 'Ftel|Effective focal length F_tel|1000|mm;w|Sensor width w|23.5|mm;h|Sensor height h|15.6|mm',
+       'outputs': 'Horizontal FOV (degrees)|2*atan(w/(2*Ftel))*180/pi|°;Vertical FOV (degrees)|2*atan(h/(2*Ftel))*180/pi|°;Diagonal FOV (degrees)|2*atan(sqrt(w^2+h^2)/(2*Ftel))*180/pi|°;Horizontal FOV (arcminutes)|(2*atan(w/(2*Ftel))*180/pi)*60|arcmin',
+       'formula': 'FOV = 2 · arctan[Sensor Dimension / (2 · F_tel)]'}
+  ],
+  'TFOV = AFOV / M;  FOV_sensor = 2 arctan(w / (2F_tel))',
+  'Exact trigonometric formula is used for camera sensors; AFOV/M is the standard paraxial eyepiece approximation.',
+  'field of view calculator tfov afov telescope camera sensor fov')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'exit-pupil-calculator', 'Exit Pupil Calculator',
+  'Calculate the diameter of the optical exit pupil beam d_ep = D / M = F_ep / N and compare against dark-adapted human pupil diameter.',
+  'D|Telescope aperture D|200|mm;Ftel|Telescope focal length F_tel|1000|mm;Fep|Eyepiece focal length F_ep|20|mm;dpupil|Observer dark-adapted pupil|7|mm',
+  'Exit pupil diameter d_ep|D/(Ftel/Fep)|mm;Magnification M|Ftel/Fep|×;Telescope focal ratio N = F_tel/D|Ftel/D;Light transmission efficiency to eye|min(100,100*(dpupil/(D/(Ftel/Fep)))^2)|%',
+  'd_ep = D / M = F_ep / (F_tel / D)',
+  'If d_ep exceeds the observer’s dark-adapted pupil (~5–7 mm), peripheral light from the objective isvignetted by the iris.',
+  'exit pupil calculator telescope eyepiece surface brightness')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'limiting-magnitude-estimator', 'Limiting Magnitude Estimator',
+  'Estimate the faintest stellar apparent magnitude m_lim visible through a telescope of aperture D under dark skies.',
+  'D|Telescope aperture D|200|mm;deye|Dark-adapted eye pupil d_eye|7|mm;meye|Naked-eye limiting magnitude m_eye|6.5',
+  'Empirical visual limiting magnitude (2.7 + 5 log₁₀ D_mm)|2.7+5*log(D);Observer-adjusted limiting magnitude|meye+5*log(D/deye);Magnitude gain over naked eye|5*log(D/deye)|mag;Light-gathering factor (D/d_eye)²|(D/deye)^2|×',
+  'm_lim ≈ m_eye + 5 log₁₀(D / d_eye) ≈ 2.7 + 5 log₁₀(D_mm)',
+  'Point-source stellar limit depends on sky darkness (Bortle class), atmospheric extinction, optical transmission, and magnification.',
+  'limiting magnitude estimator faintest star telescope aperture bortle')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'light-gathering-power-calculator', 'Light Gathering Power Calculator',
+  'Compute a telescope’s light-gathering power (LGP) relative to the human eye, accounting for central secondary-mirror obstruction.',
+  'D|Primary aperture diameter D|200|mm;dobs|Central obstruction diameter d_obs|50|mm;deye|Human eye pupil diameter d_eye|7|mm',
+  'Unobstructed LGP ratio (D/d_eye)²|(D/deye)^2|×;Effective LGP (with central obstruction)|(D^2-dobs^2)/deye^2|×;Net collecting area A_eff|(pi/4)*(D^2-dobs^2)|mm²;Linear obstruction percentage|100*dobs/D|%;Area obstruction percentage|100*(dobs/D)^2|%;Magnitude gain Δm|2.5*log((D^2-dobs^2)/deye^2)|mag',
+  'LGP_eff = (D² − d_obs²) / d_eye²;  A_eff = (π/4)(D² − d_obs²)',
+  'Reflectors and catadioptric telescopes (SCT/Mak) typically have 20%–35% linear central obstruction (4%–12% area loss).',
+  'light gathering power calculator telescope collecting area central obstruction')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'telescope-image-scale-calculator', 'Telescope Image Scale Calculator',
+  'Calculate focal-plane plate scale s = 206,264.8 / F (arcsec/mm) and projected linear image size for an astronomical target.',
+  'F|Effective focal length F|1000|mm;theta|Target angular diameter θ|1800|arcsec',
+  'Plate scale (arcsec/mm)|206264.806247/F|arcsec/mm;Plate scale (arcmin/mm)|(206264.806247/F)/60|arcmin/mm;Projected image size on focal plane|theta/(206264.806247/F)|mm;Inverse scale (mm per arcminute)|(60*F)/206264.806247|mm/arcmin',
+  'Plate Scale s = 206,264.806 / F_mm  [arcsec/mm];  Image Size = θ″ / s',
+  'Defaults calculate the projected diameter of the Full Moon (θ = 1800″ = 0.5° → 8.73 mm) at the prime focus of a 1,000 mm focal-length telescope.',
+  'telescope image scale calculator plate scale focal plane arcsec per mm')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'ccd-cmos-pixel-scale-calculator', 'CCD/CMOS Pixel Scale Calculator',
+  'Calculate astrophotography pixel resolution (arcsec/pixel), sensor field of view, and seeing Nyquist sampling ratio.',
+  'F|Telescope effective focal length F|800|mm;px|Camera pixel pitch p|3.76|µm;bin|Pixel binning factor (1, 2, 3, 4)|1;seeing|Atmospheric seeing FWHM|2.0|arcsec',
+  'Pixel scale (arcsec/pixel)|206.264806*(px*bin)/F|arcsec/px;Seeing sampling ratio (FWHM / pixel scale)|seeing/(206.264806*(px*bin)/F)|px/FWHM;Optimal focal length for 2.5 px/FWHM|2.5*206.264806*(px*bin)/seeing|mm;Effective binned pixel size|px*bin|µm',
+  'Pixel Scale = (206.2648 × p_µm × binning) / F_mm  [arcsec/pixel]',
+  'Nyquist sampling of atmospheric seeing typically targets 2.0 to 3.0 pixels per seeing FWHM (< 1.5 px/FWHM is undersampled; > 3.5 px/FWHM is oversampled).',
+  'ccd cmos pixel scale calculator arcsec per pixel astrophotography nyquist seeing')
+
+f('Astronomy & Astrophysics', 'Observational Astronomy & Telescopes', 'exposure-time-estimator', 'Exposure Time Estimator',
+  'Calculate astrophotography CCD/CMOS Signal-to-Noise Ratio (SNR) using the standard CCD equation and estimate untracked star-trail exposure limits.',
+  'Rstar|Target signal rate R_★|50|e⁻/s;Rsky|Sky background rate per pixel R_sky|2.5|e⁻/px/s;Rdark|Dark current rate per pixel R_dark|0.05|e⁻/px/s;Nread|Read noise N_read (RMS)|3.5|e⁻;npix|Photometric aperture pixels n_pix|9;t|Sub-exposure integration time t|120|s',
+  'Signal-to-Noise Ratio (SNR)|(Rstar*t)/sqrt(Rstar*t+npix*(Rsky*t+Rdark*t+Nread^2));Total target signal electrons (R_★·t)|Rstar*t|e⁻;Total noise RMS (shot + sky + dark + read)|sqrt(Rstar*t+npix*(Rsky*t+Rdark*t+Nread^2))|e⁻;Min sub-exposure for 5× read-noise swamp|(5*Nread^2)/(Rsky+Rdark)|s;Magnitude uncertainty (1.0857 / SNR)|1.0857/((Rstar*t)/sqrt(Rstar*t+npix*(Rsky*t+Rdark*t+Nread^2)))|mag',
+  'SNR = (R_★ t) / √[R_★ t + n_pix · (R_sky t + R_dark t + N_read²)]',
+  'Standard Poisson + Gaussian read-noise CCD photometric equation. Sky-limited sub-exposures occur when R_sky · t ≫ N_read².',
+  'exposure time estimator ccd snr equation signal to noise astrophotography')
+
+# --- G. Exoplanets (6 Unique Canonical + 2 Cross-Listed = 8 Tools) ---
+f('Astronomy & Astrophysics', 'Exoplanets', 'transit-depth-calculator', 'Transit Depth Calculator',
+  'Calculate exoplanet photometric transit depth ΔF/F = (R_p/R_★)² in percentage and ppm, plus geometric transit probability.',
+  'Rp|Planet radius R_p|6.371e6|m;Rstar|Host star radius R_★|6.957e8|m;a|Orbital semi-major axis a|1.495978707e11|m',
+  'Transit depth ΔF/F (fraction)|(Rp/Rstar)^2;Transit depth (%)|100*(Rp/Rstar)^2|%;Transit depth (ppm)|1e6*(Rp/Rstar)^2|ppm;Radius ratio R_p / R_★|Rp/Rstar;Geometric transit probability (R_★+R_p)/a|(Rstar+Rp)/a;Transit probability (%)|100*(Rstar+Rp)/a|%',
+  'ΔF / F = (R_p / R_★)²;  P_transit = (R_★ + R_p) / a',
+  'Defaults represent an Earth-analog transiting a Sun-like star at 1 AU (ΔF/F ≈ 84 ppm, P_transit ≈ 0.465%). Neglects stellar limb darkening.',
+  'transit depth calculator exoplanet light curve ppm transit probability')
+
+f('Astronomy & Astrophysics', 'Exoplanets', 'exoplanet-radius-calculator', 'Exoplanet Radius Calculator',
+  'Determine exoplanet physical radius R_p (in Earth radii R_⊕, Jupiter radii R_J, and meters) from observed transit depth (ppm) and host star radius.',
+  'depth_ppm|Observed transit depth ΔF/F|84|ppm;Rstar_sun|Host star radius (in Solar radii R_★/R_☉)|1.0',
+  'Planet radius in Earth radii (R_⊕)|(Rstar_sun*R_sun*sqrt(depth_ppm/1e6))/R_earth|R_⊕;Planet radius in Jupiter radii (R_J)|(Rstar_sun*R_sun*sqrt(depth_ppm/1e6))/R_jup|R_J;Planet radius (meters)|Rstar_sun*R_sun*sqrt(depth_ppm/1e6)|m;Planet-to-star radius ratio R_p/R_★|sqrt(depth_ppm/1e6)',
+  'R_p = R_★ · √(ΔF / F) = R_★ · √(Depth_ppm / 10⁶)',
+  'Assumes a non-grazing transit across a uniform-brightness stellar disk without contaminant third-light dilution.',
+  'exoplanet radius calculator transit depth earth radii jupiter radii')
+
+f('Astronomy & Astrophysics', 'Exoplanets', 'radial-velocity-calculator', 'Radial Velocity Calculator',
+  'Calculate the stellar reflex Doppler radial-velocity semi-amplitude K_★ induced by an orbiting exoplanet.',
+  'Mp|Planet mass M_p|1.89813e27|kg;Mstar|Stellar mass M_★|1.98847e30|kg;P|Orbital period P|3.743e8|s;inc|Orbital inclination i (90° = edge-on)|90|°;e|Orbital eccentricity e|0.0489',
+  'RV semi-amplitude K_★ (m/s)|(2*pi*G/P)^(1/3)*(Mp*sin(inc*pi/180))/(Mstar+Mp)^(2/3)/sqrt(1-e^2)|m/s;Minimum planet mass M_p sin(i) (M_⊕)|Mp*sin(inc*pi/180)/M_earth|M_⊕;Minimum mass M_p sin(i) (M_J)|Mp*sin(inc*pi/180)/M_jup|M_J;Semi-major axis a (AU)|((G*(Mstar+Mp)*P^2/(4*pi^2))^(1/3))/AU|AU',
+  'K_★ = (2πG / P)^(1/3) · [M_p sin(i) / (M_★ + M_p)^(2/3)] · (1 − e²)^(−1/2)',
+  'Defaults represent Jupiter orbiting the Sun (K_★ ≈ 12.47 m/s; an Earth analog at 1 AU induces K_★ ≈ 0.089 m/s).',
+  'radial velocity calculator doppler wobble exoplanet semi amplitude K')
+
+f('Astronomy & Astrophysics', 'Exoplanets', 'planet-star-mass-ratio-estimator', 'Planet-Star Mass Ratio Estimator',
+  'Compute the planet-to-star mass ratio q = M_p/M_★, stellar barycenter reflex orbit radius a_★, and astrometric wobble signature.',
+  'Mp|Planet mass M_p|1.89813e27|kg;Mstar|Host star mass M_★|1.98847e30|kg;a|Orbital semi-major axis a|7.7857e11|m;d|Distance to system d (parsecs)|10|pc',
+  'Mass ratio q = M_p / M_★|Mp/Mstar;Stellar reflex orbit radius a_★|a*Mp/(Mstar+Mp)|m;Stellar reflex radius / Solar radius (a_★/R_☉)|(a*Mp/(Mstar+Mp))/R_sun;Astrometric wobble θ_★ (microarcseconds)|((a*Mp/(Mstar+Mp))/AU)/d*1e6|µas;Planet mass in Earth masses|Mp/M_earth|M_⊕',
+  'q = M_p / M_★;  a_★ = a · M_p / (M_★ + M_p);  θ_★ = (a_★ / AU) / d_pc  [arcsec]',
+  'Defaults correspond to the Sun–Jupiter system viewed from 10 pc (a_★ ≈ 1.07 R_☉, astrometric signature ≈ 500 µas).',
+  'planet star mass ratio estimator barycenter astrometric wobble microlensing')
+
+f('Astronomy & Astrophysics', 'Exoplanets', 'transit-duration-estimator', 'Transit Duration Estimator',
+  'Calculate total transit duration T₁₄ (first to fourth contact) and full flat-bottom duration T₂₃ (second to third contact) for a transiting exoplanet.',
+  'P|Orbital period P|365.256|days;Rstar|Stellar radius R_★|6.957e8|m;Rp|Planet radius R_p|6.371e6|m;a|Semi-major axis a|1.495978707e11|m;b|Impact parameter b = (a cos i)/R_★ (0 to 1)|0',
+  'Total transit duration T₁₄ (hours)|(P*24/pi)*asin((Rstar/a)*sqrt((1+Rp/Rstar)^2-b^2)/sqrt(1-(b*Rstar/a)^2))|h;Flat-bottom duration T₂₃ (hours)|(P*24/pi)*asin((Rstar/a)*sqrt((1-Rp/Rstar)^2-b^2)/sqrt(1-(b*Rstar/a)^2))|h;Ingress / egress duration (T₁₄ − T₂₃)/2|0.5*((P*24/pi)*asin((Rstar/a)*sqrt((1+Rp/Rstar)^2-b^2)/sqrt(1-(b*Rstar/a)^2))-(P*24/pi)*asin((Rstar/a)*sqrt((1-Rp/Rstar)^2-b^2)/sqrt(1-(b*Rstar/a)^2)))|h;Scaled semi-major axis a / R_★|a/Rstar',
+  'T₁₄ = (P / π) arcsin[(R_★ / a) √((1 + k)² − b²) / sin i]  (k = R_p / R_★)',
+  'Seager & Mallén-Ornelas (2003) circular-orbit transit geometry. Central Earth–Sun transit duration is T₁₄ ≈ 12.98 hours.',
+  'transit duration estimator t14 t23 impact parameter exoplanet transit')
+
+f('Astronomy & Astrophysics', 'Exoplanets', 'exoplanet-orbital-period-calculator', 'Exoplanet Orbital Period Calculator',
+  'Calculate exoplanet orbital period P, orbital speed, and incident stellar insolation from semi-major axis a (in AU) and host star parameters.',
+  'a_AU|Semi-major axis a (in AU)|0.05;Mstar_sun|Host star mass (M_★ / M_☉)|1.0;Lstar_sun|Host star luminosity (L_★ / L_☉)|1.0',
+  'Orbital period P (days)|2*pi*sqrt((a_AU*AU)^3/(G*Mstar_sun*M_sun))/86400|days;Orbital period (hours)|2*pi*sqrt((a_AU*AU)^3/(G*Mstar_sun*M_sun))/3600|h;Orbital period (Julian years)|2*pi*sqrt((a_AU*AU)^3/(G*Mstar_sun*M_sun))/31557600|years;Circular orbital speed (km/s)|sqrt(G*Mstar_sun*M_sun/(a_AU*AU))/1000|km/s;Incident insolation S / S_⊕|Lstar_sun/a_AU^2|S_⊕',
+  'P = 2π √[a³ / (G M_★)];  S / S_⊕ = (L_★ / L_☉) / (a / AU)²',
+  'Defaults represent a Hot Jupiter at a = 0.05 AU around a Sun-like star (P ≈ 4.08 days, S ≈ 400 S_⊕).',
+  'exoplanet orbital period calculator hot jupiter insolation kepler orbit')
+
+# --- H. Astronomy Converters & Reference Tools (13 Canonical Tools) ---
+f('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'light-year-converter', 'Light-Year Converter',
+  'Convert distances in IAU Julian light-years (ly) to parsecs (pc), Astronomical Units (AU), kilometers (km), and meters (m).',
+  'ly_val|Distance in Light-Years (ly)|4.2465',
+  'Parsecs (pc)|(ly_val*ly)/pc|pc;Astronomical Units (AU)|(ly_val*ly)/AU|AU;Kilometers (km)|(ly_val*ly)/1000|km;Meters (m)|ly_val*ly|m;Light-days|ly_val*365.25|light-days',
+  '1 ly = c × 365.25 d = 9,460,730,472,580,800 m ≈ 0.306601 pc ≈ 63,241.077 AU',
+  'Uses the exact IAU Julian year definition (365.25 × 86,400 = 31,557,600 s) and exact speed of light c = 299,792,458 m/s.',
+  'light year converter ly to parsec au km meters')
+
+f('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'astronomical-unit-converter', 'Astronomical Unit Converter',
+  'Convert distances in Astronomical Units (AU) to kilometers, meters, light-minutes, light-years, and parsecs.',
+  'au_val|Distance in Astronomical Units (AU)|1.0',
+  'Kilometers (km)|(au_val*AU)/1000|km;Meters (m)|au_val*AU|m;Light-travel time (minutes)|(au_val*AU)/(c*60)|min;Light-years (ly)|(au_val*AU)/ly|ly;Parsecs (pc)|(au_val*AU)/pc|pc;Solar radii (R_☉)|(au_val*AU)/R_sun|R_☉',
+  '1 AU = 149,597,870,700 m (IAU 2012 Resolution B2 exact) ≈ 499.00478 light-seconds',
+  'IAU 2012 fixed the Astronomical Unit as an exact defining SI length constant.',
+  'astronomical unit converter au to km light minutes parsecs')
+
+f('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'parsec-converter', 'Parsec Converter',
+  'Convert distances in parsecs (pc) to light-years (ly), Astronomical Units (AU), kiloparsecs (kpc), megaparsecs (Mpc), and meters.',
+  'pc_val|Distance in Parsecs (pc)|1.0',
+  'Light-years (ly)|(pc_val*pc)/ly|ly;Astronomical Units (AU)|(pc_val*pc)/AU|AU;Kilometers (km)|(pc_val*pc)/1000|km;Meters (m)|pc_val*pc|m;Kiloparsecs (kpc)|pc_val/1000|kpc;Megaparsecs (Mpc)|pc_val/1e6|Mpc',
+  '1 pc = (648,000 / π) AU ≈ 3.085677581 × 10¹⁶ m ≈ 3.261563777 ly',
+  'Defined by IAU 2015 Resolution B2 as exactly 648,000/π Astronomical Units.',
+  'parsec converter pc to light years au kpc mpc meters')
+
+f('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'solar-mass-converter', 'Solar Mass Converter',
+  'Convert masses in nominal Solar masses (M_☉) to kilograms, Jupiter masses (M_J), Earth masses (M_⊕), and Lunar masses.',
+  'msun_val|Mass in Solar Masses (M_☉)|1.0',
+  'Kilograms (kg)|msun_val*M_sun|kg;Jupiter masses (M_J)|(msun_val*M_sun)/M_jup|M_J;Earth masses (M_⊕)|(msun_val*M_sun)/M_earth|M_⊕;Lunar masses (M_Moon)|(msun_val*M_sun)/7.346e22|M_Moon;Schwarzschild radius (2GM/c²)|2*G*(msun_val*M_sun)/c^2|m',
+  '1 M_☉ = GM_☉ / G ≈ 1.98847 × 10³⁰ kg ≈ 1,047.56 M_J ≈ 332,946 M_⊕',
+  'Based on IAU 2015 nominal solar mass parameter GM_☉ = 1.3271244 × 10²⁰ m³·s⁻² and CODATA 2018 G.',
+  'solar mass converter m_sun to kg earth masses jupiter masses')
+
+f('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'solar-radius-converter', 'Solar Radius Converter',
+  'Convert stellar/planetary radii in nominal Solar radii (R_☉) to meters, kilometers, Jupiter radii (R_J), Earth radii (R_⊕), and AU.',
+  'rsun_val|Radius in Solar Radii (R_☉)|1.0',
+  'Meters (m)|rsun_val*R_sun|m;Kilometers (km)|(rsun_val*R_sun)/1000|km;Jupiter radii (R_J)|(rsun_val*R_sun)/R_jup|R_J;Earth radii (R_⊕)|(rsun_val*R_sun)/R_earth|R_⊕;Astronomical Units (AU)|(rsun_val*R_sun)/AU|AU',
+  '1 R_☉ = 6.957 × 10⁸ m = 695,700 km (IAU 2015 Resolution B3 exact) ≈ 109.2 R_⊕ ≈ 9.95 R_J',
+  'Uses the exact IAU 2015 Resolution B3 nominal solar photospheric radius.',
+  'solar radius converter r_sun to km earth radii jupiter radii au')
+
+f('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'solar-luminosity-converter', 'Solar Luminosity Converter',
+  'Convert bolometric power in nominal Solar luminosities (L_☉) to Watts (W), erg/s, and IAU absolute bolometric magnitude M_bol.',
+  'lsun_val|Luminosity in Solar Luminosities (L_☉)|1.0',
+  'Watts (W = J/s)|lsun_val*L_sun|W;Ergs per second (erg/s)|lsun_val*L_sun*1e7|erg/s;Absolute bolometric magnitude M_bol|4.74-2.5*log(lsun_val);Equivalent mass-energy rate (L/c²)|(lsun_val*L_sun)/c^2|kg/s',
+  '1 L_☉ = 3.828 × 10²⁶ W = 3.828 × 10³³ erg/s;  M_bol = 4.74 − 2.5 log₁₀(L / L_☉)',
+  'Uses the exact IAU 2015 Resolution B3 nominal solar luminosity and zero-point bolometric magnitude M_bol,☉ = 4.74.',
+  'solar luminosity converter l_sun to watts erg/s bolometric magnitude')
+
+f('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'angular-unit-converter', 'Angular Unit Converter',
+  'Convert astronomical angles between degrees (°), arcminutes (′), arcseconds (″), milliarcseconds (mas), microradians (µrad), and radians.',
+  'arcsec_val|Angle in Arcseconds (″)|1.0',
+  'Degrees (°)|arcsec_val/3600|°;Arcminutes (′)|arcsec_val/60|′;Milliarcseconds (mas)|arcsec_val*1000|mas;Radians (rad)|arcsec_val*(pi/648000)|rad;Microradians (µrad)|(arcsec_val*(pi/648000))*1e6|µrad',
+  '1° = 60′ = 3,600″;  1 rad = (180/π)° ≈ 206,264.806247″',
+  'Change the input unit selector (″, ′, °, mas, rad) to convert from any angular unit immediately.',
+  'angular unit converter arcseconds arcminutes degrees radians milliarcseconds')
+
+m('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'right-ascension-converter', 'Right Ascension Converter',
+  'Convert celestial Right Ascension (RA α) between sexagesimal hours:minutes:seconds (HMS) and decimal degrees / radians.',
+  [
+      {'id': 'hms_to_deg', 'label': 'HMS (h m s) → Decimal Degrees & Radians', 'fields': 'h|Hours (0 to 23)|5;m|Minutes (0 to 59)|34;s|Seconds (0 to 60)|31.94',
+       'outputs': 'Right Ascension (decimal degrees)|(h+m/60+s/3600)*15|°;Right Ascension (decimal hours)|h+m/60+s/3600|h;Right Ascension (radians)|((h+m/60+s/3600)*15)*pi/180|rad;Right Ascension (arcseconds)|((h+m/60+s/3600)*15)*3600|arcsec',
+       'formula': 'α (deg) = (H + M/60 + S/3600) × 15°'},
+      {'id': 'deg_to_hms', 'label': 'Decimal Degrees → HMS (h m s)', 'fields': 'deg|Right Ascension α (0° to 360°)|83.63308',
+       'outputs': 'Decimal hours (α / 15)|deg/15|h;Hours component H|floor(deg/15)|h;Minutes component M|floor(((deg/15)-floor(deg/15))*60)|m;Seconds component S|((((deg/15)-floor(deg/15))*60)-floor(((deg/15)-floor(deg/15))*60))*60|s;Radians|deg*pi/180|rad',
+       'formula': 'α (hours) = α_deg / 15;  1h = 15°, 1m = 15′, 1s = 15″'}
+  ],
+  'α_deg = (H + M/60 + S/3600) × 15°',
+  'Defaults correspond to the Crab Nebula (M1 / PSR B0531+21: RA 05h 34m 31.94s = 83.63308°).',
+  'right ascension converter ra hms to degrees celestial coordinates')
+
+m('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'declination-converter', 'Declination Converter',
+  'Convert celestial Declination (Dec δ) between signed degrees:arcminutes:arcseconds (DMS) and decimal degrees / radians.',
+  [
+      {'id': 'dms_to_deg', 'label': 'DMS (±° ′ ″) → Decimal Degrees & Radians', 'fields': 'sgn|Sign (+1 for North, −1 for South)|1;d|Degrees D (0 to 90)|22;m|Arcminutes M (0 to 59)|0;s|Arcseconds S (0 to 60)|52.2',
+       'outputs': 'Declination δ (decimal degrees)|sgn*(d+m/60+s/3600)|°;Declination (radians)|(sgn*(d+m/60+s/3600))*pi/180|rad;North Polar Distance (90° − δ)|90-sgn*(d+m/60+s/3600)|°;Total signed arcseconds|sgn*(d*3600+m*60+s)|arcsec',
+       'formula': 'δ (deg) = sign × (D + M/60 + S/3600)'},
+      {'id': 'deg_to_dms', 'label': 'Decimal Degrees → DMS (° ′ ″)', 'fields': 'deg|Declination δ (−90° to +90°)|22.0145',
+       'outputs': 'Sign (+1 North, −1 South)|deg/abs(deg);Degrees D|floor(abs(deg))|°;Arcminutes M|floor((abs(deg)-floor(abs(deg)))*60)|′;Arcseconds S|(((abs(deg)-floor(abs(deg)))*60)-floor((abs(deg)-floor(abs(deg)))*60))*60|″;Radians|deg*pi/180|rad',
+       'formula': '|δ| = D° + M′/60 + S″/3600'}
+  ],
+  'δ = ±(|D| + M/60 + S/3600)',
+  'Declination must lie in [−90°, +90°]. Always apply the negative sign to the entire sum (D + M/60 + S/3600) for Southern Hemisphere targets.',
+  'declination converter dms to decimal degrees celestial coordinates')
+
+s('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'julian-date-converter', 'Julian Date Converter',
+  'Bidirectional converter between UTC Gregorian Calendar Date/Time and astronomical Julian Date (JD), Modified Julian Date (MJD), and J2000.0 offset.',
+  'astro_julian',
+  'JD = ⌊365.25(Y + 4716)⌋ + ⌊30.6001(M + 1)⌋ + D + B − 1524.5',
+  'Julian Date counts continuous days since 12:00 UTC (noon) on January 1, 4713 BCE (Julian proleptic calendar). J2000.0 epoch is JD 2451545.0.',
+  'julian date converter jd to utc calendar date j2000')
+
+s('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'modified-julian-date-converter', 'Modified Julian Date Converter',
+  'Convert Modified Julian Date (MJD = JD − 2,400,000.5) to full Julian Date (JD) and UTC Calendar Date/Time.',
+  'astro_mjd',
+  'MJD = JD − 2,400,000.5',
+  'Unlike Julian Date (which starts at noon UTC), Modified Julian Date starts at 00:00 UTC (midnight) on November 17, 1858.',
+  'modified julian date converter mjd to jd utc time')
+
+s('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'sidereal-time-calculator', 'Sidereal Time Calculator',
+  'Calculate Greenwich Mean Sidereal Time (GMST), Local Sidereal Time (LST), and Local Hour Angle (LHA) from UTC date/time or Julian Date and observer longitude.',
+  'astro_sidereal',
+  'GMST = 280.46061837° + 360.98564736629°(JD − 2451545.0) + …;  LST = GMST + λ_lon',
+  'Uses the IAU 1982 / Meeus sidereal rotation polynomial. East longitudes are positive (+), West longitudes are negative (−).',
+  'sidereal time calculator gmst lst local hour angle meridian transit')
+
+s('Astronomy & Astrophysics', 'Astronomy Converters & Reference Tools', 'celestial-coordinate-distance-calculator', 'Distance Between Celestial Coordinates',
+  'Compute exact spherical great-circle angular separation θ and position angle PA between two celestial objects (RA₁, Dec₁) and (RA₂, Dec₂).',
+  'astro_celestial_dist',
+  'tan θ = √[(cos δ₂ sin Δα)² + (cos δ₁ sin δ₂ − sin δ₁ cos δ₂ cos Δα)²] / (sin δ₁ sin δ₂ + cos δ₁ cos δ₂ cos Δα)',
+  'Uses the exact Vincenty spherical inverse formula, preventing numerical round-off errors at both sub-arcsecond and antipodal separations.',
+  'distance between celestial coordinates angular separation ra dec vincenty')
 
 # ==============================================================================
 # VERIFICATION & SERIALIZATION

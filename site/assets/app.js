@@ -18,6 +18,12 @@ import {
   chiSquareCdf, chiSquareInv, fDistCdf, poissonDist, oneWayAnova,
   calcNpvIrr, calcXirr, calcBondValuation, calcBlackScholes
 } from './linalg_stats_finance.js';
+import {
+  ASTRO_CONSTANTS, CELESTIAL_BODIES, COSMO_PRESETS,
+  computeCosmology, solveKeplerOrbit, computeBlackbodyRadiation,
+  computeHabitableZone, calendarToJulianDate, julianDateToCalendar,
+  computeSiderealTime, computeCelestialSeparation
+} from './astronomy.js';
 
 let data, tool, currentExplanation = null, explainOpen = false;
 const $ = (s, r = document) => (typeof r === 'string' ? document.querySelector(r) : r)?.querySelector(s);
@@ -35,7 +41,8 @@ const icons = {
   'Physics & Engineering': '⚛',
   'Statistics & Probability': '▥',
   'Finance': '₹',
-  'Converters & Everyday Tools': '⇄'
+  'Converters & Everyday Tools': '⇄',
+  'Astronomy & Astrophysics': '✦'
 };
 
 const featured = [
@@ -542,6 +549,109 @@ function validateFormula(t, v, modeId = '') {
       throw Error('Absolute temperature must be positive Kelvin (T > 0 K)');
     }
   }
+  // Astronomy & Astrophysics domain & physical boundary validation
+  if (t.category === 'Astronomy & Astrophysics') {
+    const magSlugs = new Set(['apparent-magnitude-calculator', 'absolute-magnitude-calculator', 'distance-modulus-calculator']);
+    const coordSlugs = new Set(['right-ascension-converter', 'declination-converter']);
+    for (const k of ['M', 'M1', 'm', 'R', 'RM', 'Req', 'Rpol', 'Rstar', 'Rstar_sun', 'Rp', 'Mstar', 'Mstar_sun', 'Mp', 'Ms', 'L', 'Lstar', 'Lstar_sun', 'Teff', 'Tstar', 'T', 'T1', 'T2', 'TH', 'Rs', 'a', 'a_AU', 'b', 'r', 'rp', 'ra', 'd', 'P', 'Prot', 'rho', 'rhoM', 'rhom', 'g', 'Mmol', 'P0', 'H0', 'lobs', 'lemit', 'D', 'F', 'Ftel', 'Fep', 'lam', 'px', 'bin', 'seeing', 'dpupil', 'deye', 't', 'npix', 'ly_val', 'au_val', 'pc_val', 'msun_val', 'rsun_val', 'lsun_val', 'p']) {
+      if (v[k] !== undefined) {
+        if (k === 'b' && slug === 'transit-duration-estimator') continue;
+        if ((k === 'm' || k === 'M') && magSlugs.has(slug)) continue;
+        if ((k === 'm' || k === 'd') && coordSlugs.has(slug)) continue;
+        if (v[k] <= 0) throw Error(`Astrophysical parameter (${k}) must be strictly positive (> 0)`);
+      }
+    }
+    if (v.M2 !== undefined && v.M2 < 0) throw Error('Secondary mass M₂ must be non-negative (≥ 0)');
+    if (slug === 'orbital-velocity-calculator' && modeId === 'vis_viva' && (2 / v.r - 1 / v.a <= 0)) {
+      throw Error('Vis-Viva bound orbit requires radial distance r < 2a (so 2/r − 1/a > 0)');
+    }
+    if (slug === 'orbital-energy-calculator' && (2 / v.r - 1 / v.a < 0)) {
+      throw Error('Orbital state requires radial distance r ≤ 2a');
+    }
+    if (slug === 'orbital-eccentricity-calculator') {
+      if (modeId === 'from_apses' && v.rp > v.ra) throw Error('Periapsis distance r_p cannot exceed apoapsis distance r_a (require 0 < r_p ≤ r_a)');
+      if (modeId === 'from_axes' && v.b > v.a) throw Error('Semi-minor axis b cannot exceed semi-major axis a (require 0 < b ≤ a)');
+    }
+    if (slug === 'synodic-period-calculator' && Math.abs(v.T1 - v.T2) < 1e-12) {
+      throw Error('Sidereal periods T₁ and T₂ must be distinct (T₁ ≠ T₂) to have a finite synodic period');
+    }
+    if ((slug === 'hill-sphere-calculator' || slug === 'radial-velocity-calculator') && (v.e < 0 || v.e >= 1)) {
+      throw Error('Closed elliptical orbit eccentricity e must satisfy 0 ≤ e < 1');
+    }
+    if (slug === 'planetary-radius-volume-calculator' && v.Rpol > v.Req) {
+      throw Error('Oblate spheroid requires polar radius R_pol ≤ equatorial radius R_eq');
+    }
+    if ((slug === 'surface-temperature-estimator' || slug === 'planetary-equilibrium-temperature-calculator') && (v.AB < 0 || v.AB >= 1)) {
+      throw Error('Bond albedo A_B must lie in [0, 1)');
+    }
+    if (slug === 'surface-temperature-estimator' && v.tauIR < 0) {
+      throw Error('Infrared optical depth τ_IR must be non-negative (≥ 0)');
+    }
+    if (slug === 'planetary-equilibrium-temperature-calculator' && (v.f <= 0 || v.f > 4)) {
+      throw Error('Heat redistribution factor f must lie between 0 (exclusive) and 4 (1 = global uniform, 2 = dayside)');
+    }
+    if (slug === 'stefan-boltzmann-law-calculator' && (v.eps <= 0 || v.eps > 1)) {
+      throw Error('Emissivity ε must lie between 0 (exclusive) and 1 (inclusive)');
+    }
+    if (slug === 'scale-factor-calculator' && v.z <= -1) {
+      throw Error('Cosmological redshift z must be strictly greater than −1');
+    }
+    if (slug === 'hubble-parameter-calculator') {
+      if (v.z <= -1 || v.OmegaM < 0) throw Error('Require z > −1 and matter density Ω_m,0 ≥ 0');
+      const rad = v.OmegaM * Math.pow(1 + v.z, 3) + (1 - v.OmegaM - v.OmegaL) * Math.pow(1 + v.z, 2) + v.OmegaL;
+      if (rad <= 0) throw Error('Unphysical cosmological parameters: E(z)² ≤ 0 at this redshift');
+    }
+    if (slug === 'gravitational-time-dilation-calculator') {
+      const rs = (2 * ASTRO_CONSTANTS.G * v.M) / (ASTRO_CONSTANTS.c ** 2);
+      if (v.r <= rs) throw Error(`Radial coordinate r (${fmt(v.r)} m) must lie strictly outside the Schwarzschild event horizon R_s = ${fmt(rs)} m`);
+    }
+    if (['lorentz-factor-calculator', 'time-dilation-calculator', 'length-contraction-calculator', 'relativistic-energy-calculator', 'relativistic-momentum-calculator'].includes(slug)) {
+      if (v.v < 0 || v.v >= ASTRO_CONSTANTS.c) {
+        throw Error(`Relative speed v must satisfy 0 ≤ v < c (c = ${ASTRO_CONSTANTS.c} m/s); massive objects cannot reach or exceed the speed of light`);
+      }
+      if (v.dtau !== undefined && v.dtau <= 0) throw Error('Proper time interval Δτ must be positive (> 0)');
+      if (v.L0 !== undefined && v.L0 <= 0) throw Error('Proper length L₀ must be positive (> 0)');
+    }
+    if (slug === 'light-gathering-power-calculator' && (v.dobs < 0 || v.dobs >= v.D)) {
+      throw Error('Central obstruction diameter d_obs must satisfy 0 ≤ d_obs < primary aperture D');
+    }
+    if (slug === 'exposure-time-estimator' && (v.Rsky < 0 || v.Rdark < 0 || v.Nread < 0)) {
+      throw Error('Sky background, dark current, and read noise must be non-negative (≥ 0)');
+    }
+    if (slug === 'transit-depth-calculator' && (v.Rp >= v.Rstar || v.a <= v.Rstar)) {
+      throw Error('Transit geometry requires planet radius R_p < star radius R_★ and orbital semi-major axis a > R_★');
+    }
+    if (slug === 'exoplanet-radius-calculator' && (v.depth_ppm <= 0 || v.depth_ppm >= 1e6)) {
+      throw Error('Transit depth must lie strictly between 0 ppm and 1,000,000 ppm (100%)');
+    }
+    if (slug === 'radial-velocity-calculator' && (v.inc <= 0 || v.inc > 180)) {
+      throw Error('Orbital inclination i must lie in (0°, 180°]');
+    }
+    if (slug === 'transit-duration-estimator') {
+      const k = v.Rp / v.Rstar;
+      if (v.b < 0 || v.b >= 1 - k) throw Error(`Non-grazing transit requires impact parameter 0 ≤ b < 1 − R_p/R_★ (${(1 - k).toFixed(4)})`);
+      if (v.a <= v.Rstar) throw Error('Semi-major axis a must exceed stellar radius R_★');
+    }
+    if (slug === 'right-ascension-converter') {
+      if (modeId === 'hms_to_deg' && (v.h < 0 || v.h >= 24 || v.m < 0 || v.m >= 60 || v.s < 0 || v.s >= 60)) {
+        throw Error('Right Ascension HMS requires 0 ≤ H < 24, 0 ≤ M < 60, and 0 ≤ S < 60');
+      }
+      if (modeId === 'deg_to_hms' && (v.deg < 0 || v.deg >= 360)) {
+        throw Error('Right Ascension α in degrees must lie in [0°, 360°)');
+      }
+    }
+    if (slug === 'declination-converter') {
+      if (modeId === 'dms_to_deg') {
+        if (v.sgn !== 1 && v.sgn !== -1) throw Error('Sign must be +1 (North) or −1 (South)');
+        if (v.d < 0 || v.d > 90 || v.m < 0 || v.m >= 60 || v.s < 0 || v.s >= 60 || (v.d + v.m / 60 + v.s / 3600) > 90) {
+          throw Error('Declination magnitude |δ| must lie between 0° and 90° (with 0 ≤ M, S < 60)');
+        }
+      }
+      if (modeId === 'deg_to_dms' && (v.deg < -90 || v.deg > 90 || v.deg === 0)) {
+        throw Error('Enter a non-zero Declination δ between −90° and +90°');
+      }
+    }
+  }
 }
 
 function overrideZeroRate(t, v, modeId = '') {
@@ -584,12 +694,57 @@ function renderFormulaOrMultimode(def, initialModeId = '') {
     const modeTabsHtml = isMulti
       ? `<div class="mode-selector-wrap"><span class="mode-selector-label">Calculation Mode</span><div class="mode-tabs" role="tablist">${def.modes.map(m => `<button type="button" role="tab" aria-selected="${m.id === activeMode.id ? 'true' : 'false'}" class="mode-tab ${m.id === activeMode.id ? 'active' : ''}" data-mode-id="${esc(m.id)}">${esc(m.label)}</button>`).join('')}</div></div>`
       : '';
+    const showBodyPresets = def.subcategory === 'Planetary Science' || ['circular-orbit-calculator', 'escape-velocity-calculator', 'orbital-period-calculator', 'hill-sphere-calculator', 'roche-limit-calculator'].includes(def.slug);
+    const bodyPresetHtml = showBodyPresets
+      ? `<div class="preset-bar"><label class="preset-label" for="celestial-preset-select">✦ Celestial Body Reference Preset (NASA / IAU):</label><select id="celestial-preset-select" class="preset-select"><option value="custom">Custom Body (Manual Input)</option>${Object.values(CELESTIAL_BODIES).map(b => `<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('')}</select></div>`
+      : '';
     const fieldsHtml = activeMode.fields.map(renderFieldControl).join('');
-    $('#calculator-app').innerHTML = `${modeTabsHtml}<div class="control-grid">${fieldsHtml}</div>${actionBarHtml()}`;
+    $('#calculator-app').innerHTML = `${modeTabsHtml}${bodyPresetHtml}<div class="control-grid">${fieldsHtml}</div>${actionBarHtml()}`;
 
-    // Update formula block on page dynamically when mode changes
+    // Update formula block and variables table on page dynamically when mode changes
     const fBlock = $('.formula-block');
     if (fBlock && activeMode.formula) fBlock.textContent = activeMode.formula;
+    const varTbody = $('#edu-var-tbody');
+    if (varTbody && activeMode.fields) {
+      varTbody.innerHTML = activeMode.fields.map(f => `<tr><td><code>${esc(f.key)}</code></td><td>${esc(f.label)}</td><td>${esc(f.unit || 'Dimensionless')}</td></tr>`).join('');
+    }
+
+    const presetSel = $('#celestial-preset-select', '#calculator-app');
+    if (presetSel) {
+      presetSel.onchange = () => {
+        const body = CELESTIAL_BODIES[presetSel.value];
+        if (!body) return;
+        const setField = (k, val) => {
+          const inp = $(`[data-field="${k}"]`, '#calculator-app');
+          if (inp && val !== undefined && val > 0) {
+            inp.value = String(val);
+            const uSel = $(`[data-unit-for="${k}"]`, '#calculator-app');
+            if (uSel) uSel.selectedIndex = 0;
+          }
+        };
+        setField('M', body.massKg);
+        setField('R', body.radiusM);
+        setField('Req', body.eqRadiusM);
+        setField('Rpol', body.polRadiusM);
+        setField('rho', body.densityKgM3);
+        setField('rhom', body.densityKgM3);
+        setField('g', body.surfaceGravityMS2);
+        if (def.slug === 'surface-gravity-calculator') setField('Prot', body.rotationHours);
+        else setField('Prot', body.rotationHours * 3600);
+        if (body.smaAU > 0) {
+          setField('a', body.smaAU * ASTRO_CONSTANTS.AU);
+          setField('d', body.smaAU * ASTRO_CONSTANTS.AU);
+        }
+        if (body.bondAlbedo >= 0 && body.bondAlbedo < 1) {
+          const abInp = $('[data-field="AB"]', '#calculator-app');
+          if (abInp) abInp.value = String(body.bondAlbedo);
+        }
+        if (body.meanMolMassG > 0) setField('Mmol', body.meanMolMassG / 1000);
+        if (body.momentFactorC > 0) setField('C', body.momentFactorC);
+        const calcBtn = $('#btn-calculate', '#calculator-app');
+        if (calcBtn) calcBtn.click();
+      };
+    }
 
     $$('[data-mode-id]', '#calculator-app').forEach(btn => {
       btn.onclick = () => {
@@ -3985,6 +4140,501 @@ function random() {
   bind(roll);
 }
 
+
+// ============================================================================
+// SPECIALIZED ASTRONOMY & ASTROPHYSICS SOLVERS
+// ============================================================================
+function astro_elliptical() {
+  $('#calculator-app').innerHTML = `<div class="preset-bar"><label class="preset-label" for="kepler-preset">✦ Orbit Preset (NASA / IAU):</label><select id="kepler-preset" class="preset-select">
+    <option value="earth">Earth around Sun (a = 1 AU, e = 0.01671)</option>
+    <option value="mercury">Mercury around Sun (a = 0.3871 AU, e = 0.20563)</option>
+    <option value="mars">Mars around Sun (a = 1.5237 AU, e = 0.0934)</option>
+    <option value="halley">Halley's Comet around Sun (a = 17.834 AU, e = 0.96714)</option>
+    <option value="molniya">Molniya Satellite around Earth (a = 26,600 km, e = 0.74)</option>
+  </select></div>
+  <div class="control-grid">
+    ${renderFieldControl({ key: 'M', label: 'Central body mass M', default: '1.98847e30', unit: 'kg' })}
+    ${renderFieldControl({ key: 'a', label: 'Semi-major axis a', default: '1.495978707e11', unit: 'm' })}
+    ${input('Orbital eccentricity e (0 ≤ e < 1)', 'e', '0.01671')}
+    ${input('Mean anomaly M_anom (degrees, 0° to 360°)', 'Manom', '45')}
+  </div>${actionBarHtml()}`;
+
+  function runOrbit() {
+    evalSafe(() => {
+      const { v, inputRecords } = numsWithUnits([
+        { key: 'M', label: 'Central body mass M', unit: 'kg' },
+        { key: 'a', label: 'Semi-major axis a', unit: 'm' },
+        { key: 'e', label: 'Orbital eccentricity e', unit: '' },
+        { key: 'Manom', label: 'Mean anomaly M', unit: '°' }
+      ]);
+      const res = solveKeplerOrbit(v.M, v.a, v.e, v.Manom);
+      updateResults([
+        { label: 'Instantaneous orbital speed v(ν)', value: res.vInst, unit: 'm/s' },
+        { label: 'Instantaneous radial distance r(ν)', value: res.rInst, unit: 'm' },
+        { label: 'Eccentric anomaly E (from M = E − e sin E)', value: res.eccentricAnomalyDeg, unit: '°' },
+        { label: 'True anomaly ν (angle from periapsis)', value: res.trueAnomalyDeg, unit: '°' },
+        { label: 'Periapsis distance r_p = a(1 − e)', value: res.rp, unit: 'm' },
+        { label: 'Apoapsis distance r_a = a(1 + e)', value: res.ra, unit: 'm' },
+        { label: 'Maximum speed at periapsis v_p', value: res.vp, unit: 'm/s' },
+        { label: 'Minimum speed at apoapsis v_a', value: res.va, unit: 'm/s' },
+        { label: 'Semi-minor axis b = a√(1 − e²)', value: res.b, unit: 'm' },
+        { label: 'Orbital period T (days)', value: res.periodDays, unit: 'days' },
+        { label: 'Specific orbital energy ε = −GM/(2a)', value: res.specificEnergy, unit: 'J/kg' },
+        { label: 'Specific angular momentum h = √[GMa(1−e²)]', value: res.specificAngMom, unit: 'm²/s' }
+      ], {
+        inputs: inputRecords,
+        formula: 'M_anom = E − e·sin(E);  tan(ν/2) = √[(1+e)/(1−e)]·tan(E/2);  r = a(1 − e·cos E);  v = √[GM(2/r − 1/a)]',
+        principle: 'Astronomy & Astrophysics › Orbital Mechanics & Celestial Motion (Keplerian Two-Body Solver)',
+        substituted: `Solved E − ${fmt(v.e)}·sin(E) = ${fmt((v.Manom * Math.PI) / 180)} rad in ${res.iterations} Newton–Raphson iterations → E = ${fmt(res.eccentricAnomalyDeg)}°, ν = ${fmt(res.trueAnomalyDeg)}°`,
+        steps: [
+          `1. Gravitational parameter μ = G·M = ${fmt(res.mu)} m³/s²`,
+          `2. Periapsis r_p = a(1 − e) = ${fmt(res.rp)} m; Apoapsis r_a = a(1 + e) = ${fmt(res.ra)} m`,
+          `3. Newton–Raphson solution of Kepler's Equation M = E − e sin(E): E = ${fmt(res.eccentricAnomalyDeg)}° (${res.iterations} iterations)`,
+          `4. True anomaly ν = ${fmt(res.trueAnomalyDeg)}°; Instantaneous radius r = a(1 − e cos E) = ${fmt(res.rInst)} m`,
+          `5. Vis-Viva orbital speed v = √[μ(2/r − 1/a)] = ${fmt(res.vInst)} m/s`
+        ],
+        finalSummary: `v(ν) = ${fmt(res.vInst)} m/s at r(ν) = ${fmt(res.rInst)} m (ν = ${fmt(res.trueAnomalyDeg)}°)`,
+        assumptions: 'Two-body point-mass Keplerian ellipse (0 ≤ e < 1) assuming orbiting mass m ≪ M and no non-gravitational or third-body perturbations.'
+      });
+    });
+  }
+
+  const preset = $('#kepler-preset', '#calculator-app');
+  if (preset) {
+    preset.onchange = () => {
+      const map = {
+        earth:   { M: 1.98847e30, a: 1.495978707e11, e: 0.01671, Manom: 45 },
+        mercury: { M: 1.98847e30, a: 0.387098 * ASTRO_CONSTANTS.AU, e: 0.20563, Manom: 60 },
+        mars:    { M: 1.98847e30, a: 1.52368 * ASTRO_CONSTANTS.AU, e: 0.0934, Manom: 90 },
+        halley:  { M: 1.98847e30, a: 17.834 * ASTRO_CONSTANTS.AU, e: 0.96714, Manom: 15 },
+        molniya: { M: 5.97217e24, a: 2.66e7, e: 0.74, Manom: 30 }
+      };
+      const cfg = map[preset.value];
+      if (!cfg) return;
+      $('[data-field="M"]').value = String(cfg.M);
+      $('[data-field="a"]').value = String(cfg.a);
+      $('[data-field="e"]').value = String(cfg.e);
+      $('[data-field="Manom"]').value = String(cfg.Manom);
+      $('[data-unit-for]', '#calculator-app').forEach(s => (s.selectedIndex = 0));
+      runOrbit();
+    };
+  }
+  bind(runOrbit);
+}
+
+function astro_habitable_zone() {
+  $('#calculator-app').innerHTML = `<div class="preset-bar"><label class="preset-label" for="hz-star-preset">✦ Host Star Reference Preset:</label><select id="hz-star-preset" class="preset-select">
+    <option value="sun">Sun (G2V · L = 1.0 L_☉, T_eff = 5772 K, Earth a = 1.0 AU)</option>
+    <option value="proxima">Proxima Centauri (M5.5V · L = 0.00155 L_☉, T_eff = 3042 K, Proxima b a = 0.0485 AU)</option>
+    <option value="trappist1">TRAPPIST-1 (M8V · L = 0.000553 L_☉, T_eff = 2566 K, Planet e a = 0.02925 AU)</option>
+    <option value="kepler186">Kepler-186 (M1V · L = 0.055 L_☉, T_eff = 3755 K, Kepler-186f a = 0.432 AU)</option>
+    <option value="tauceti">Tau Ceti (G8V · L = 0.52 L_☉, T_eff = 5344 K, Planet e a = 0.538 AU)</option>
+  </select></div>
+  <div class="control-grid">
+    ${input('Stellar luminosity L_★ (in Solar units L_☉)', 'Lsun', '1.0')}
+    ${input('Stellar effective temperature T_eff (2,000–12,000 K)', 'Teff', '5772')}
+    ${input('Candidate planet orbital distance a (in AU)', 'aAU', '1.0')}
+  </div>${actionBarHtml()}`;
+
+  function runHZ() {
+    evalSafe(() => {
+      const { Lsun, Teff, aAU } = nums(['Lsun', 'Teff', 'aAU']);
+      if (aAU <= 0) throw Error('Candidate planet orbital distance a (AU) must be strictly positive');
+      const hz = computeHabitableZone(Lsun, Teff);
+      const fluxEarth = Lsun / (aAU * aAU);
+      let zoneStatus = 'Within Conservative Habitable Zone (Liquid Water Zone)';
+      if (aAU < hz.recentVenus.distAU) zoneStatus = 'Too Hot (Inner to Optimistic Recent-Venus Limit)';
+      else if (aAU < hz.runawayGH.distAU) zoneStatus = 'Optimistic Inner Habitable Zone (Between Recent Venus & Runaway Greenhouse)';
+      else if (aAU > hz.earlyMars.distAU) zoneStatus = 'Too Cold (Beyond Optimistic Early-Mars Outer Limit)';
+      else if (aAU > hz.maxGH.distAU) zoneStatus = 'Optimistic Outer Habitable Zone (Between Maximum Greenhouse & Early Mars)';
+
+      updateResults([
+        { label: 'Conservative Habitable Zone (Runaway → Max Greenhouse)', value: `${fmt(hz.runawayGH.distAU, 4)} to ${fmt(hz.maxGH.distAU, 4)} AU` },
+        { label: 'Optimistic Habitable Zone (Recent Venus → Early Mars)', value: `${fmt(hz.recentVenus.distAU, 4)} to ${fmt(hz.earlyMars.distAU, 4)} AU` },
+        { label: 'Conservative Inner Edge (Runaway Greenhouse)', value: hz.runawayGH.distAU, unit: 'AU' },
+        { label: 'Conservative Outer Edge (Maximum CO₂ Greenhouse)', value: hz.maxGH.distAU, unit: 'AU' },
+        { label: 'Optimistic Inner Edge (Recent Venus)', value: hz.recentVenus.distAU, unit: 'AU' },
+        { label: 'Optimistic Outer Edge (Early Mars)', value: hz.earlyMars.distAU, unit: 'AU' },
+        { label: 'Earth-Equivalent Flux Distance √(L_★/L_☉)', value: hz.earthEquivalentAU, unit: 'AU' },
+        { label: 'Candidate Planet Incident Flux (S / S_⊕)', value: fluxEarth, unit: 'S_⊕' },
+        { label: 'Candidate Planet Habitability Classification', value: zoneStatus }
+      ], {
+        inputs: [
+          { label: 'Host Star Luminosity', rawVal: `${fmt(Lsun)} L_☉` },
+          { label: 'Host Star T_eff', rawVal: `${fmt(Teff)} K` },
+          { label: 'Planet Semi-Major Axis a', rawVal: `${fmt(aAU)} AU` }
+        ],
+        formula: 'd_HZ = √(L_★ / S_eff);  S_eff(T_eff) = S_eff☉ + a·ΔT + b·ΔT² + c·ΔT³ + d·ΔT⁴  (ΔT = T_eff − 5780 K)',
+        principle: 'Kopparapu et al. (2013, 2014) 1D Radiative-Convective Circumstellar Habitable Zone Model',
+        substituted: `ΔT = ${fmt(Teff - 5780)} K → S_eff(Runaway GH) = ${fmt(hz.runawayGH.seff, 4)} S_⊕, S_eff(Max GH) = ${fmt(hz.maxGH.seff, 4)} S_⊕`,
+        steps: [
+          `1. Temperature offset from solar reference: ΔT = ${fmt(Teff)} − 5780 = ${fmt(Teff - 5780)} K`,
+          `2. Effective stellar flux boundaries: Recent Venus = ${fmt(hz.recentVenus.seff, 4)} S_⊕, Runaway GH = ${fmt(hz.runawayGH.seff, 4)} S_⊕, Max GH = ${fmt(hz.maxGH.seff, 4)} S_⊕, Early Mars = ${fmt(hz.earlyMars.seff, 4)} S_⊕`,
+          `3. Conservative HZ: d_in = √(${fmt(Lsun)} / ${fmt(hz.runawayGH.seff, 4)}) = ${fmt(hz.runawayGH.distAU, 4)} AU; d_out = √(${fmt(Lsun)} / ${fmt(hz.maxGH.seff, 4)}) = ${fmt(hz.maxGH.distAU, 4)} AU`,
+          `4. Candidate planet at a = ${fmt(aAU)} AU receives S = ${fmt(fluxEarth, 4)} S_⊕ → ${zoneStatus}`
+        ],
+        finalSummary: `Conservative HZ = [${fmt(hz.runawayGH.distAU, 4)} AU, ${fmt(hz.maxGH.distAU, 4)} AU]`,
+        assumptions: 'Assumes an Earth-mass (1 M_⊕) planet with a N₂–CO₂–H₂O atmosphere. Cooler M-dwarf radiation shifts near-IR absorption, moving S_eff boundaries outward relative to simple √L scaling.'
+      });
+    });
+  }
+
+  const preset = $('#hz-star-preset', '#calculator-app');
+  if (preset) {
+    preset.onchange = () => {
+      const map = {
+        sun:       { Lsun: 1.0, Teff: 5772, aAU: 1.0 },
+        proxima:   { Lsun: 0.00155, Teff: 3042, aAU: 0.0485 },
+        trappist1: { Lsun: 0.000553, Teff: 2566, aAU: 0.02925 },
+        kepler186: { Lsun: 0.055, Teff: 3755, aAU: 0.432 },
+        tauceti:   { Lsun: 0.52, Teff: 5344, aAU: 0.538 }
+      };
+      const cfg = map[preset.value];
+      if (!cfg) return;
+      $('[data-field="Lsun"]').value = String(cfg.Lsun);
+      $('[data-field="Teff"]').value = String(cfg.Teff);
+      $('[data-field="aAU"]').value = String(cfg.aAU);
+      runHZ();
+    };
+  }
+  bind(runHZ);
+}
+
+function astro_blackbody() {
+  $('#calculator-app').innerHTML = `<div class="control-grid">
+    ${renderFieldControl({ key: 'T', label: 'Blackbody temperature T', default: '5772', unit: 'K' })}
+    ${renderFieldControl({ key: 'lam', label: 'Observation wavelength λ', default: '500', unit: 'nm' })}
+  </div>${actionBarHtml()}`;
+
+  function runBB() {
+    evalSafe(() => {
+      const { v, inputRecords } = numsWithUnits([
+        { key: 'T', label: 'Temperature T', unit: 'K' },
+        { key: 'lam', label: 'Wavelength λ', unit: 'nm' }
+      ]);
+      const bb = computeBlackbodyRadiation(v.T, v.lam);
+      updateResults([
+        { label: 'Planck spectral radiance B_λ(λ, T) [per nm]', value: bb.B_lambda_nm, unit: 'W·sr⁻¹·m⁻²·nm⁻¹' },
+        { label: 'Planck spectral radiance B_λ(λ, T) [SI per m]', value: bb.B_lambda_SI, unit: 'W·sr⁻¹·m⁻³' },
+        { label: 'Frequency spectral radiance B_ν(ν, T)', value: bb.B_nu_SI, unit: 'W·sr⁻¹·m⁻²·Hz⁻¹' },
+        { label: 'Total integrated exitance M = σT⁴', value: bb.totalExitance, unit: 'W/m²' },
+        { label: 'Wien peak wavelength λ_max = b / T', value: bb.lambdaPeakNm, unit: 'nm' },
+        { label: 'Wien frequency-distribution peak ν_max', value: bb.nuPeakHz, unit: 'Hz' },
+        { label: 'Photon energy at λ (E = hc/λ)', value: bb.photonEnergyEv, unit: 'eV' },
+        { label: 'Rayleigh–Jeans classical approx B_RJ (long-λ limit)', value: bb.B_RJ_SI * 1e-9, unit: 'W·sr⁻¹·m⁻²·nm⁻¹' },
+        { label: 'Wien short-wavelength approx B_Wien (hc/λkT ≫ 1)', value: bb.B_Wien_SI * 1e-9, unit: 'W·sr⁻¹·m⁻²·nm⁻¹' }
+      ], {
+        inputs: inputRecords,
+        formula: 'B_λ(λ, T) = (2hc² / λ⁵) / [exp(hc / (λ k_B T)) − 1]',
+        principle: 'Quantum Planck Blackbody Radiation Law (with Rayleigh–Jeans & Wien Classical Limits)',
+        substituted: `Dimensionless photon-to-thermal ratio x = hc / (λ k_B T) = ${fmt(bb.x, 4)} at T = ${fmt(v.T)} K, λ = ${fmt(v.lam)} nm`,
+        steps: [
+          `1. Convert wavelength to SI: λ = ${fmt(v.lam)} nm = ${fmt(bb.lambdaM)} m`,
+          `2. Dimensionless exponent x = hc / (λ k_B T) = ${fmt(bb.x, 6)}`,
+          `3. Bose–Einstein denominator exp(x) − 1 = ${fmt(Math.expm1(bb.x))}`,
+          `4. Exact Planck radiance B_λ = ${fmt(bb.B_lambda_nm)} W·sr⁻¹·m⁻²·nm⁻¹ (Wien peak at λ_max = ${fmt(bb.lambdaPeakNm)} nm)`,
+          `5. Classical Rayleigh–Jeans yields ${fmt(bb.B_RJ_SI * 1e-9)} (valid only for x ≪ 1; diverges in the UV catastrophe as λ → 0)`
+        ],
+        finalSummary: `B_λ(${fmt(v.lam)} nm, ${fmt(v.T)} K) = ${fmt(bb.B_lambda_nm)} W·sr⁻¹·m⁻²·nm⁻¹`,
+        assumptions: 'Ideal thermodynamic blackbody in local thermodynamic equilibrium (emissivity ε = 1, isotropic emission).'
+      });
+    });
+  }
+  bind(runBB);
+}
+
+function astro_cosmology(def) {
+  const slug = def?.canonicalSlug || def?.slug || 'redshift-distance-calculator';
+  const showSizeInput = slug === 'angular-diameter-distance-calculator';
+  const showMagInput = slug === 'luminosity-distance-calculator';
+
+  $('#calculator-app').innerHTML = `<div class="preset-bar"><label class="preset-label" for="cosmo-preset">✦ Cosmological Model Preset:</label><select id="cosmo-preset" class="preset-select">
+    ${Object.entries(COSMO_PRESETS).map(([k, p]) => `<option value="${esc(k)}">${esc(p.name)} (H₀=${p.H0}, Ω_m=${p.OmegaM}, Ω_Λ=${p.OmegaL})</option>`).join('')}
+  </select></div>
+  <div class="control-grid">
+    ${input('Cosmological redshift z', 'z', '1.0')}
+    ${input('Hubble constant H₀ (km/s/Mpc)', 'H0', '67.4')}
+    ${input('Matter density parameter Ω_m,0', 'OmegaM', '0.315')}
+    ${input('Dark energy parameter Ω_Λ,0', 'OmegaL', '0.685')}
+    ${showSizeInput ? input('Galaxy physical diameter D_phys (kpc)', 'Dphys', '10') : ''}
+    ${showMagInput ? input('Source absolute magnitude M', 'Mabs', '-19.3') : ''}
+  </div>${actionBarHtml()}`;
+
+  function runCosmo() {
+    evalSafe(() => {
+      const keys = ['z', 'H0', 'OmegaM', 'OmegaL'];
+      if (showSizeInput) keys.push('Dphys');
+      if (showMagInput) keys.push('Mabs');
+      const v = nums(keys);
+      const cRes = computeCosmology(v.z, v.H0, v.OmegaM, v.OmegaL);
+
+      let items;
+      if (slug === 'lookback-time-estimator') {
+        items = [
+          { label: 'Lookback time t_L(z)', value: cRes.lookbackGyr, unit: 'Gyr' },
+          { label: 'Cosmic age at redshift z (t(z) = t₀ − t_L)', value: cRes.ageAtRedshiftGyr, unit: 'Gyr' },
+          { label: 'Present age of the Universe t₀ (z = 0)', value: cRes.ageUniverseGyr, unit: 'Gyr' },
+          { label: 'Fraction of current cosmic age elapsed at z', value: (cRes.ageAtRedshiftGyr / cRes.ageUniverseGyr) * 100, unit: '%' },
+          { label: 'Light-travel distance (c · t_L)', value: cRes.lightTravelMpc, unit: 'Mpc' },
+          { label: 'Cosmic scale factor a = 1 / (1 + z)', value: cRes.a },
+          { label: 'Hubble time 1 / H₀', value: cRes.t_H_Gyr, unit: 'Gyr' }
+        ];
+      } else if (slug === 'luminosity-distance-calculator') {
+        const appMag = v.Mabs + cRes.distanceModulus;
+        items = [
+          { label: 'Luminosity distance D_L(z) = (1+z) D_M(z)', value: cRes.DL_Mpc, unit: 'Mpc' },
+          { label: 'Luminosity distance (billion light-years)', value: cRes.DL_Gly, unit: 'Gly' },
+          { label: 'Cosmological distance modulus μ = 5 log₁₀(D_L/10 pc)', value: cRes.distanceModulus, unit: 'mag' },
+          { label: 'Apparent magnitude m = M + μ (without K-correction)', value: appMag, unit: 'mag' },
+          { label: 'Transverse comoving distance D_M(z)', value: cRes.DM_Mpc, unit: 'Mpc' },
+          { label: 'Flux dilution factor relative to comoving (1+z)²', value: (1 + v.z) ** 2 }
+        ];
+      } else if (slug === 'comoving-distance-calculator') {
+        items = [
+          { label: 'Line-of-sight comoving distance D_C(z)', value: cRes.DC_Mpc, unit: 'Mpc' },
+          { label: 'Transverse comoving distance D_M(z)', value: cRes.DM_Mpc, unit: 'Mpc' },
+          { label: 'Comoving distance (billion light-years)', value: cRes.DC_Gly, unit: 'Gly' },
+          { label: 'All-sky comoving volume V_C(z)', value: cRes.comovingVolumeGpc3, unit: 'Gpc³' },
+          { label: 'Spatial curvature parameter Ω_k,0 = 1 − Ω_m − Ω_Λ', value: cRes.OmegaK },
+          { label: 'Hubble parameter at redshift H(z)', value: cRes.Hz, unit: 'km/s/Mpc' }
+        ];
+      } else if (slug === 'angular-diameter-distance-calculator') {
+        if (v.Dphys <= 0) throw Error('Physical galaxy diameter D_phys (kpc) must be strictly positive');
+        const scaleKpcPerArcsec = (cRes.DA_Mpc * 1000 * Math.PI) / (180 * 3600);
+        const apparentArcsec = scaleKpcPerArcsec > 0 ? v.Dphys / scaleKpcPerArcsec : 0;
+        items = [
+          { label: 'Angular diameter distance D_A(z) = D_M(z) / (1+z)', value: cRes.DA_Mpc, unit: 'Mpc' },
+          { label: 'Angular diameter distance (billion light-years)', value: cRes.DA_Gly, unit: 'Gly' },
+          { label: 'Physical transverse scale at z (kpc per arcsecond)', value: scaleKpcPerArcsec, unit: 'kpc/″' },
+          { label: `Apparent angular diameter θ (for ${fmt(v.Dphys)} kpc object)`, value: apparentArcsec, unit: 'arcsec' },
+          { label: 'Transverse comoving distance D_M(z)', value: cRes.DM_Mpc, unit: 'Mpc' },
+          { label: 'Surface brightness dimming factor (1+z)⁴', value: (1 + v.z) ** 4 }
+        ];
+      } else {
+        items = [
+          { label: 'Comoving distance D_C(z) [exact ΛCDM quadrature]', value: cRes.DC_Mpc, unit: 'Mpc' },
+          { label: 'Luminosity distance D_L(z) = (1+z) D_M(z)', value: cRes.DL_Mpc, unit: 'Mpc' },
+          { label: 'Angular diameter distance D_A(z) = D_M(z) / (1+z)', value: cRes.DA_Mpc, unit: 'Mpc' },
+          { label: 'Lookback time t_L(z)', value: cRes.lookbackGyr, unit: 'Gyr' },
+          { label: 'Light-travel distance (c · t_L)', value: cRes.lightTravelMpc, unit: 'Mpc' },
+          { label: 'Naive linear Hubble estimate d_lin = c·z / H₀', value: cRes.dLinearMpc, unit: 'Mpc' },
+          { label: 'Linear Hubble error vs. exact D_C(z)', value: cRes.linearDeviationPct, unit: '%' },
+          { label: 'Cosmic age at redshift t(z)', value: cRes.ageAtRedshiftGyr, unit: 'Gyr' },
+          { label: 'Hubble expansion rate H(z)', value: cRes.Hz, unit: 'km/s/Mpc' }
+        ];
+      }
+
+      updateResults(items, {
+        inputs: [
+          { label: 'Redshift z', rawVal: fmt(v.z) },
+          { label: 'H₀', rawVal: `${fmt(v.H0)} km/s/Mpc` },
+          { label: 'Ω_m,0', rawVal: fmt(v.OmegaM) },
+          { label: 'Ω_Λ,0', rawVal: fmt(v.OmegaL) },
+          { label: 'Ω_k,0 (derived)', rawVal: fmt(cRes.OmegaK) }
+        ],
+        formula: def?.formula || 'D_C(z) = (c/H₀) ∫₀ᶻ dz′ / E(z′);  D_L = (1+z)D_M;  D_A = D_M/(1+z)',
+        principle: 'Numerical FLRW / ΛCDM Cosmological Quadrature (8-Point Composite Gauss–Legendre Integration)',
+        substituted: `H₀ = ${fmt(v.H0)} km/s/Mpc (d_H = ${fmt(cRes.d_H_Mpc)} Mpc, t_H = ${fmt(cRes.t_H_Gyr)} Gyr); E(${fmt(v.z)}) = ${fmt(cRes.Ez)}`,
+        steps: [
+          `1. Spatial curvature density: Ω_k,0 = 1 − Ω_m,0 − Ω_Λ,0 − Ω_r,0 = ${fmt(cRes.OmegaK)}`,
+          `2. Hubble distance d_H = c / H₀ = ${fmt(cRes.d_H_Mpc)} Mpc; Hubble time t_H = 1 / H₀ = ${fmt(cRes.t_H_Gyr)} Gyr`,
+          `3. Numerical Gauss–Legendre quadrature of ∫₀ᶻ dz′ / E(z′) yields D_C(z) = ${fmt(cRes.DC_Mpc)} Mpc (${fmt(cRes.DC_Gly)} Gly)`,
+          `4. Luminosity distance D_L(z) = (1+z)D_M = ${fmt(cRes.DL_Mpc)} Mpc; Angular diameter distance D_A(z) = D_M/(1+z) = ${fmt(cRes.DA_Mpc)} Mpc`,
+          `5. Numerical lookback time quadrature yields t_L(z) = ${fmt(cRes.lookbackGyr)} Gyr (cosmic age at z: ${fmt(cRes.ageAtRedshiftGyr)} Gyr out of t₀ = ${fmt(cRes.ageUniverseGyr)} Gyr)`,
+          `6. Comparison: Linear Hubble law cz/H₀ gives ${fmt(cRes.dLinearMpc)} Mpc (deviation: ${fmt(cRes.linearDeviationPct, 2)}% from exact D_C)`
+        ],
+        finalSummary: `${items[0].label} = ${fmt(items[0].value)}${items[0].unit ? ' ' + items[0].unit : ''}`,
+        assumptions: 'FLRW metric with constant dark energy equation of state w = −1 (ΛCDM) and radiation density Ω_r,0 = 9.24 × 10⁻⁵. Linear Hubble law is NOT used for cosmological distances.'
+      });
+    });
+  }
+
+  const preset = $('#cosmo-preset', '#calculator-app');
+  if (preset) {
+    preset.onchange = () => {
+      const p = COSMO_PRESETS[preset.value];
+      if (!p) return;
+      $('[data-field="H0"]').value = String(p.H0);
+      $('[data-field="OmegaM"]').value = String(p.OmegaM);
+      $('[data-field="OmegaL"]').value = String(p.OmegaL);
+      runCosmo();
+    };
+  }
+  bind(runCosmo);
+}
+
+function astro_julian() {
+  $('#calculator-app').innerHTML = `<div class="control-grid">
+    ${input('UTC Year (e.g. 2026)', 'Y', '2026')}
+    ${input('UTC Month (1 to 12)', 'M', '11')}
+    ${input('UTC Day (1 to 31)', 'D', '6')}
+    ${input('UTC Hour (0 to 23)', 'h', '0')}
+    ${input('UTC Minute (0 to 59)', 'm', '0')}
+    ${input('UTC Second (0 to 59.99)', 's', '0')}
+  </div>${actionBarHtml()}`;
+
+  function runJD() {
+    evalSafe(() => {
+      const { Y, M, D, h, m, s } = nums(['Y', 'M', 'D', 'h', 'm', 's']);
+      if (h < 0 || h >= 24 || m < 0 || m >= 60 || s < 0 || s >= 60) {
+        throw Error('UTC time requires 0 ≤ hour < 24, 0 ≤ minute < 60, and 0 ≤ second < 60');
+      }
+      const res = calendarToJulianDate(Y, M, D, h, m, s);
+      const back = julianDateToCalendar(res.JD);
+      updateResults([
+        { label: 'Julian Date (JD)', value: res.JD.toFixed(6) },
+        { label: 'Modified Julian Date (MJD = JD − 2,400,000.5)', value: res.MJD.toFixed(6) },
+        { label: 'Days since J2000.0 epoch (JD 2451545.0)', value: res.deltaJ2000Days, unit: 'days' },
+        { label: 'Julian centuries since J2000.0 (T)', value: res.T_J2000 },
+        { label: 'Verified UTC Calendar Timestamp', value: back.isoUTC }
+      ], {
+        inputs: [{ label: 'UTC Date & Time', rawVal: back.isoUTC }],
+        formula: 'JD = ⌊365.25(Y′ + 4716)⌋ + ⌊30.6001(M′ + 1)⌋ + D + B − 1524.5;  MJD = JD − 2,400,000.5',
+        principle: 'Meeus / IAU Gregorian-to-Julian Day Conversion',
+        substituted: `JD(${back.isoUTC}) = ${res.JD.toFixed(6)}, MJD = ${res.MJD.toFixed(6)}`,
+        steps: [
+          `1. Fractional day D_frac = ${fmt(D + (h + m / 60 + s / 3600) / 24, 6)}`,
+          `2. Gregorian century leap-day correction B applied for ${back.isoUTC}`,
+          `3. Julian Date JD = ${res.JD.toFixed(6)} (starts at 12:00 UTC noon)`,
+          `4. Modified Julian Date MJD = JD − 2,400,000.5 = ${res.MJD.toFixed(6)} (starts at 00:00 UTC midnight)`
+        ],
+        finalSummary: `JD = ${res.JD.toFixed(6)} (MJD = ${res.MJD.toFixed(6)})`,
+        assumptions: 'Uses the proleptic Gregorian calendar rule after October 15, 1582 (JD ≥ 2299160.5) and UTC time scale.'
+      });
+    });
+  }
+  bind(runJD);
+}
+
+function astro_mjd() {
+  $('#calculator-app').innerHTML = `<div class="control-grid">
+    ${input('Modified Julian Date (MJD)', 'mjd', '61350.0')}
+  </div>${actionBarHtml()}`;
+
+  function runMJD() {
+    evalSafe(() => {
+      const { mjd } = nums(['mjd']);
+      const jd = mjd + 2400000.5;
+      const cal = julianDateToCalendar(jd);
+      const tJ2000 = (jd - 2451545.0) / 36525.0;
+      updateResults([
+        { label: 'Julian Date (JD = MJD + 2,400,000.5)', value: jd.toFixed(6) },
+        { label: 'Corresponding UTC Calendar Date & Time', value: cal.isoUTC },
+        { label: 'Modified Julian Date (MJD)', value: mjd.toFixed(6) },
+        { label: 'Days since J2000.0 (JD 2451545.0)', value: jd - 2451545.0, unit: 'days' },
+        { label: 'Julian centuries since J2000.0 (T)', value: tJ2000 }
+      ], {
+        inputs: [{ label: 'Modified Julian Date (MJD)', rawVal: mjd.toFixed(6) }],
+        formula: 'JD = MJD + 2,400,000.5',
+        principle: 'IAU / SAO Modified Julian Date Conversion (Epoch: 1858-11-17 00:00 UTC)',
+        substituted: `JD = ${mjd.toFixed(6)} + 2400000.5 = ${jd.toFixed(6)} → ${cal.isoUTC}`,
+        steps: [
+          `1. Add MJD epoch offset: JD = ${mjd.toFixed(6)} + 2,400,000.5 = ${jd.toFixed(6)}`,
+          `2. Invert Meeus Julian day calendar algorithm → ${cal.isoUTC}`,
+          `3. Offset from J2000.0 epoch: ΔD = ${fmt(jd - 2451545.0)} days (T = ${fmt(tJ2000)} centuries)`
+        ],
+        finalSummary: `JD = ${jd.toFixed(6)} (${cal.isoUTC})`,
+        assumptions: 'MJD was introduced by the Smithsonian Astrophysical Observatory in 1957 so day numbers change at midnight UTC rather than noon UTC.'
+      });
+    });
+  }
+  bind(runMJD);
+}
+
+function astro_sidereal() {
+  $('#calculator-app').innerHTML = `<div class="control-grid">
+    ${input('Julian Date (JD, e.g. 2461350.5)', 'jd', '2461350.5')}
+    ${input('Observer Longitude λ (−180° West to +180° East)', 'lon', '73.8567')}
+    ${input('Target Right Ascension α (hours, 0 to 24)', 'ra', '5.5755')}
+  </div>${actionBarHtml()}`;
+
+  function runST() {
+    evalSafe(() => {
+      const { jd, lon, ra } = nums(['jd', 'lon', 'ra']);
+      if (ra < 0 || ra >= 24) throw Error('Target Right Ascension α must lie in [0h, 24h)');
+      const st = computeSiderealTime(jd, lon, ra);
+      const cal = julianDateToCalendar(jd);
+      updateResults([
+        { label: 'Local Sidereal Time (LST — Sexagesimal)', value: st.lstHMS },
+        { label: 'Greenwich Mean Sidereal Time (GMST — Sexagesimal)', value: st.gmstHMS },
+        { label: 'Local Sidereal Time (decimal hours)', value: st.lstHours, unit: 'h' },
+        { label: 'Local Sidereal Time (degrees)', value: st.lstDeg, unit: '°' },
+        { label: 'Greenwich Mean Sidereal Time (decimal hours)', value: st.gmstHours, unit: 'h' },
+        { label: 'Target Local Hour Angle LHA = LST − RA', value: st.lhaHMS },
+        { label: 'UTC Timestamp for JD', value: cal.isoUTC }
+      ], {
+        inputs: [
+          { label: 'Julian Date JD', rawVal: jd.toFixed(5) },
+          { label: 'Observer Longitude λ', rawVal: `${fmt(lon)}°` },
+          { label: 'Target RA α', rawVal: `${fmt(ra)} h` }
+        ],
+        formula: 'GMST(°) = 280.46061837 + 360.98564736629(JD − 2451545.0) + 0.000387933 T²;  LST = GMST + λ_lon',
+        principle: 'IAU 1982 / Meeus Greenwich & Local Mean Sidereal Time',
+        substituted: `d = ${fmt(jd - 2451545.0)} days → GMST = ${st.gmstHMS}, LST = ${st.lstHMS}`,
+        steps: [
+          `1. Days from J2000.0 epoch: d = JD − 2451545.0 = ${fmt(jd - 2451545.0)} d`,
+          `2. Greenwich Mean Sidereal Time: GMST = ${fmt(st.gmstDeg)}° = ${st.gmstHMS}`,
+          `3. Add East longitude λ = ${fmt(lon)}°: LST = ${fmt(st.lstDeg)}° = ${st.lstHMS}`,
+          `4. Local Hour Angle for RA = ${fmt(ra)}h: LHA = LST − RA = ${st.lhaHMS}`
+        ],
+        finalSummary: `LST = ${st.lstHMS} (GMST = ${st.gmstHMS})`,
+        assumptions: 'Computes Mean Sidereal Time (GMST/LMST); Apparent Sidereal Time (GAST/LAST) differs by the equation of the equinoxes (≤ ±1.1 seconds).'
+      });
+    });
+  }
+  bind(runST);
+}
+
+function astro_celestial_dist() {
+  $('#calculator-app').innerHTML = `<div class="control-grid">
+    ${input('Object 1 Right Ascension α₁ (degrees, 0°–360°)', 'ra1', '101.2872')}
+    ${input('Object 1 Declination δ₁ (degrees, −90° to +90°)', 'dec1', '-16.7161')}
+    ${input('Object 2 Right Ascension α₂ (degrees, 0°–360°)', 'ra2', '88.7929')}
+    ${input('Object 2 Declination δ₂ (degrees, −90° to +90°)', 'dec2', '7.4071')}
+    ${input('Object 1 Distance d₁ (parsecs, optional > 0)', 'd1', '2.64')}
+    ${input('Object 2 Distance d₂ (parsecs, optional > 0)', 'd2', '152.7')}
+  </div>${actionBarHtml()}`;
+
+  function runSep() {
+    evalSafe(() => {
+      const { ra1, dec1, ra2, dec2, d1, d2 } = nums(['ra1', 'dec1', 'ra2', 'dec2', 'd1', 'd2']);
+      if (ra1 < 0 || ra1 > 360 || ra2 < 0 || ra2 > 360) throw Error('Right Ascension α must lie in [0°, 360°]');
+      if (d1 <= 0 || d2 <= 0) throw Error('Distances d₁ and d₂ must be positive (> 0 pc)');
+      const sep = computeCelestialSeparation(ra1, dec1, ra2, dec2);
+      // 3D Euclidean law of cosines in parsecs: d_3D = sqrt(d1^2 + d2^2 - 2 d1 d2 cos(theta))
+      const d3dPc = Math.sqrt(Math.max(0, d1 * d1 + d2 * d2 - 2 * d1 * d2 * Math.cos(sep.sepRad)));
+      const d3dLy = d3dPc * (ASTRO_CONSTANTS.pc / ASTRO_CONSTANTS.ly);
+
+      updateResults([
+        { label: 'Great-circle angular separation θ (degrees)', value: sep.sepDeg, unit: '°' },
+        { label: 'Angular separation (arcminutes)', value: sep.sepArcmin, unit: '′' },
+        { label: 'Angular separation (arcseconds)', value: sep.sepArcsec, unit: '″' },
+        { label: 'Angular separation (radians)', value: sep.sepRad, unit: 'rad' },
+        { label: 'Position Angle PA (North through East, 1 → 2)', value: sep.paDeg, unit: '°' },
+        { label: '3D Spatial Separation (parsecs)', value: d3dPc, unit: 'pc' },
+        { label: '3D Spatial Separation (light-years)', value: d3dLy, unit: 'ly' }
+      ], {
+        inputs: [
+          { label: 'Object 1 (α₁, δ₁, d₁)', rawVal: `(${fmt(ra1)}°, ${fmt(dec1)}°, ${fmt(d1)} pc)` },
+          { label: 'Object 2 (α₂, δ₂, d₂)', rawVal: `(${fmt(ra2)}°, ${fmt(dec2)}°, ${fmt(d2)} pc)` }
+        ],
+        formula: 'tan θ = √[(cos δ₂ sin Δα)² + (cos δ₁ sin δ₂ − sin δ₁ cos δ₂ cos Δα)²] / (sin δ₁ sin δ₂ + cos δ₁ cos δ₂ cos Δα)',
+        principle: 'Vincenty Exact Spherical Great-Circle Angular Distance & 3D Law of Cosines',
+        substituted: `Δα = ${fmt(ra2 - ra1)}° → θ = ${fmt(sep.sepDeg)}° (${fmt(sep.sepArcsec)}″), PA = ${fmt(sep.paDeg)}°`,
+        steps: [
+          `1. Right Ascension difference Δα = α₂ − α₁ = ${fmt(ra2 - ra1)}°`,
+          `2. Vincenty numerator & denominator evaluated in radians → θ = ${fmt(sep.sepRad)} rad = ${fmt(sep.sepDeg)}°`,
+          `3. Initial Position Angle PA = ${fmt(sep.paDeg)}° (measured East from North at Object 1)`,
+          `4. 3D spatial distance d_3D = √(d₁² + d₂² − 2d₁d₂ cos θ) = ${fmt(d3dPc)} pc (${fmt(d3dLy)} ly)`
+        ],
+        finalSummary: `θ = ${fmt(sep.sepDeg)}° (${fmt(sep.sepArcmin)}′ / ${fmt(sep.sepArcsec)}″)`,
+        assumptions: 'Coordinates are assumed to be in the same equinox/epoch (e.g. ICRS / J2000.0). Defaults represent Sirius A and Betelgeuse.'
+      });
+    });
+  }
+  bind(runSep);
+}
+
 const renderers = {
   scientific, equation, quadratic, expression, mean_suite, number_theory, complex_calc, inequality_calc,
   poly_solver, partial_fractions, matrix, vector, system, linalg_eigen, linalg_lu, linalg_qr, linalg_svd,
@@ -3999,7 +4649,9 @@ const renderers = {
   pvalue_calc, sample_size, anova_calc, multi_regression, logistic_reg, stat_power,
   finance_npv, finance_irr, finance_xirr, finance_bond, finance_mortgage, finance_bs, finance_greeks,
   finance_depreciation, finance_prepayment, finance_taxslab, converter, base, comp_binary,
-  comp_bitwise, comp_ieee754, comp_subnet, color, fraction, prime, dates: () => dates('dates'), age, random
+  comp_bitwise, comp_ieee754, comp_subnet, color, fraction, prime, dates: () => dates('dates'), age, random,
+  astro_elliptical, astro_habitable_zone, astro_blackbody, astro_cosmology,
+  astro_julian, astro_mjd, astro_sidereal, astro_celestial_dist
 };
 
 function renderTool() {
@@ -4084,12 +4736,12 @@ function renderCategory() {
   pillBar.innerHTML = `<button type="button" class="filter-pill ${activeSub === 'all' ? 'active' : ''}" data-sub="all">All ${esc(catObj.name)} (${tools.length})</button>` +
     subcats.map(s => {
       const sSlug = slugify(s);
-      const cnt = tools.filter(t => slugify(t.subcategory) === sSlug).length;
+      const cnt = tools.filter(t => slugify(t.subcategory) === sSlug || (t.secondarySubcategories || []).some(sec => slugify(sec) === sSlug)).length;
       return `<button type="button" class="filter-pill ${activeSub === sSlug ? 'active' : ''}" data-sub="${esc(sSlug)}">${esc(s)} (${cnt})</button>`;
     }).join('');
 
   function draw() {
-    const list = activeSub === 'all' ? tools : tools.filter(t => slugify(t.subcategory) === activeSub);
+    const list = activeSub === 'all' ? tools : tools.filter(t => slugify(t.subcategory) === activeSub || (t.secondarySubcategories || []).some(sec => slugify(sec) === activeSub));
     container.innerHTML = list.map(card).join('');
   }
   $$('[data-sub]', pillBar).forEach(btn => {
@@ -4197,7 +4849,7 @@ function shell() {
       const catTools = canon.filter(t => t.category === c.name);
       const subLinks = (c.subcategories || []).map(s => {
         const sSlug = slugify(s);
-        const sCount = catTools.filter(t => t.subcategory === s).length;
+        const sCount = catTools.filter(t => t.subcategory === s || (t.secondarySubcategories || []).includes(s)).length;
         return `<a href="/categories/${cSlug}/#${sSlug}" class="subcat-link">${esc(s)} <span>${sCount}</span></a>`;
       }).join('');
       return `<details class="cat-nav-group ${isOpen ? 'active' : ''}" ${isOpen ? 'open' : ''}>

@@ -159,7 +159,7 @@ function buildExplainStepContent(exp) {
 
   const stringSteps = steps.map(step => typeof step === 'string' ? step : explainDisplayValue(step));
   const isDerivativeRuleTrace = /derivative/i.test(String(exp.formula || '')) &&
-    stringSteps.some(step => /Rule:/.test(step));
+    stringSteps.some(step => /Rule\s*(?::|d\/dx)|Symbolic derivative:|Evaluated at/i.test(step));
 
   if (isDerivativeRuleTrace) {
     const groups = new Map();

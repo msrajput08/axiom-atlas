@@ -85,27 +85,167 @@ async function copy(text) {
 }
 
 // --- EXPLAIN EVERY CALCULATION RENDERER ---
+function explainDisplayValue(value) {
+  if (typeof value === 'number') return fmt(value);
+  if (Array.isArray(value)) return value.map(explainDisplayValue).join(', ');
+  if (value && typeof value === 'object') {
+    try { return JSON.stringify(value); } catch { return '[structured value]'; }
+  }
+  return String(value ?? '');
+}
+
+function explainOperationGroup(op) {
+  const name = String(op || '').toLowerCase();
+  if (name.startsWith('function ')) return 'Evaluate functions';
+  if (name.includes('power') || name.includes('exponent') || name.includes('root')) return 'Powers and roots';
+  if (name.includes('multiplication') || name.includes('division')) return 'Products and quotients';
+  if (name.includes('addition') || name.includes('subtraction')) return 'Addition and subtraction';
+  if (name.includes('remainder') || name.includes('modulo')) return 'Remainders';
+  return 'Other operations';
+}
+
+function explainDetailedStep(step, index) {
+  if (typeof step === 'string') {
+    return '<li class="explain-detail-item"><span class="explain-detail-index">' + (index + 1) +
+      '</span><div class="explain-detail-body"><p>' + esc(step) + '</p></div></li>';
+  }
+  const op = step?.op || step?.rule || 'Calculation step';
+  const symbolic = step?.symbolic || step?.expr || '';
+  const substituted = step?.substituted || '';
+  const hasValue = step && Object.prototype.hasOwnProperty.call(step, 'value');
+  const value = hasValue ? explainDisplayValue(step.value) : '';
+  return '<li class="explain-detail-item"><span class="explain-detail-index">' + (index + 1) +
+    '</span><div class="explain-detail-body"><b>' + esc(op) + '</b>' +
+    (symbolic ? '<div class="explain-detail-expression">' + esc(symbolic) + '</div>' : '') +
+    (substituted ? '<div class="explain-detail-substitution">' + esc(substituted) + '</div>' : '') +
+    (hasValue ? '<div class="explain-detail-result">Result: <strong>' + esc(value) + '</strong></div>' : '') +
+    '</div></li>';
+}
+
+function buildExplainStepContent(exp) {
+  const steps = Array.isArray(exp.steps) ? exp.steps : [];
+  if (!steps.length) return { guided: '', detailed: '' };
+
+  const detailsLimit = 120;
+  const detailItems = steps.slice(0, detailsLimit).map(explainDetailedStep).join('');
+  const omitted = steps.length > detailsLimit
+    ? '<p class="explain-detail-note">Showing the first ' + detailsLimit + ' of ' + steps.length + ' recorded operations. The calculation itself used the complete execution trace.</p>'
+    : '';
+  const detailed = '<details class="explain-details"><summary><span>Show detailed derivation</span><small>' +
+    steps.length + (steps.length === 1 ? ' recorded step' : ' recorded steps') + '</small></summary>' +
+    '<ol class="explain-detail-list">' + detailItems + '</ol>' + omitted + '</details>';
+
+  const objectTrace = steps.every(step => step && typeof step === 'object' && !Array.isArray(step));
+  if (objectTrace) {
+    const groups = new Map();
+    steps.forEach(step => {
+      const label = explainOperationGroup(step.op || step.rule);
+      if (!groups.has(label)) groups.set(label, []);
+      groups.get(label).push(step);
+    });
+    const guided = Array.from(groups.entries()).map(([label, items], index) => {
+      const last = items[items.length - 1];
+      const expression = last.symbolic || last.substituted || '';
+      const result = Object.prototype.hasOwnProperty.call(last, 'value')
+        ? '<div class="explain-step-result">Latest intermediate result: <strong>' + esc(explainDisplayValue(last.value)) + '</strong></div>'
+        : '';
+      return '<article class="explain-step-card"><div class="explain-step-top"><span class="explain-step-number">' +
+        (index + 1) + '</span><h5>' + esc(label) + '</h5><span class="explain-step-count">' +
+        items.length + (items.length === 1 ? ' operation' : ' operations') + '</span></div>' +
+        (expression ? '<p class="explain-step-preview">' + esc(expression) + '</p>' : '') + result + '</article>';
+    }).join('');
+    return { guided: '<div class="explain-guided-grid">' + guided + '</div>', detailed };
+  }
+
+  const stringSteps = steps.map(step => typeof step === 'string' ? step : explainDisplayValue(step));
+  const isDerivativeRuleTrace = /derivative/i.test(String(exp.formula || '')) &&
+    stringSteps.some(step => /Rule:/.test(step));
+
+  if (isDerivativeRuleTrace) {
+    const groups = new Map();
+    stringSteps.forEach(step => {
+      const colon = step.indexOf(':');
+      if (colon < 0) return;
+      const rawLabel = step.slice(0, colon).trim();
+      if (/^(Constant Rule|Variable Identity Rule)/i.test(rawLabel)) return;
+      let label = rawLabel;
+      if (/Power & Chain Rule/i.test(rawLabel)) label = 'Power and chain rule';
+      else if (/Exponential Rule/i.test(rawLabel)) label = 'Exponential rule';
+      else if (/Chain Rule on ln/i.test(rawLabel)) label = 'Logarithm chain rule';
+      else if (/Chain Rule on sin/i.test(rawLabel)) label = 'Trigonometric chain rule';
+      else if (/Chain Rule on sqrt/i.test(rawLabel)) label = 'Square-root chain rule';
+      else if (/Sum \/ Difference Rule/i.test(rawLabel)) label = 'Sum and difference rule';
+      else if (/Product Rule/i.test(rawLabel)) label = 'Product rule';
+      else if (/Quotient Rule/i.test(rawLabel)) label = 'Quotient rule';
+      else if (/^Symbolic derivative/i.test(rawLabel)) label = 'Simplified derivative';
+      else if (/^Evaluated at/i.test(rawLabel)) label = 'Evaluate at the requested point';
+      if (!groups.has(label)) groups.set(label, []);
+      groups.get(label).push(step.slice(colon + 1).trim());
+    });
+    const guided = Array.from(groups.entries()).map(([label, examples], index) =>
+      '<article class="explain-step-card"><div class="explain-step-top"><span class="explain-step-number">' +
+      (index + 1) + '</span><h5>' + esc(label) + '</h5><span class="explain-step-count">' +
+      examples.length + (examples.length === 1 ? ' application' : ' applications') +
+      '</span></div><p class="explain-step-preview">Related operations are grouped here to make the derivation easier to follow.</p></article>'
+    ).join('');
+    return { guided: '<div class="explain-guided-grid">' + guided + '</div>', detailed };
+  }
+
+  const visibleCount = 6;
+  const visible = stringSteps.slice(0, visibleCount);
+  const guided = '<ol class="explain-guided-list">' + visible.map((step, index) =>
+    '<li class="explain-guided-item"><span class="explain-step-number">' + (index + 1) +
+    '</span><div>' + esc(step) + '</div></li>'
+  ).join('') + '</ol>';
+  return { guided, detailed: steps.length > visibleCount ? detailed : '' };
+}
+
 function buildExplainHtml(exp) {
   if (!exp) return '';
   const inputsHtml = exp.inputs?.length
-    ? `<div class="explain-sec"><span class="explain-sec-title">1. Given Inputs${exp.modeLabel ? ` · Mode: ${esc(exp.modeLabel)}` : ''}</span><ul class="explain-steps">${exp.inputs.map(inp => `<li><b>${esc(inp.label)}</b> = <code>${esc(inp.rawVal)}${inp.selectedUnit ? ' ' + esc(inp.selectedUnit) : ''}</code>${inp.convertedNote ? ` <em>(${esc(inp.convertedNote)})</em>` : ''}</li>`).join('')}</ul></div>`
+    ? '<section class="explain-section"><div class="explain-section-heading"><span class="explain-eyebrow">01 · INPUTS</span><h4>Given information</h4></div>' +
+      (exp.modeLabel ? '<span class="explain-mode-chip">' + esc(exp.modeLabel) + '</span>' : '') +
+      '<div class="explain-input-grid">' + exp.inputs.map(inp => {
+        const rawValue = inp.rawVal ?? inp.value ?? '';
+        return '<div class="explain-input-card"><span>' + esc(inp.label || 'Input') + '</span><strong>' +
+          esc(explainDisplayValue(rawValue)) + (inp.selectedUnit ? ' <em>' + esc(inp.selectedUnit) + '</em>' : '') +
+          '</strong>' + (inp.convertedNote ? '<small>' + esc(inp.convertedNote) + '</small>' : '') + '</div>';
+      }).join('') + '</div></section>'
     : '';
+
   const formulaHtml = exp.formula
-    ? `<div class="explain-sec"><span class="explain-sec-title">2. Formula & Governing Principle</span><code class="explain-code">${esc(exp.formula)}</code>${exp.principle ? `<div style="margin-top:4px;color:var(--muted)">${esc(exp.principle)}</div>` : ''}</div>`
+    ? '<section class="explain-section"><div class="explain-section-heading"><span class="explain-eyebrow">02 · METHOD</span><h4>Formula used</h4></div>' +
+      '<div class="explain-equation-card"><div class="explain-equation">' + esc(exp.formula) + '</div>' +
+      (exp.principle ? '<p class="explain-principle">' + esc(exp.principle) + '</p>' : '') + '</div></section>'
     : '';
+
   const substHtml = exp.substituted
-    ? `<div class="explain-sec"><span class="explain-sec-title">3. Substitution of Values</span><code class="explain-code">${esc(exp.substituted)}</code></div>`
+    ? '<section class="explain-section"><div class="explain-section-heading"><span class="explain-eyebrow">03 · SUBSTITUTION</span><h4>Putting in your values</h4></div>' +
+      '<div class="explain-equation-card explain-equation-card-muted"><div class="explain-equation">' +
+      esc(exp.substituted) + '</div></div></section>'
     : '';
-  const stepsHtml = exp.steps?.length
-    ? `<div class="explain-sec"><span class="explain-sec-title">4. Step-by-Step Calculation & Intermediate Values</span><ol class="explain-steps">${exp.steps.map(st => `<li>${typeof st === 'string' ? esc(st) : `<b>${esc(st.op || 'Step')}:</b> <code>${esc(st.substituted || st.expr || '')}</code> = <strong>${esc(typeof st.value === 'number' ? fmt(st.value) : st.value ?? '')}</strong>`}</li>`).join('')}</ol></div>`
+
+  const stepContent = buildExplainStepContent(exp);
+  const stepsHtml = stepContent.guided
+    ? '<section class="explain-section"><div class="explain-section-heading"><span class="explain-eyebrow">04 · WORKED STEPS</span><h4>Follow the calculation</h4>' +
+      '<p>Related operations are grouped so the important reasoning is easier to see.</p></div>' +
+      stepContent.guided + stepContent.detailed + '</section>'
     : '';
+
   const finalHtml = exp.finalSummary
-    ? `<div class="explain-sec"><span class="explain-sec-title">5. Final Verified Result & Precision</span><div><strong>${esc(exp.finalSummary)}</strong></div><div style="color:var(--muted);font-size:11.5px;margin-top:3px">Precision: IEEE-754 double-precision (formatted to 12 significant figures / up to 9 decimal places). Displayed result and trace originate from the exact same calculation execution.</div></div>`
+    ? '<section class="explain-final"><span class="explain-final-label">FINAL ANSWER</span><div class="explain-final-value">' +
+      esc(exp.finalSummary) + '</div><p>The result shown here comes from the same calculation used by the result panel.</p></section>'
     : '';
+
   const notesHtml = exp.assumptions
-    ? `<div class="explain-sec"><span class="explain-sec-title">6. Assumptions, Domain & Method Notes</span><div>${esc(exp.assumptions)}</div></div>`
+    ? '<section class="explain-notes"><span class="explain-eyebrow">MORE CONTEXT</span><h4>Assumptions and method notes</h4><p>' +
+      esc(exp.assumptions) + '</p></section>'
     : '';
-  return `<div class="explain-drawer" id="explain-drawer" ${explainOpen ? '' : 'hidden'}><h3><span>✦ Step-by-Step Calculation Explanation</span></h3>${inputsHtml}${formulaHtml}${substHtml}${stepsHtml}${finalHtml}${notesHtml}</div>`;
+
+  return '<section class="explain-drawer" id="explain-drawer" role="region" aria-label="Step-by-step calculation explanation" ' +
+    (explainOpen ? '' : 'hidden') + '><header class="explain-intro"><span class="explain-eyebrow">CALCULATION GUIDE</span>' +
+    '<h3>How this calculation works</h3><p>A clear walkthrough of the inputs, method and result.</p></header>' +
+    inputsHtml + formulaHtml + substHtml + stepsHtml + finalHtml + notesHtml + '</section>';
 }
 
 function updateResults(items, explanation = null, extraHtml = '') {

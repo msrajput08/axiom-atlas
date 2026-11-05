@@ -1,0 +1,1471 @@
+{
+  "capturedAt": "2026-11-05T19:50:03.517Z",
+  "categoryCount": 14,
+  "toolCount": 136,
+  "categories": [
+    "Math & numbers",
+    "Algebra",
+    "Graphing & calculus",
+    "Geometry",
+    "Trigonometry",
+    "Physics",
+    "Linear algebra",
+    "Statistics",
+    "Finance",
+    "Converters",
+    "Computing",
+    "Education",
+    "Date & time",
+    "Everyday"
+  ],
+  "formulaBaselines": {
+    "percentage-calculator": {
+      "category": "Math & numbers",
+      "title": "Percentage Calculator",
+      "inputs": {
+        "p": 15,
+        "n": 240
+      },
+      "outputs": {
+        "Result": 36
+      }
+    },
+    "percent-change": {
+      "category": "Math & numbers",
+      "title": "Percentage Change Calculator",
+      "inputs": {
+        "old": 80,
+        "new": 100
+      },
+      "outputs": {
+        "Change": 20,
+        "Percent change": 25
+      }
+    },
+    "percent-difference": {
+      "category": "Math & numbers",
+      "title": "Percentage Difference Calculator",
+      "inputs": {
+        "a": 64,
+        "b": 80
+      },
+      "outputs": {
+        "Difference": 16,
+        "Percent difference": 22.22222222222222
+      }
+    },
+    "ratio-calculator": {
+      "category": "Math & numbers",
+      "title": "Ratio Calculator",
+      "inputs": {
+        "a": 3,
+        "b": 5
+      },
+      "outputs": {
+        "A/B": 0.6,
+        "A share": 37.5,
+        "B share": 62.5
+      }
+    },
+    "proportion-calculator": {
+      "category": "Math & numbers",
+      "title": "Proportion Calculator",
+      "inputs": {
+        "a": 3,
+        "b": 4,
+        "c": 9
+      },
+      "outputs": {
+        "x": 12
+      }
+    },
+    "weighted-average": {
+      "category": "Math & numbers",
+      "title": "Weighted Average Calculator",
+      "inputs": {
+        "a": 80,
+        "wa": 2,
+        "b": 90,
+        "wb": 3,
+        "c": 70,
+        "wc": 1
+      },
+      "outputs": {
+        "Weighted average": 83.33333333333333
+      }
+    },
+    "nth-root": {
+      "category": "Math & numbers",
+      "title": "Nth Root Calculator",
+      "inputs": {
+        "x": 256,
+        "n": 4
+      },
+      "outputs": {
+        "Root": 4
+      }
+    },
+    "power-calculator": {
+      "category": "Math & numbers",
+      "title": "Power & Exponent Calculator",
+      "inputs": {
+        "a": 2,
+        "b": 8
+      },
+      "outputs": {
+        "Result": 256
+      }
+    },
+    "logarithm-calculator": {
+      "category": "Math & numbers",
+      "title": "Logarithm Calculator",
+      "inputs": {
+        "x": 1000,
+        "b": 10
+      },
+      "outputs": {
+        "Logarithm": 3
+      }
+    },
+    "factorial-calculator": {
+      "category": "Math & numbers",
+      "title": "Factorial Calculator",
+      "inputs": {
+        "n": 6
+      },
+      "outputs": {
+        "Factorial": 720
+      }
+    },
+    "permutation-calculator": {
+      "category": "Math & numbers",
+      "title": "Permutation Calculator",
+      "inputs": {
+        "n": 8,
+        "r": 3
+      },
+      "outputs": {
+        "Permutations": 336
+      }
+    },
+    "combination-calculator": {
+      "category": "Math & numbers",
+      "title": "Combination Calculator",
+      "inputs": {
+        "n": 8,
+        "r": 3
+      },
+      "outputs": {
+        "Combinations": 56
+      }
+    },
+    "gcd-calculator": {
+      "category": "Math & numbers",
+      "title": "GCD Calculator",
+      "inputs": {
+        "a": 84,
+        "b": 30
+      },
+      "outputs": {
+        "GCD": 6
+      }
+    },
+    "lcm-calculator": {
+      "category": "Math & numbers",
+      "title": "LCM Calculator",
+      "inputs": {
+        "a": 12,
+        "b": 18
+      },
+      "outputs": {
+        "LCM": 36
+      }
+    },
+    "modulo-calculator": {
+      "category": "Math & numbers",
+      "title": "Modulo Calculator",
+      "inputs": {
+        "a": 29,
+        "b": 6
+      },
+      "outputs": {
+        "Remainder": 5,
+        "Quotient": 4
+      }
+    },
+    "arithmetic-mean": {
+      "category": "Math & numbers",
+      "title": "Arithmetic Mean Calculator",
+      "inputs": {
+        "a": 10,
+        "b": 15,
+        "c": 25,
+        "d": 30
+      },
+      "outputs": {
+        "Mean": 20,
+        "Sum": 80
+      }
+    },
+    "geometric-mean": {
+      "category": "Math & numbers",
+      "title": "Geometric Mean Calculator",
+      "inputs": {
+        "a": 2,
+        "b": 8,
+        "c": 32
+      },
+      "outputs": {
+        "Geometric mean": 7.999999999999999
+      }
+    },
+    "linear-equation": {
+      "category": "Algebra",
+      "title": "Linear Equation Calculator",
+      "inputs": {
+        "a": 3,
+        "b": 5,
+        "c": 20
+      },
+      "outputs": {
+        "x": 5
+      }
+    },
+    "polynomial-evaluation": {
+      "category": "Algebra",
+      "title": "Polynomial Value Calculator",
+      "inputs": {
+        "a": 2,
+        "b": -3,
+        "c": 4,
+        "d": -7,
+        "x": 2
+      },
+      "outputs": {
+        "P(x)": 5
+      }
+    },
+    "arithmetic-sequence": {
+      "category": "Algebra",
+      "title": "Arithmetic Sequence Calculator",
+      "inputs": {
+        "a": 4,
+        "d": 3,
+        "n": 12
+      },
+      "outputs": {
+        "nth term": 37,
+        "Sum": 246
+      }
+    },
+    "geometric-sequence": {
+      "category": "Algebra",
+      "title": "Geometric Sequence Calculator",
+      "inputs": {
+        "a": 2,
+        "r": 1.5,
+        "n": 8
+      },
+      "outputs": {
+        "nth term": 34.171875,
+        "Sum": 98.515625
+      }
+    },
+    "slope-calculator": {
+      "category": "Algebra",
+      "title": "Slope Calculator",
+      "inputs": {
+        "x1": 2,
+        "y1": 3,
+        "x2": 6,
+        "y2": 11
+      },
+      "outputs": {
+        "Slope": 2,
+        "Rise": 8,
+        "Run": 4
+      }
+    },
+    "midpoint-calculator": {
+      "category": "Algebra",
+      "title": "Midpoint Calculator",
+      "inputs": {
+        "x1": 2,
+        "y1": 6,
+        "x2": 8,
+        "y2": 10
+      },
+      "outputs": {
+        "Midpoint x": 5,
+        "Midpoint y": 8
+      }
+    },
+    "distance-between-points": {
+      "category": "Algebra",
+      "title": "2D Distance Calculator",
+      "inputs": {
+        "x1": 2,
+        "y1": 1,
+        "x2": 8,
+        "y2": 9
+      },
+      "outputs": {
+        "Distance": 10
+      }
+    },
+    "exponential-growth": {
+      "category": "Algebra",
+      "title": "Exponential Growth Calculator",
+      "inputs": {
+        "p": 1000,
+        "r": 5,
+        "t": 3
+      },
+      "outputs": {
+        "Final value": 1161.834242728283,
+        "Change": 161.83424272828307
+      }
+    },
+    "rectangle-calculator": {
+      "category": "Geometry",
+      "title": "Rectangle Calculator",
+      "inputs": {
+        "l": 12,
+        "w": 8
+      },
+      "outputs": {
+        "Area": 96,
+        "Perimeter": 40,
+        "Diagonal": 14.422205101855956
+      }
+    },
+    "square-calculator": {
+      "category": "Geometry",
+      "title": "Square Calculator",
+      "inputs": {
+        "s": 8
+      },
+      "outputs": {
+        "Area": 64,
+        "Perimeter": 32,
+        "Diagonal": 11.313708498984761
+      }
+    },
+    "triangle-calculator": {
+      "category": "Geometry",
+      "title": "Triangle Area Calculator",
+      "inputs": {
+        "b": 12,
+        "h": 7
+      },
+      "outputs": {
+        "Area": 42
+      }
+    },
+    "herons-formula": {
+      "category": "Geometry",
+      "title": "Heron’s Formula Calculator",
+      "inputs": {
+        "a": 5,
+        "b": 6,
+        "c": 7
+      },
+      "outputs": {
+        "Semiperimeter": 9,
+        "Area": 14.696938456699069
+      }
+    },
+    "circle-calculator": {
+      "category": "Geometry",
+      "title": "Circle Calculator",
+      "inputs": {
+        "r": 7
+      },
+      "outputs": {
+        "Area": 153.93804002589985,
+        "Circumference": 43.982297150257104,
+        "Diameter": 14
+      }
+    },
+    "ellipse-calculator": {
+      "category": "Geometry",
+      "title": "Ellipse Calculator",
+      "inputs": {
+        "a": 8,
+        "b": 5
+      },
+      "outputs": {
+        "Area": 125.66370614359172,
+        "Perimeter estimate": 41.38626361137799
+      }
+    },
+    "trapezoid-calculator": {
+      "category": "Geometry",
+      "title": "Trapezoid Area Calculator",
+      "inputs": {
+        "a": 6,
+        "b": 12,
+        "h": 5
+      },
+      "outputs": {
+        "Area": 45
+      }
+    },
+    "parallelogram-calculator": {
+      "category": "Geometry",
+      "title": "Parallelogram Area Calculator",
+      "inputs": {
+        "b": 10,
+        "h": 6,
+        "s": 7
+      },
+      "outputs": {
+        "Area": 60,
+        "Perimeter": 34
+      }
+    },
+    "sector-calculator": {
+      "category": "Geometry",
+      "title": "Circle Sector Calculator",
+      "inputs": {
+        "r": 10,
+        "angle": 60
+      },
+      "outputs": {
+        "Sector area": 52.35987755982988,
+        "Arc length": 10.471975511965978
+      }
+    },
+    "pythagorean-calculator": {
+      "category": "Geometry",
+      "title": "Pythagorean Theorem Calculator",
+      "inputs": {
+        "a": 3,
+        "b": 4
+      },
+      "outputs": {
+        "Hypotenuse": 5
+      }
+    },
+    "cube-calculator": {
+      "category": "Geometry",
+      "title": "Cube Calculator",
+      "inputs": {
+        "a": 6
+      },
+      "outputs": {
+        "Volume": 216,
+        "Surface area": 216,
+        "Space diagonal": 10.392304845413264
+      }
+    },
+    "cuboid-calculator": {
+      "category": "Geometry",
+      "title": "Rectangular Prism Calculator",
+      "inputs": {
+        "l": 8,
+        "w": 4,
+        "h": 3
+      },
+      "outputs": {
+        "Volume": 96,
+        "Surface area": 136,
+        "Diagonal": 9.433981132056603
+      }
+    },
+    "sphere-calculator": {
+      "category": "Geometry",
+      "title": "Sphere Calculator",
+      "inputs": {
+        "r": 5
+      },
+      "outputs": {
+        "Volume": 523.5987755982989,
+        "Surface area": 314.1592653589793
+      }
+    },
+    "cylinder-calculator": {
+      "category": "Geometry",
+      "title": "Cylinder Calculator",
+      "inputs": {
+        "r": 4,
+        "h": 10
+      },
+      "outputs": {
+        "Volume": 502.6548245743669,
+        "Surface area": 351.85837720205683
+      }
+    },
+    "cone-calculator": {
+      "category": "Geometry",
+      "title": "Cone Calculator",
+      "inputs": {
+        "r": 3,
+        "h": 8
+      },
+      "outputs": {
+        "Volume": 75.39822368615503,
+        "Slant height": 8.54400374531753,
+        "Surface area": 108.79967207790783
+      }
+    },
+    "pyramid-calculator": {
+      "category": "Geometry",
+      "title": "Square Pyramid Calculator",
+      "inputs": {
+        "s": 6,
+        "h": 8
+      },
+      "outputs": {
+        "Volume": 96,
+        "Surface area": 138.52804494381036
+      }
+    },
+    "torus-calculator": {
+      "category": "Geometry",
+      "title": "Torus Calculator",
+      "inputs": {
+        "r": 2,
+        "R": 6
+      },
+      "outputs": {
+        "Volume": 473.7410112522892,
+        "Surface area": 473.7410112522892
+      }
+    },
+    "regular-polygon": {
+      "category": "Geometry",
+      "title": "Regular Polygon Calculator",
+      "inputs": {
+        "n": 6,
+        "s": 5
+      },
+      "outputs": {
+        "Perimeter": 30,
+        "Area": 64.9519052838329
+      }
+    },
+    "degree-radian": {
+      "category": "Trigonometry",
+      "title": "Degree to Radian Converter",
+      "inputs": {
+        "d": 180
+      },
+      "outputs": {
+        "Radians": 3.141592653589793,
+        "Turns": 0.5
+      }
+    },
+    "arc-length": {
+      "category": "Trigonometry",
+      "title": "Arc Length Calculator",
+      "inputs": {
+        "r": 7,
+        "deg": 90
+      },
+      "outputs": {
+        "Arc length": 10.995574287564276
+      }
+    },
+    "law-of-cosines": {
+      "category": "Trigonometry",
+      "title": "Law of Cosines Calculator",
+      "inputs": {
+        "a": 7,
+        "b": 9,
+        "C": 60
+      },
+      "outputs": {
+        "Opposite side c": 8.185352771872449
+      }
+    },
+    "law-of-sines": {
+      "category": "Trigonometry",
+      "title": "Law of Sines Calculator",
+      "inputs": {
+        "a": 7,
+        "A": 30,
+        "B": 45
+      },
+      "outputs": {
+        "Side b": 9.899494936611665
+      }
+    },
+    "speed-calculator": {
+      "category": "Physics",
+      "title": "Speed Calculator",
+      "inputs": {
+        "d": 150,
+        "t": 12
+      },
+      "outputs": {
+        "Speed": 12.5,
+        "Speed km/h": 45
+      }
+    },
+    "distance-calculator": {
+      "category": "Physics",
+      "title": "Distance Calculator",
+      "inputs": {
+        "v": 16,
+        "t": 30
+      },
+      "outputs": {
+        "Distance": 480
+      }
+    },
+    "acceleration-calculator": {
+      "category": "Physics",
+      "title": "Acceleration Calculator",
+      "inputs": {
+        "u": 5,
+        "v": 25,
+        "t": 4
+      },
+      "outputs": {
+        "Acceleration": 5
+      }
+    },
+    "displacement-calculator": {
+      "category": "Physics",
+      "title": "Displacement Calculator",
+      "inputs": {
+        "u": 10,
+        "t": 5,
+        "a": 2
+      },
+      "outputs": {
+        "Displacement": 75,
+        "Final speed": 20
+      }
+    },
+    "force-calculator": {
+      "category": "Physics",
+      "title": "Force Calculator",
+      "inputs": {
+        "m": 12,
+        "a": 3
+      },
+      "outputs": {
+        "Force": 36
+      }
+    },
+    "work-calculator": {
+      "category": "Physics",
+      "title": "Work Calculator",
+      "inputs": {
+        "F": 100,
+        "d": 5,
+        "deg": 30
+      },
+      "outputs": {
+        "Work": 433.01270189221935
+      }
+    },
+    "kinetic-energy": {
+      "category": "Physics",
+      "title": "Kinetic Energy Calculator",
+      "inputs": {
+        "m": 10,
+        "v": 6
+      },
+      "outputs": {
+        "Kinetic energy": 180
+      }
+    },
+    "potential-energy": {
+      "category": "Physics",
+      "title": "Gravitational Potential Energy",
+      "inputs": {
+        "m": 5,
+        "g": 9.80665,
+        "h": 10
+      },
+      "outputs": {
+        "Potential energy": 490.3325
+      }
+    },
+    "momentum-calculator": {
+      "category": "Physics",
+      "title": "Momentum Calculator",
+      "inputs": {
+        "m": 8,
+        "v": 4
+      },
+      "outputs": {
+        "Momentum": 32
+      }
+    },
+    "density-calculator": {
+      "category": "Physics",
+      "title": "Density Calculator",
+      "inputs": {
+        "m": 600,
+        "V": 0.3
+      },
+      "outputs": {
+        "Density": 2000
+      }
+    },
+    "pressure-calculator": {
+      "category": "Physics",
+      "title": "Pressure Calculator",
+      "inputs": {
+        "F": 800,
+        "A": 0.4
+      },
+      "outputs": {
+        "Pressure": 2000
+      }
+    },
+    "mechanical-power": {
+      "category": "Physics",
+      "title": "Power Calculator",
+      "inputs": {
+        "W": 1000,
+        "t": 20
+      },
+      "outputs": {
+        "Power": 50
+      }
+    },
+    "ohms-law": {
+      "category": "Physics",
+      "title": "Ohm’s Law Calculator",
+      "inputs": {
+        "V": 12,
+        "R": 6
+      },
+      "outputs": {
+        "Current": 2,
+        "Power": 24
+      }
+    },
+    "electrical-power": {
+      "category": "Physics",
+      "title": "Electrical Power Calculator",
+      "inputs": {
+        "V": 230,
+        "I": 2,
+        "t": 5
+      },
+      "outputs": {
+        "Power": 460,
+        "Energy": 2.3
+      }
+    },
+    "wave-speed": {
+      "category": "Physics",
+      "title": "Wave Speed Calculator",
+      "inputs": {
+        "f": 440,
+        "l": 0.78
+      },
+      "outputs": {
+        "Wave speed": 343.2
+      }
+    },
+    "frequency-period": {
+      "category": "Physics",
+      "title": "Frequency & Period Calculator",
+      "inputs": {
+        "f": 50
+      },
+      "outputs": {
+        "Period": 0.02,
+        "Angular frequency": 314.1592653589793
+      }
+    },
+    "pendulum-period": {
+      "category": "Physics",
+      "title": "Simple Pendulum Calculator",
+      "inputs": {
+        "L": 1,
+        "g": 9.80665
+      },
+      "outputs": {
+        "Period": 2.0064092925890407,
+        "Frequency": 0.4984027953287711
+      }
+    },
+    "projectile-range": {
+      "category": "Physics",
+      "title": "Projectile Motion Calculator",
+      "inputs": {
+        "v": 20,
+        "angle": 45,
+        "g": 9.80665
+      },
+      "outputs": {
+        "Range": 40.78864851911713,
+        "Flight time": 2.8841929963302353,
+        "Maximum height": 10.19716212977928
+      }
+    },
+    "gravitational-force": {
+      "category": "Physics",
+      "title": "Universal Gravitation Calculator",
+      "inputs": {
+        "m1": 1000,
+        "m2": 500,
+        "r": 2
+      },
+      "outputs": {
+        "Force": 0.000008342875
+      }
+    },
+    "heat-energy": {
+      "category": "Physics",
+      "title": "Heat Energy Calculator",
+      "inputs": {
+        "m": 2,
+        "c": 4184,
+        "dT": 10
+      },
+      "outputs": {
+        "Heat energy": 83680
+      }
+    },
+    "ideal-gas": {
+      "category": "Physics",
+      "title": "Ideal Gas Law Calculator",
+      "inputs": {
+        "n": 1,
+        "T": 300,
+        "V": 0.025
+      },
+      "outputs": {
+        "Pressure": 99773.551416
+      }
+    },
+    "buoyant-force": {
+      "category": "Physics",
+      "title": "Buoyant Force Calculator",
+      "inputs": {
+        "rho": 1000,
+        "V": 0.002,
+        "g": 9.80665
+      },
+      "outputs": {
+        "Buoyant force": 19.6133
+      }
+    },
+    "torque-calculator": {
+      "category": "Physics",
+      "title": "Torque Calculator",
+      "inputs": {
+        "r": 0.5,
+        "F": 80,
+        "angle": 90
+      },
+      "outputs": {
+        "Torque": 40
+      }
+    },
+    "spring-force": {
+      "category": "Physics",
+      "title": "Hooke’s Law Calculator",
+      "inputs": {
+        "k": 300,
+        "x": 0.05
+      },
+      "outputs": {
+        "Force magnitude": 15,
+        "Stored energy": 0.37500000000000006
+      }
+    },
+    "centripetal-force": {
+      "category": "Physics",
+      "title": "Centripetal Force Calculator",
+      "inputs": {
+        "m": 2,
+        "v": 10,
+        "r": 5
+      },
+      "outputs": {
+        "Force": 40,
+        "Acceleration": 20
+      }
+    },
+    "snells-law": {
+      "category": "Physics",
+      "title": "Snell’s Law Calculator",
+      "inputs": {
+        "n1": 1,
+        "n2": 1.5,
+        "ang": 30
+      },
+      "outputs": {
+        "Refracted angle": 19.47122063449069
+      }
+    },
+    "thin-lens": {
+      "category": "Physics",
+      "title": "Thin Lens Equation Calculator",
+      "inputs": {
+        "f": 10,
+        "o": 30
+      },
+      "outputs": {
+        "Image distance": 14.999999999999996,
+        "Magnification": -0.4999999999999999
+      }
+    },
+    "z-score": {
+      "category": "Statistics",
+      "title": "Z-Score Calculator",
+      "inputs": {
+        "x": 85,
+        "mean": 70,
+        "sd": 10
+      },
+      "outputs": {
+        "Z-score": 1.5
+      }
+    },
+    "standard-error": {
+      "category": "Statistics",
+      "title": "Standard Error Calculator",
+      "inputs": {
+        "sd": 12,
+        "n": 64
+      },
+      "outputs": {
+        "Standard error": 1.5
+      }
+    },
+    "confidence-interval": {
+      "category": "Statistics",
+      "title": "95% Confidence Interval Calculator",
+      "inputs": {
+        "mean": 120,
+        "sd": 20,
+        "n": 100
+      },
+      "outputs": {
+        "Lower bound": 116.08,
+        "Upper bound": 123.92,
+        "Margin": 3.9200000000000004
+      }
+    },
+    "probability-calculator-basic": {
+      "category": "Statistics",
+      "title": "Basic Probability Calculator",
+      "inputs": {
+        "p": 0.25
+      },
+      "outputs": {
+        "Complement": 0.75,
+        "Odds for": 0.3333333333333333
+      }
+    },
+    "simple-interest": {
+      "category": "Finance",
+      "title": "Simple Interest Calculator",
+      "inputs": {
+        "p": 10000,
+        "r": 8,
+        "t": 3
+      },
+      "outputs": {
+        "Interest": 2400,
+        "Final balance": 12400
+      }
+    },
+    "compound-interest": {
+      "category": "Finance",
+      "title": "Compound Interest Calculator",
+      "inputs": {
+        "p": 10000,
+        "r": 8,
+        "n": 12,
+        "t": 5
+      },
+      "outputs": {
+        "Final balance": 14898.457083016048,
+        "Interest": 4898.457083016048
+      }
+    },
+    "emi-calculator": {
+      "category": "Finance",
+      "title": "Loan EMI Calculator",
+      "inputs": {
+        "p": 500000,
+        "r": 9,
+        "years": 5
+      },
+      "outputs": {
+        "Monthly EMI": 10379.177613176937,
+        "Total paid": 622750.6567906162,
+        "Total interest": 122750.65679061622
+      }
+    },
+    "sip-calculator": {
+      "category": "Finance",
+      "title": "SIP Investment Calculator",
+      "inputs": {
+        "p": 5000,
+        "r": 12,
+        "t": 10
+      },
+      "outputs": {
+        "Future value": 1161695.3817597027,
+        "Contributions": 600000,
+        "Estimated growth": 561695.3817597027
+      }
+    },
+    "roi-calculator": {
+      "category": "Finance",
+      "title": "ROI Calculator",
+      "inputs": {
+        "cost": 12000,
+        "value": 15000
+      },
+      "outputs": {
+        "Net gain": 3000,
+        "ROI": 25
+      }
+    },
+    "cagr-calculator": {
+      "category": "Finance",
+      "title": "CAGR Calculator",
+      "inputs": {
+        "initial": 10000,
+        "final": 18000,
+        "years": 5
+      },
+      "outputs": {
+        "CAGR": 12.474611314209483
+      }
+    },
+    "discount-calculator": {
+      "category": "Finance",
+      "title": "Discount Calculator",
+      "inputs": {
+        "price": 1500,
+        "off": 20
+      },
+      "outputs": {
+        "You save": 300,
+        "Final price": 1200
+      }
+    },
+    "tax-calculator": {
+      "category": "Finance",
+      "title": "GST / Sales Tax Calculator",
+      "inputs": {
+        "price": 1000,
+        "rate": 18
+      },
+      "outputs": {
+        "Tax": 180,
+        "Total with tax": 1180
+      }
+    },
+    "profit-margin": {
+      "category": "Finance",
+      "title": "Profit Margin Calculator",
+      "inputs": {
+        "cost": 120,
+        "sell": 180
+      },
+      "outputs": {
+        "Gross profit": 60,
+        "Margin": 33.333333333333336,
+        "Markup": 50
+      }
+    },
+    "break-even": {
+      "category": "Finance",
+      "title": "Break-Even Calculator",
+      "inputs": {
+        "fixed": 50000,
+        "price": 400,
+        "variable": 250
+      },
+      "outputs": {
+        "Break-even units": 334,
+        "Contribution margin": 150
+      }
+    },
+    "inflation-calculator": {
+      "category": "Finance",
+      "title": "Inflation Calculator",
+      "inputs": {
+        "price": 1000,
+        "infl": 5,
+        "years": 10
+      },
+      "outputs": {
+        "Future equivalent": 1628.8946267774422,
+        "Purchasing power": 613.9132535407591
+      }
+    },
+    "present-value": {
+      "category": "Finance",
+      "title": "Present Value Calculator",
+      "inputs": {
+        "future": 10000,
+        "r": 8,
+        "years": 5
+      },
+      "outputs": {
+        "Present value": 6805.831970337529
+      }
+    },
+    "future-value-annuity": {
+      "category": "Finance",
+      "title": "Future Value of Annuity",
+      "inputs": {
+        "p": 200,
+        "r": 1,
+        "n": 24
+      },
+      "outputs": {
+        "Future value": 5394.692970638295
+      }
+    },
+    "rule-of-72": {
+      "category": "Finance",
+      "title": "Rule of 72 Calculator",
+      "inputs": {
+        "r": 8
+      },
+      "outputs": {
+        "Estimated years to double": 9
+      }
+    },
+    "tip-calculator": {
+      "category": "Finance",
+      "title": "Tip & Bill Split Calculator",
+      "inputs": {
+        "bill": 850,
+        "tip": 10,
+        "people": 3
+      },
+      "outputs": {
+        "Total tip": 85,
+        "Total bill": 935.0000000000001,
+        "Per person": 311.6666666666667
+      }
+    },
+    "attendance-calculator": {
+      "category": "Education",
+      "title": "Attendance Calculator",
+      "inputs": {
+        "att": 56,
+        "total": 75,
+        "target": 75
+      },
+      "outputs": {
+        "Current attendance": 74.66666666666667,
+        "Additional classes needed": 1
+      }
+    },
+    "cgpa-percentage": {
+      "category": "Education",
+      "title": "CGPA to Percentage Calculator",
+      "inputs": {
+        "cgpa": 8.5,
+        "factor": 9.5
+      },
+      "outputs": {
+        "Estimated percentage": 80.75
+      }
+    },
+    "grade-percentage": {
+      "category": "Education",
+      "title": "Marks Percentage Calculator",
+      "inputs": {
+        "obtained": 428,
+        "maxmarks": 500
+      },
+      "outputs": {
+        "Percentage": 85.6
+      }
+    },
+    "target-grade": {
+      "category": "Education",
+      "title": "Target Exam Score Calculator",
+      "inputs": {
+        "current": 75,
+        "weight": 60,
+        "target": 85
+      },
+      "outputs": {
+        "Required remaining score": 100
+      }
+    },
+    "study-time-calculator": {
+      "category": "Education",
+      "title": "Study Time Calculator",
+      "inputs": {
+        "minutes": 45,
+        "days": 5,
+        "weeks": 8
+      },
+      "outputs": {
+        "Hours total": 30,
+        "Sessions": 40
+      }
+    },
+    "download-time": {
+      "category": "Computing",
+      "title": "Download Time Calculator",
+      "inputs": {
+        "size": 1500,
+        "speed": 40
+      },
+      "outputs": {
+        "Estimated seconds": 300,
+        "Estimated minutes": 5
+      }
+    },
+    "data-size-calculator": {
+      "category": "Computing",
+      "title": "Data Storage Calculator",
+      "inputs": {
+        "gb": 4
+      },
+      "outputs": {
+        "Megabytes": 4000,
+        "Kilobytes": 4000000,
+        "Bytes": 4000000000
+      }
+    },
+    "pixel-density": {
+      "category": "Computing",
+      "title": "PPI Calculator",
+      "inputs": {
+        "w": 1920,
+        "h": 1080,
+        "d": 15.6
+      },
+      "outputs": {
+        "PPI": 141.21199808219862
+      }
+    },
+    "aspect-ratio": {
+      "category": "Computing",
+      "title": "Aspect Ratio Calculator",
+      "inputs": {
+        "w": 1920,
+        "h": 1080,
+        "neww": 1280
+      },
+      "outputs": {
+        "Aspect (w/h)": 1.7777777777777777,
+        "New height": 720
+      }
+    },
+    "electricity-cost": {
+      "category": "Computing",
+      "title": "Electricity Cost Calculator",
+      "inputs": {
+        "W": 1000,
+        "hours": 5,
+        "days": 30,
+        "rate": 8
+      },
+      "outputs": {
+        "Energy consumed": 150,
+        "Estimated cost": 1200
+      }
+    },
+    "resistor-series": {
+      "category": "Computing",
+      "title": "Series Resistors Calculator",
+      "inputs": {
+        "a": 100,
+        "b": 220,
+        "c": 330
+      },
+      "outputs": {
+        "Equivalent resistance": 650
+      }
+    },
+    "resistor-parallel": {
+      "category": "Computing",
+      "title": "Parallel Resistors Calculator",
+      "inputs": {
+        "a": 100,
+        "b": 220,
+        "c": 330
+      },
+      "outputs": {
+        "Equivalent resistance": 56.896551724137936
+      }
+    },
+    "frequency-wavelength": {
+      "category": "Computing",
+      "title": "Frequency to Wavelength",
+      "inputs": {
+        "f": 100000000
+      },
+      "outputs": {
+        "Wavelength": 2.99792458
+      }
+    },
+    "compression-ratio": {
+      "category": "Computing",
+      "title": "Compression Ratio Calculator",
+      "inputs": {
+        "original": 2000000,
+        "compressed": 750000
+      },
+      "outputs": {
+        "Ratio": 2.6666666666666665,
+        "Size reduction": 62.5
+      }
+    },
+    "fuel-cost": {
+      "category": "Everyday",
+      "title": "Fuel Cost Calculator",
+      "inputs": {
+        "km": 350,
+        "kmpl": 16,
+        "price": 105
+      },
+      "outputs": {
+        "Fuel required": 21.875,
+        "Total cost": 2296.875
+      }
+    },
+    "bmi-calculator": {
+      "category": "Everyday",
+      "title": "BMI Calculator",
+      "inputs": {
+        "kg": 70,
+        "cm": 175
+      },
+      "outputs": {
+        "BMI": 22.857142857142858
+      }
+    },
+    "recipe-scaler": {
+      "category": "Everyday",
+      "title": "Recipe Scaling Calculator",
+      "inputs": {
+        "q": 250,
+        "old": 4,
+        "new": 7
+      },
+      "outputs": {
+        "Required quantity": 437.5
+      }
+    },
+    "pace-calculator": {
+      "category": "Everyday",
+      "title": "Running Pace Calculator",
+      "inputs": {
+        "distance": 5,
+        "minutes": 30
+      },
+      "outputs": {
+        "Pace": 6,
+        "Speed": 10
+      }
+    },
+    "paint-coverage": {
+      "category": "Everyday",
+      "title": "Paint Coverage Calculator",
+      "inputs": {
+        "area": 65,
+        "coverage": 10,
+        "coats": 2
+      },
+      "outputs": {
+        "Paint required": 13
+      }
+    },
+    "tile-calculator": {
+      "category": "Everyday",
+      "title": "Tile Quantity Calculator",
+      "inputs": {
+        "floor": 15,
+        "tilew": 0.6,
+        "tileh": 0.6,
+        "waste": 10
+      },
+      "outputs": {
+        "Tiles required": 46
+      }
+    }
+  },
+  "specializedBaselines": {
+    "scientific-calculator": 1,
+    "equation-solver": [
+      2,
+      3
+    ],
+    "quadratic-equation-real": [
+      "2",
+      "3"
+    ],
+    "quadratic-equation-complex": [
+      "0 + 2i",
+      "0 − 2i"
+    ],
+    "linear-system": {
+      "det": 3,
+      "answer": [
+        [
+          1.3333333333333333
+        ],
+        [
+          2.3333333333333335
+        ]
+      ]
+    },
+    "expression-simplifier": 49,
+    "derivative-calculator": 3.583853163480199,
+    "integral-calculator": 4.082813503213933,
+    "limit-calculator": 0.9999999983333334,
+    "matrix-calculator-mul": [
+      [
+        2,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "matrix-calculator-inv": [
+      [
+        0.6666666666666666,
+        -0.3333333333333333
+      ],
+      [
+        -0.3333333333333333,
+        0.6666666666666666
+      ]
+    ],
+    "matrix-calculator-det": [
+      [
+        3
+      ]
+    ],
+    "statistics-calculator": {
+      "Count": 8,
+      "Sum": 179,
+      "Mean": 22.375,
+      "Median": 22,
+      "Mode": "22",
+      "Minimum": 12,
+      "Maximum": 35,
+      "Range": 23,
+      "Population variance": 50.734375,
+      "Sample variance": 57.982142857142854,
+      "Population std. deviation": 7.122806679954188,
+      "Sample std. deviation": 7.614600636746674,
+      "Q1": 16.5,
+      "Q3": 27.5
+    },
+    "unit-converter-length": 1000,
+    "unit-converter-temp": 212,
+    "fraction-calculator": "17/12",
+    "prime-checker-101": true,
+    "prime-checker-91": false
+  }
+}

@@ -1,1 +1,13 @@
+/categories/math-numbers/* /categories/mathematics/ 301
+/categories/graphing-calculus/* /categories/calculus-graphing/ 301
+/categories/geometry/* /categories/geometry-trigonometry/ 301
+/categories/trigonometry/* /categories/geometry-trigonometry/ 301
+/categories/physics/* /categories/physics-engineering/ 301
+/categories/linear-algebra/* /categories/algebra/ 301
+/categories/statistics/* /categories/statistics-probability/ 301
+/categories/converters/* /categories/converters-everyday-tools/ 301
+/categories/computing/* /categories/converters-everyday-tools/ 301
+/categories/education/* /categories/converters-everyday-tools/ 301
+/categories/date-time/* /categories/converters-everyday-tools/ 301
+/categories/everyday/* /categories/converters-everyday-tools/ 301
 /tools/* /tools/:splat 200

@@ -1,0 +1,10 @@
+{
+  "name": "axiom-atlas",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "python3 scripts/rebuild.py",
+    "test": "node tests/run_all_tests.mjs"
+  }
+}

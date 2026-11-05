@@ -180,9 +180,26 @@ export function eigenvaluesEigenvectors(A) {
       Ak = matrixOp(R, Q, 'multiply');
     }
   }
-  const eigs = Ak.map((r, i) => (Math.abs(r[i]) < 1e-11 ? 0 : r[i])).sort((a, b) => b - a);
+  const rawEigs = [];
+  let idx = 0;
+  while (idx < n) {
+    if (idx < n - 1 && Math.abs(Ak[idx + 1][idx]) > 1e-4) {
+      const a11 = Ak[idx][idx], a12 = Ak[idx][idx + 1], a21 = Ak[idx + 1][idx], a22 = Ak[idx + 1][idx + 1];
+      const tr2 = a11 + a22, det2 = a11 * a22 - a12 * a21, disc2 = tr2 * tr2 - 4 * det2;
+      if (disc2 < 0) {
+        const re = tr2 / 2, im = Math.sqrt(-disc2) / 2;
+        rawEigs.push(`${fmt(re)} + ${fmt(im)}i`, `${fmt(re)} − ${fmt(im)}i`);
+        idx += 2;
+        continue;
+      }
+    }
+    rawEigs.push(Math.abs(Ak[idx][idx]) < 1e-11 ? 0 : Ak[idx][idx]);
+    idx++;
+  }
+  const eigs = rawEigs.every(x => typeof x === 'number') ? rawEigs.sort((a, b) => b - a) : rawEigs;
   const vecs = eigs.map(lam => {
     // Solve (A - (lam + 1e-9)I) v = [1, 1, ..., 1]^T (1-step shifted inverse iteration)
+    if (typeof lam !== 'number') return '[Complex conjugate eigenvector]';
     const M = A.map((r, i) => r.map((v, j) => (i === j ? v - lam - 1e-8 : v)));
     const b = Array.from({ length: n }, (_, i) => [1 + 0.1 * i]);
     try {
@@ -242,16 +259,18 @@ export function svdDecomposition(A) {
     vCol: V.map(r => r[j])
   })).sort((a, b) => b.sigma - a.sigma);
 
-  const singularValues = pairs.map(p => (p.sigma < 1e-12 ? 0 : p.sigma));
+  const rankMax = Math.min(m, n);
+  const sMax = pairs[0]?.sigma || 0;
+  const tol = Math.max(1e-11, sMax * 1e-7);
+  const singularValues = pairs.slice(0, rankMax).map(p => (p.sigma < tol ? 0 : p.sigma));
   const Vsorted = Array.from({ length: n }, (_, r) => Array.from({ length: n }, (__, c) => pairs[c].vCol[r]));
   const AV = matrixOp(A, Vsorted, 'multiply');
   const U = Array.from({ length: m }, (_, r) =>
-    Array.from({ length: n }, (__, c) => (singularValues[c] > 1e-12 ? AV[r][c] / singularValues[c] : (r === c ? 1 : 0)))
+    Array.from({ length: rankMax }, (__, c) => (singularValues[c] > tol ? AV[r][c] / singularValues[c] : (r === c ? 1 : 0)))
   );
-  const sMax = singularValues[0] || 0;
-  const nonZeroS = singularValues.filter(s => s > 1e-11);
-  const sMin = nonZeroS.length === n ? singularValues[n - 1] : 0;
-  const cond = sMin > 1e-12 ? sMax / sMin : Infinity;
+  const nonZeroS = singularValues.filter(s => s > tol);
+  const sMin = nonZeroS.length === rankMax ? singularValues[rankMax - 1] : 0;
+  const cond = sMin > tol ? sMax / sMin : Infinity;
   return { U, singularValues, V: Vsorted, conditionNumber: cond, rank: nonZeroS.length };
 }
 
@@ -540,13 +559,28 @@ export function calcXirr(cashFlows, datesMs) {
   const d0 = datesMs[0];
   const years = datesMs.map(d => (d - d0) / (365 * 86400000));
   const f = r => cashFlows.reduce((s, cf, i) => s + cf / Math.pow(1 + r, years[i]), 0);
-  let lo = -0.9, hi = 5.0;
-  for (let i = 0; i < 80; i++) {
-    const mid = (lo + hi) / 2;
-    if (f(lo) * f(mid) <= 0) hi = mid;
-    else lo = mid;
+  let lo = -0.95, hi = 10.0, fLo = f(lo), bracketed = false;
+  for (let step = -0.9; step <= 10.0; step += 0.05) {
+    const fVal = f(step);
+    if (fLo * fVal <= 0) { hi = step; bracketed = true; break; }
+    lo = step; fLo = fVal;
   }
-  return ((lo + hi) / 2) * 100;
+  if (!bracketed && f(lo) * f(hi) > 0) {
+    throw Error('XIRR did not converge to a real rate of return in [−95%, +1000%]');
+  }
+  let a = lo, b = hi, fa = f(a);
+  for (let i = 0; i < 90; i++) {
+    const mid = (a + b) / 2, fm = f(mid);
+    if (Math.abs(fm) < 1e-11) { a = b = mid; break; }
+    if (fa * fm <= 0) b = mid;
+    else { a = mid; fa = fm; }
+  }
+  const root = (a + b) / 2;
+  const scale = Math.max(1, ...cashFlows.map(Math.abs));
+  if (Math.abs(f(root)) > 1e-3 * scale) {
+    throw Error('XIRR iterative solver failed to converge within tolerance');
+  }
+  return root * 100;
 }
 
 export function calcBondValuation(faceValue, couponRatePct, ytmPct, yearsToMaturity, freq = 2) {

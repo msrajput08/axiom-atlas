@@ -24,12 +24,35 @@ export const CONSTANTS = {
 };
 
 export function erf(x) {
+  if (!Number.isFinite(x)) return x < 0 ? -1 : (x > 0 ? 1 : NaN);
+  if (x === 0) return 0;
   const sign = x < 0 ? -1 : 1;
   x = Math.abs(x);
-  const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
-  const t = 1 / (1 + p * x);
-  const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
-  return sign * y;
+  if (x >= 6.5) return sign;
+  if (x < 3.2) {
+    // Power series: erf(x) = (2/sqrt(pi)) * e^(-x^2) * sum_{n=0}^inf (2^n x^(2n+1)) / (1*3*...*(2n+1))
+    const x2 = x * x;
+    let term = x, sum = x;
+    for (let n = 1; n <= 85; n++) {
+      term *= (2 * x2) / (2 * n + 1);
+      sum += term;
+      if (term < sum * 1e-16) break;
+    }
+    return sign * (2 / Math.sqrt(Math.PI)) * Math.exp(-x2) * sum;
+  }
+  // Continued fraction for erfc(x) when x >= 3.2
+  let a = 1, b = x, c = x, d = 1 / (x * x + 0.5), h = d;
+  for (let n = 1; n <= 60; n++) {
+    const an = n * 0.5;
+    // Lentz continued fraction for exp(x^2)*sqrt(pi)*erfc(x)
+  }
+  // Laplace continued fraction for erfc(x)
+  let f = 0;
+  for (let n = 30; n >= 1; n--) {
+    f = (n * 0.5) / (x + f);
+  }
+  const erfcVal = Math.exp(-x * x) / (Math.sqrt(Math.PI) * (x + f));
+  return sign * (1 - erfcVal);
 }
 
 export function lgamma(z) {
@@ -63,18 +86,26 @@ function snapTrigZero(v) {
 
 function gcdPair(a, b) {
   if (!Number.isFinite(a) || !Number.isFinite(b)) throw Error('GCD requires finite numbers');
-  a = Math.round(Math.abs(a));
-  b = Math.round(Math.abs(b));
-  if (!Number.isSafeInteger(a) || !Number.isSafeInteger(b)) throw Error('GCD requires safe integers');
-  while (b) { [a, b] = [b, a % b]; }
-  return a;
+  a = Math.abs(a);
+  b = Math.abs(b);
+  let scale = 1;
+  while ((!Number.isInteger(Math.round(a * scale * 1e6) / 1e6) || !Number.isInteger(Math.round(b * scale * 1e6) / 1e6)) && scale < 1e6) {
+    scale *= 10;
+  }
+  let ia = Math.round(a * scale);
+  let ib = Math.round(b * scale);
+  if (!Number.isSafeInteger(ia) || !Number.isSafeInteger(ib)) throw Error('GCD requires safe integers');
+  while (ib) { [ia, ib] = [ib, ia % ib]; }
+  return ia / scale;
 }
 
 function lcmPair(a, b) {
-  a = Math.round(Math.abs(a));
-  b = Math.round(Math.abs(b));
+  if (!Number.isFinite(a) || !Number.isFinite(b)) throw Error('LCM requires finite numbers');
+  a = Math.abs(a);
+  b = Math.abs(b);
   if (a === 0 || b === 0) return 0;
-  return (a / gcdPair(a, b)) * b;
+  const g = gcdPair(a, b);
+  return (a / g) * b;
 }
 
 export const known = {
@@ -898,7 +929,7 @@ export const unitGroups = {
   Speed: { 'm/s': 1, 'km/h': 1 / 3.6, mph: 0.44704, knot: 0.5144444444, 'ft/s': 0.3048, 'cm/s': 0.01 },
   Acceleration: { 'm/s²': 1, 'cm/s²': 0.01, 'ft/s²': 0.3048, 'g₀': 9.80665 },
   Time: { s: 1, ms: 0.001, 'µs': 1e-6, ns: 1e-9, min: 60, h: 3600, day: 86400, week: 604800, year: 31557600 },
-  Temperature: { '°C': 1, '°F': 1, K: 1 },
+  Temperature: { '°C': 1, '°F': 1, K: 1, C: 1, F: 1 },
   Pressure: { Pa: 1, kPa: 1000, MPa: 1e6, GPa: 1e9, bar: 1e5, mbar: 100, atm: 101325, psi: 6894.757293178, torr: 133.322368421, mmHg: 133.322387415 },
   Energy: { J: 1, kJ: 1000, MJ: 1e6, mJ: 0.001, cal: 4.184, kcal: 4184, Wh: 3600, kWh: 3.6e6, eV: 1.602176634e-19, keV: 1.602176634e-16, MeV: 1.602176634e-13, BTU: 1055.05585262, 'ft·lbf': 1.35581794833 },
   Power: { W: 1, mW: 0.001, kW: 1000, MW: 1e6, GW: 1e9, hp: 745.69987158, 'BTU/h': 0.29307107 },
@@ -932,9 +963,10 @@ export function convertUnit(group, num, from, to) {
   if (!Number.isFinite(num)) throw Error('Enter a finite number');
   if (from === to) return num;
   if (group === 'Temperature') {
-    const c = from === '°C' ? num : from === '°F' ? (num - 32) * (5 / 9) : num - 273.15;
+    const fU = from.replace('°', ''), tU = to.replace('°', '');
+    const c = fU === 'C' ? num : fU === 'F' ? (num - 32) * (5 / 9) : num - 273.15;
     if (c < -273.15 - 1e-8) throw Error('Temperature cannot be below absolute zero (0 K / −273.15 °C)');
-    return to === '°C' ? c : to === '°F' ? (c * 9) / 5 + 32 : c + 273.15;
+    return tU === 'C' ? c : tU === 'F' ? (c * 9) / 5 + 32 : c + 273.15;
   }
   const g = unitGroups[group];
   if (!g || !Object.prototype.hasOwnProperty.call(g, from) || !Object.prototype.hasOwnProperty.call(g, to)) {

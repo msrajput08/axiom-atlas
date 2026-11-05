@@ -144,6 +144,7 @@ function updateResults(items, explanation = null, extraHtml = '') {
 }
 
 function fail(message, conditionHint = '') {
+  currentExplanation = null;
   const target = $('#result-display');
   if (!target) return;
   const hint = conditionHint || 'Verify that all required fields contain valid numbers within the mathematical or physical domain of this calculator.';
@@ -470,17 +471,67 @@ function validateFormula(t, v, modeId = '') {
     const crit = v.n1 > v.n2 ? ((Math.asin(v.n2 / v.n1) * 180) / Math.PI).toFixed(2) : 'N/A';
     throw Error(`Total Internal Reflection occurs! Incident angle (${v.ang}°) exceeds the critical angle θ_c = ${crit}°.`);
   }
+  if (slug === 'weighted-average' && (v.wa + v.wb + v.wc === 0)) {
+    throw Error('Sum of weights (wa + wb + wc) cannot be zero');
+  }
+  if ((slug === '2d-geometry-calculator' && modeId === 'sector') || slug === 'sector-calculator' || slug === 'arc-length') {
+    const ang = v.angle ?? v.deg;
+    if (ang <= 0 || ang > 360) throw Error('Central angle θ must lie between 0° (exclusive) and 360° (inclusive)');
+  }
+  if (slug === 'bayesian-probability-calculator') {
+    if ([v.pA, v.pBA, v.pBnotA].some(x => x < 0 || x > 1)) throw Error('All probabilities P(A), P(B|A), and P(B|¬A) must lie in [0, 1]');
+    if (v.pBA * v.pA + v.pBnotA * (1 - v.pA) <= 0) throw Error('Marginal probability P(B) cannot be zero');
+  }
+  if (slug === 'investment-returns-calculator') {
+    if (modeId === 'cagr' && (v.initial <= 0 || v.final < 0 || v.years <= 0)) throw Error('CAGR requires initial > 0, final ≥ 0, and years > 0');
+    if (modeId === 'roi' && v.cost <= 0) throw Error('ROI requires initial investment cost > 0');
+    if (modeId === 'rule72' && v.r <= 0) throw Error('Rule of 72 requires a positive annual growth rate r > 0');
+  }
+  if (slug === 'price-tax-calculator' && v.off !== undefined && (v.off < 0 || v.off > 100)) {
+    throw Error('Discount percentage must lie between 0% and 100%');
+  }
+  if (slug === 'portfolio-risk-calculator' && (v.sd1 < 0 || v.sd2 < 0 || v.rho < -1 || v.rho > 1 || v.val <= 0)) {
+    throw Error('Require non-negative volatilities, correlation ρ ∈ [−1, 1], and portfolio value > 0');
+  }
+  if (slug === 'gpa-cgpa-calculator' && (v.cgpa < 0 || v.cgpa > 10 || v.factor <= 0)) {
+    throw Error('Require CGPA between 0 and 10 and positive multiplier');
+  }
+  if (slug === 'exam-target-calculator' && (v.weight <= 0 || v.weight >= 100 || v.current < 0 || v.current > 100 || v.target < 0 || v.target > 100)) {
+    throw Error('Require percentages in [0, 100] and completed weight strictly between 0% and 100%');
+  }
   // General physics positive mass / resistance / Kelvin checks
   if (t.category === 'Physics & Engineering') {
     for (const k of ['m', 'm1', 'm2', 'M', 'M1', 'M2']) {
       if (v[k] !== undefined && v[k] <= 0) throw Error(`Mass (${k}) must be strictly positive (> 0)`);
     }
-    for (const k of ['R', 'r1', 'r2', 'L', 'C', 'V', 'A', 'D', 'D1', 'D2']) {
-      if (v[k] !== undefined && v[k] <= 0 && !['V'].includes(k)) {
-        if (k === 'R' || k === 'C' || k === 'L' || k === 'A' || k === 'D' || k === 'D1' || k === 'D2') {
+    if (slug === 'moment-of-inertia-calculator' && modeId === 'hollow_cyl') {
+      if (v.r1 < 0 || v.r2 <= 0 || v.r1 >= v.r2) throw Error('Hollow cylinder requires 0 ≤ inner radius r₁ < outer radius r₂');
+    }
+    for (const k of ['R', 'r', 'r2', 'L', 'L0', 'C', 'A', 'D', 'D1', 'D2', 'd', 'f', 'f0', 'T', 'l']) {
+      if (v[k] !== undefined && v[k] <= 0 && !(slug === 'spring-force' || slug === 'work-calculator' || slug === 'work-energy-theorem-calculator')) {
+        if (['R', 'r', 'r2', 'L', 'L0', 'C', 'A', 'D', 'D1', 'D2', 'f', 'f0', 'T', 'l'].includes(k)) {
           throw Error(`Physical parameter (${k}) must be strictly positive (> 0)`);
         }
       }
+    }
+    if (slug === 'elastic-inelastic-collision-calculator' && modeId === 'inelastic' && (v.e < 0 || v.e > 1)) {
+      throw Error('Coefficient of restitution e must lie between 0 and 1');
+    }
+    if (slug === 'doppler-effect-calculator') {
+      if (v.v <= 0 || v.f0 <= 0) throw Error('Wave speed v and source frequency f₀ must be positive');
+      if (v.vs >= v.v) throw Error('Source speed v_s equals or exceeds wave speed v (supersonic shock wave — classical Doppler formula requires v_s < v)');
+    }
+    if ((slug === 'transformer-calculator' || slug === 'hydraulic-power-calculator') && (v.eff <= 0 || v.eff > 100)) {
+      throw Error('Efficiency η must lie between 0% (exclusive) and 100% (inclusive)');
+    }
+    if (slug === 'power-factor-calculator' && (v.P <= 0 || v.pf1 <= 0 || v.pf1 > 1 || v.pf2 <= 0 || v.pf2 > 1 || v.pf1 > v.pf2)) {
+      throw Error('Require P > 0 and power factors 0 < PF₁ ≤ PF₂ ≤ 1');
+    }
+    if (slug === 'three-phase-power-calculator' && (v.VL <= 0 || v.IL <= 0 || v.pf <= 0 || v.pf > 1)) {
+      throw Error('Require V_L > 0, I_L > 0, and power factor cos(φ) in (0, 1]');
+    }
+    if (slug === 'heat-engine-efficiency-calculator' && (v.QH <= 0 || v.QC < 0 || v.QC > v.QH || v.TC <= 0 || v.TH <= v.TC)) {
+      throw Error('Require Q_H > 0, 0 ≤ Q_C ≤ Q_H, and 0 K < T_C < T_H');
     }
     if (slug === 'resistance-network-calculator' || slug === 'resistor-series' || slug === 'resistor-parallel' || slug === 'capacitor-network-calculator') {
       if (val('a', 'b', 'c', 'c1', 'c2', 'c3').some(x => x <= 0)) {
@@ -884,7 +935,7 @@ function extGcd(a, b) {
     const nextS = oldS - q * s; oldS = s; s = nextS;
     const nextT = oldT - q * t; oldT = t; t = nextT;
   }
-  return { g: oldR || 1, x: a < 0 ? -oldS : oldS, y: b < 0 ? -oldT : oldT, steps };
+  return { g: oldR, x: a < 0 ? -oldS : oldS, y: b < 0 ? -oldT : oldT, steps };
 }
 
 function mean_suite() {
@@ -958,25 +1009,40 @@ function number_theory(t, initialMode) {
   function calc() {
     evalSafe(() => {
       if (active === 'gcd_lcm') {
-        const arr = parseNumberList($('[data-field=nums]').value).map(v => Math.round(Math.abs(v)));
-        if (arr.length < 2) throw Error('Enter at least two integers');
-        const g = known.gcd(...arr);
-        const l = known.lcm(...arr);
-        const bez = extGcd(arr[0], arr[1]);
+        const rawArr = parseNumberList($('[data-field=nums]').value);
+        if (rawArr.length < 2 || rawArr.some(v => !Number.isInteger(v))) throw Error('Enter at least two integers');
+        const g = known.gcd(...rawArr);
+        const l = known.lcm(...rawArr);
+        const bez = extGcd(rawArr[0], rawArr[1]);
         updateResults([
           { label: 'Greatest Common Divisor (GCD)', value: g },
           { label: 'Least Common Multiple (LCM)', value: l },
-          { label: `Bézout Identity for (${arr[0]}, ${arr[1]})`, value: `${arr[0]}·(${bez.x}) + ${arr[1]}·(${bez.y}) = ${bez.g}` }
+          { label: `Bézout Identity for (${rawArr[0]}, ${rawArr[1]})`, value: `${rawArr[0]}·(${bez.x}) + ${rawArr[1]}·(${bez.y}) = ${bez.g}` }
         ], {
-          inputs: [{ label: 'Integers', rawVal: arr.join(', ') }],
-          formula: 'gcd(a,b) via Euclidean algorithm; lcm(a,b) = |a·b|/gcd(a,b)',
-          substituted: `gcd(${arr.join(', ')}) = ${g}, lcm(${arr.join(', ')}) = ${l}`,
-          steps: bez.steps,
-          finalSummary: `GCD = ${g}, LCM = ${l}`
+          inputs: [{ label: 'Integers', rawVal: rawArr.join(', ') }],
+          formula: 'gcd(a,b) = gcd(|a|,|b|) ≥ 0 via Euclidean algorithm; gcd(a,0) = |a|; lcm(a,b) = |a·b|/gcd(a,b) (lcm(a,0) = 0)',
+          substituted: `gcd(${rawArr.join(', ')}) = ${g}, lcm(${rawArr.join(', ')}) = ${l}`,
+          steps: bez.steps.length ? bez.steps : [`Direct zero-operand identity: gcd(${rawArr[0]}, ${rawArr[1]}) = ${g}`],
+          finalSummary: `GCD = ${g}, LCM = ${l}`,
+          assumptions: 'By standard number-theory convention, GCD and LCM are non-negative: gcd(−a, b) = gcd(a, b), gcd(a, 0) = |a|, gcd(0, 0) = 0, and lcm(a, 0) = 0.'
         });
       } else if (active === 'prime') {
-        const n = Math.round(Number($('[data-field=n]').value));
-        if (!Number.isFinite(n) || n < 2) throw Error('Enter an integer n ≥ 2');
+        const rawN = Number($('[data-field=n]').value);
+        if (!Number.isInteger(rawN)) throw Error('Enter a valid whole integer n');
+        const n = rawN;
+        if (n < 2) {
+          updateResults([
+            { label: 'Primality Classification', value: 'Not Prime (prime numbers are integers n ≥ 2)' },
+            { label: 'Number Tested', value: n }
+          ], {
+            inputs: [{ label: 'Integer n', rawVal: n }],
+            formula: 'Primality definition: integer n ≥ 2 with no positive divisors other than 1 and n',
+            substituted: `n = ${n} < 2 ⇒ Not Prime`,
+            steps: [`Tested integer n = ${n}`, 'Integers less than 2 (including 0, 1, and negatives) are neither prime nor composite.'],
+            finalSummary: `${n} is Not Prime`
+          });
+          return;
+        }
         const pf = primeFactors(n);
         const primeBool = isPrime(n);
         const canonical = pf.map(([p, e]) => (e > 1 ? `${p}^${e}` : `${p}`)).join(' × ');
@@ -984,8 +1050,8 @@ function number_theory(t, initialMode) {
         const divSum = pf.reduce((acc, [p, e]) => acc * ((p ** (e + 1) - 1) / (p - 1)), 1);
         const totient = Math.round(pf.reduce((acc, [p]) => acc * (1 - 1 / p), n));
         updateResults([
-          { label: 'Prime Factorization', value: canonical },
           { label: 'Primality Classification', value: primeBool ? 'Prime Number' : 'Composite Number' },
+          { label: 'Prime Factorization', value: canonical },
           { label: "Euler's Totient φ(n)", value: totient },
           { label: 'Divisor Count d(n) & Sum σ(n)', value: `d(n) = ${divCount},  σ(n) = ${divSum}` }
         ], {
@@ -1169,6 +1235,8 @@ function poly_solver() {
         roots[j].i -= (pz.i * dr - pz.r * di) / denom;
       }
     }
+    const maxRes = Math.max(...roots.map(z => { const pz = evalPolyC(z); return Math.hypot(pz.r, pz.i); }));
+    if (!Number.isFinite(maxRes) || maxRes > 1e-3) throw Error('Durand-Kerner polynomial root solver did not converge within tolerance');
     const fmtRoot = z => Math.abs(z.i) < 1e-6 ? fmt(z.r, 6) : `${fmt(z.r, 5)} ${z.i >= 0 ? '+' : '−'} ${fmt(Math.abs(z.i), 5)}i`;
     const rootStr = roots.map((z, idx) => `r_${idx + 1} = ${fmtRoot(z)}`).join('  |  ');
     updateResults([
@@ -1262,11 +1330,13 @@ function matrix() {
     const sameShape = m === B.length && n === B[0].length;
     const canMul = n === B.length;
     const sumHtml = sameShape ? formatMatrixHtml(matrixOp(A, B, 'addition')) : '<strong>Dimension mismatch</strong>';
+    const diffHtml = sameShape ? formatMatrixHtml(matrixOp(A, B, 'subtraction')) : '<strong>Dimension mismatch</strong>';
     const prodHtml = canMul ? formatMatrixHtml(matrixOp(A, B, 'multiply')) : `<strong>Dimension mismatch (${m}×${n} vs ${B.length}×${B[0].length})</strong>`;
     updateResults([
       { label: `Determinant det(A) & Trace tr(A) (${m}×${n})`, value: `det(A) = ${detVal},  tr(A) = ${trVal}` },
       { label: 'Matrix Product (A · B)', value: 'Matrix Product', html: prodHtml },
       { label: 'Matrix Sum (A + B)', value: 'Matrix Sum', html: sumHtml },
+      { label: 'Matrix Difference (A − B)', value: 'Matrix Difference', html: diffHtml },
       { label: 'Inverse Matrix (A⁻¹)', value: 'Matrix Inverse', html: invHtml },
       { label: 'Transpose (Aᵀ)', value: 'Matrix Transpose', html: formatMatrixHtml(trA) }
     ], {
@@ -1501,19 +1571,27 @@ function linalg_ols() {
 
 // Calculus & Graphing Renderers
 function graph() {
-  $('#calculator-app').innerHTML = `${mathExprControl('Primary Function f(x)', 'fx', 'sin(x) + 0.25*x')}${mathExprControl('Optional Second Function g(x)', 'gx', 'cos(x)')}
-    <div class="control-grid">${input('x min', 'xmin', -10)}${input('x max', 'xmax', 10)}</div>${actionBarHtml()}`;
+  $('#calculator-app').innerHTML = `${mathExprControl('Primary Function y₁ = f(x)', 'fx', 'sin(x) + 0.25*x')}
+    ${mathExprControl('Optional Second Function y₂ = g(x)', 'gx', 'cos(x)')}
+    ${mathExprControl('Optional Third Function y₃ = h(x)', 'hx', '')}
+    <div class="control-grid">${input('x min', 'xmin', -10)}${input('x max', 'xmax', 10)}</div>
+    <div class="graph-actions"><span>Multi-curve analysis (roots, stationary points & intersections)</span><button type="button" class="outline-btn" id="reset-graph">Reset view</button><button type="button" class="outline-btn" id="export-graph">↓ Save PNG</button></div>${actionBarHtml()}`;
   const calc = () => evalSafe(() => {
-    const fx = $('[data-field=fx]').value, gx = $('[data-field=gx]').value.trim();
+    const fx = $('[data-field=fx]').value, gx = $('[data-field=gx]').value.trim(), hx = $('[data-field=hx]')?.value.trim() || '';
     const xmin = Number($('[data-field=xmin]').value), xmax = Number($('[data-field=xmax]').value);
     if (!(xmax > xmin)) throw Error('x max must be greater than x min');
     const fAst = compile(fx);
     const f = x => run(fAst, { x });
     const gAst = gx ? compile(gx) : null;
     const g = gAst ? x => run(gAst, { x }) : null;
+    const hAst = hx ? compile(hx) : null;
+    const hFn = hAst ? x => run(hAst, { x }) : null;
     const rootsF = solveRoots(fx, 'x', xmin, xmax);
-    const dfSym = diffSymbolic(fx, 'x', 1);
-    const extremaF = solveRoots(dfSym.symbolic, 'x', xmin, xmax);
+    let extremaF = [];
+    try {
+      const dfSym = diffSymbolic(fx, 'x', 1);
+      extremaF = solveRoots(dfSym.symbolic, 'x', xmin, xmax);
+    } catch {}
     const intersections = gx ? solveRoots(`(${fx}) - (${gx})`, 'x', xmin, xmax) : [];
     const y0 = f(0);
     updateResults([
@@ -1522,7 +1600,7 @@ function graph() {
       { label: "Stationary Points (f'(x) = 0)", value: extremaF.length ? extremaF.slice(0, 6).map(x => `(${fmt(x, 3)}, ${fmt(f(x), 3)})`).join(', ') : 'None in range' },
       { label: 'Intersections f(x) = g(x)', value: gx ? (intersections.length ? intersections.slice(0, 6).map(x => `(${fmt(x, 4)}, ${fmt(f(x), 4)})`).join(', ') : 'None in range') : 'No second function g(x) specified' }
     ], {
-      inputs: [{ label: 'f(x)', rawVal: fx }, { label: 'g(x)', rawVal: gx || 'None' }, { label: 'Domain', rawVal: `[${xmin}, ${xmax}]` }],
+      inputs: [{ label: 'f(x)', rawVal: fx }, { label: 'g(x)', rawVal: gx || 'None' }, ...(hx ? [{ label: 'h(x)', rawVal: hx }] : []), { label: 'Domain', rawVal: `[${xmin}, ${xmax}]` }],
       formula: 'Adaptive sampling + sign-change/extremum root detection',
       substituted: `f(x) = ${fx} on [${xmin}, ${xmax}]`,
       steps: [`y-intercept f(0) = ${fmt(y0)}`, `Detected ${rootsF.length} root(s) and ${extremaF.length} stationary point(s) in [${xmin}, ${xmax}]`],
@@ -1530,7 +1608,22 @@ function graph() {
     });
     const fnList = [{ fn: f, color: '#5b4be8' }];
     if (g) fnList.push({ fn: g, color: '#e86f38' });
+    if (hFn) fnList.push({ fn: hFn, color: '#129490' });
     drawMiniPlot('graph-canvas', fnList, xmin, xmax);
+  });
+  $('#reset-graph')?.addEventListener('click', () => {
+    $('[data-field=xmin]').value = -10;
+    $('[data-field=xmax]').value = 10;
+    calc();
+  });
+  $('#export-graph')?.addEventListener('click', () => {
+    const c = document.getElementById('graph-canvas');
+    if (c && typeof c.toDataURL === 'function') {
+      const a = document.createElement('a');
+      a.href = c.toDataURL('image/png');
+      a.download = 'axiomatlas-function-graph.png';
+      a.click();
+    }
   });
   bind(calc);
 }
@@ -1632,7 +1725,7 @@ function derivative() {
       inputs: [{ label: 'f(x)', rawVal: fx }, { label: 'x₀', rawVal: x0 }],
       formula: "f'(x) via symbolic differentiation rules + central difference verification",
       substituted: `f'(${x0}) = ${fmt(num.value)}, f(${x0}) = ${fmt(y0)}`,
-      steps: [...rules.map(r => `${r.rule}: ${r.before} → ${r.after}`), `Symbolic derivative: f'(x) = ${sym.symbolic}`, `Evaluated at x₀ = ${x0}: f'(${x0}) = ${fmt(num.value)}`],
+      steps: [...rules.map(r => `${r.rule}: ${r.expr}`), `Symbolic derivative: f'(x) = ${sym.symbolic}`, `Evaluated at x₀ = ${x0}: f'(${x0}) = ${fmt(num.value)}`],
       finalSummary: `f'(x) = ${sym.symbolic}, f'(${x0}) = ${fmt(num.value)}`
     });
   });
@@ -2667,6 +2760,7 @@ function triangle_trig_suite(t, initialMode) {
       <button type="button" class="mode-tab ${active === 'right' ? 'active' : ''}" data-tt="right">Right Triangle & Pythagorean</button>
       <button type="button" class="mode-tab ${active === 'cosine' ? 'active' : ''}" data-tt="cosine">Law of Cosines (SAS)</button>
       <button type="button" class="mode-tab ${active === 'sine' ? 'active' : ''}" data-tt="sine">Law of Sines (AAS / ASA)</button>
+      <button type="button" class="mode-tab ${active === 'ssa' ? 'active' : ''}" data-tt="ssa">Law of Sines (SSA Ambiguous Case)</button>
       <button type="button" class="mode-tab ${active === 'heron' ? 'active' : ''}" data-tt="heron">Heron's SSS Triangle</button><button type="button" class="mode-tab ${active === 'eval' ? 'active' : ''}" data-tt="eval">All 6 Trig Ratios</button>
     </div></div>
     <div id="tt-body" class="control-grid"></div>${actionBarHtml()}`;
@@ -2678,6 +2772,8 @@ function triangle_trig_suite(t, initialMode) {
       body.innerHTML = `${input('Side a', 'a', 5)}${input('Side b', 'b', 7)}${input('Included Angle C (degrees)', 'C', 60)}`;
     } else if (active === 'sine') {
       body.innerHTML = `${input('Known Side a', 'a', 10)}${input('Angle A (degrees)', 'A', 30)}${input('Angle B (degrees)', 'B', 45)}`;
+    } else if (active === 'ssa') {
+      body.innerHTML = `${input('Side a (opposite Angle A)', 'a', 7)}${input('Side b (adjacent)', 'b', 10)}${input('Non-Included Angle A (degrees)', 'A', 30)}`;
     } else if (active === 'heron') {
       body.innerHTML = `${input('Side a', 'a', 5)}${input('Side b', 'b', 6)}${input('Side c', 'c', 7)}`;
     } else {
@@ -2740,6 +2836,55 @@ function triangle_trig_suite(t, initialMode) {
           steps: [`C = 180° − ${A}° − ${B}° = ${fmt(C)}°`, `b = ${fmt(b)}, c = ${fmt(c)}`],
           finalSummary: `b = ${fmt(b)}, c = ${fmt(c)}, C = ${fmt(C)}°`
         });
+      } else if (active === 'ssa') {
+        const a = Number($('[data-field=a]').value), b = Number($('[data-field=b]').value), A = Number($('[data-field=A]').value);
+        if (a <= 0 || b <= 0 || A <= 0 || A >= 180) throw Error('Sides a, b must be positive and angle A ∈ (0°, 180°)');
+        const radA = A * Math.PI / 180;
+        const h = b * Math.sin(radA);
+        const sinB = (b * Math.sin(radA)) / a;
+        if (sinB > 1 + 1e-12 || (A >= 90 && a <= b)) {
+          throw Error(`No valid triangle exists: side a (${fmt(a)}) is shorter than the minimum altitude h = b·sin(A) = ${fmt(h)} (or A ≥ 90° with a ≤ b).`);
+        }
+        const B1 = Math.asin(Math.min(1, sinB)) * 180 / Math.PI;
+        const C1 = 180 - A - B1;
+        const c1 = (a * Math.sin(C1 * Math.PI / 180)) / Math.sin(radA);
+        const area1 = 0.5 * a * b * Math.sin(C1 * Math.PI / 180);
+        const B2 = 180 - B1;
+        const twoTriangles = A < 90 && a > h + 1e-9 && a < b - 1e-9 && (A + B2 < 180 - 1e-9);
+        if (twoTriangles) {
+          const C2 = 180 - A - B2;
+          const c2 = (a * Math.sin(C2 * Math.PI / 180)) / Math.sin(radA);
+          const area2 = 0.5 * a * b * Math.sin(C2 * Math.PI / 180);
+          updateResults([
+            { label: 'SSA Ambiguous Case Classification', value: 'TWO Valid Triangles Exist (b·sin A < a < b)' },
+            { label: 'Triangle 1 (Acute B₁)', value: `B₁ = ${fmt(B1, 4)}°,  C₁ = ${fmt(C1, 4)}°,  c₁ = ${fmt(c1, 4)},  Area₁ = ${fmt(area1, 4)}` },
+            { label: 'Triangle 2 (Obtuse B₂ = 180° − B₁)', value: `B₂ = ${fmt(B2, 4)}°,  C₂ = ${fmt(C2, 4)}°,  c₂ = ${fmt(c2, 4)},  Area₂ = ${fmt(area2, 4)}` },
+            { label: 'Altitude h = b·sin(A)', value: h }
+          ], {
+            inputs: [{ label: 'a, b, A', rawVal: `${a}, ${b}, ${A}°` }],
+            formula: 'sin(B) = b·sin(A)/a ⇒ B₁ = arcsin(b·sin(A)/a) and B₂ = 180° − B₁',
+            substituted: `h = b·sin(A) = ${fmt(h)} < a = ${a} < b = ${b} ⇒ Two distinct triangles`,
+            steps: [
+              `Compute altitude h = ${b}·sin(${A}°) = ${fmt(h)}`,
+              `Since h (${fmt(h)}) < a (${a}) < b (${b}) and A < 90°, two valid triangles exist.`,
+              `Solution 1 (Acute): B₁ = ${fmt(B1, 4)}°, C₁ = ${fmt(C1, 4)}°, c₁ = ${fmt(c1, 4)}, Area₁ = ${fmt(area1, 4)}`,
+              `Solution 2 (Obtuse): B₂ = 180° − B₁ = ${fmt(B2, 4)}°, C₂ = ${fmt(C2, 4)}°, c₂ = ${fmt(c2, 4)}, Area₂ = ${fmt(area2, 4)}`
+            ],
+            finalSummary: `2 Solutions: (B₁=${fmt(B1, 2)}°, c₁=${fmt(c1, 3)}) and (B₂=${fmt(B2, 2)}°, c₂=${fmt(c2, 3)})`
+          });
+        } else {
+          updateResults([
+            { label: 'SSA Case Classification', value: Math.abs(a - h) <= 1e-9 ? 'Unique Right Triangle (a = b·sin A)' : 'Unique Valid Triangle (a ≥ b)' },
+            { label: 'Solved Angles B and C', value: `B = ${fmt(B1, 4)}°,  C = ${fmt(C1, 4)}°` },
+            { label: 'Third Side c & Area', value: `c = ${fmt(c1, 4)},  Area = ${fmt(area1, 4)}` }
+          ], {
+            inputs: [{ label: 'a, b, A', rawVal: `${a}, ${b}, ${A}°` }],
+            formula: 'sin(B) = b·sin(A)/a; supplementary angle B₂ = 180° − B₁ rejected since A + B₂ ≥ 180°',
+            substituted: `B = ${fmt(B1, 4)}°, C = ${fmt(C1, 4)}°, c = ${fmt(c1, 4)}`,
+            steps: [`sin(B) = ${fmt(sinB, 5)} ⇒ B₁ = ${fmt(B1, 4)}°`, `Supplementary angle B₂ = ${fmt(B2, 4)}° rejected because A + B₂ = ${fmt(A + B2, 2)}° ≥ 180°`, `Unique triangle: c = ${fmt(c1, 4)}, Area = ${fmt(area1, 4)}`],
+            finalSummary: `Unique Triangle: B = ${fmt(B1, 3)}°, C = ${fmt(C1, 3)}°, c = ${fmt(c1, 4)}`
+          });
+        }
       } else if (active === 'heron') {
         const a = Number($('[data-field=a]').value), b = Number($('[data-field=b]').value), c = Number($('[data-field=c]').value);
         if (a <= 0 || b <= 0 || c <= 0 || a + b <= c || a + c <= b || b + c <= a) throw Error('These sides cannot form a valid triangle (require a + b > c)');
@@ -2850,8 +2995,8 @@ function stats() {
       inputs: [{ label: 'n', rawVal: res.Count }, { label: 'Dataset', rawVal: arr.join(', ') }],
       formula: 'x̄ = (1/n)Σxᵢ,  s² = Σ(xᵢ − x̄)²/(n − 1),  σ² = Σ(xᵢ − x̄)²/n',
       substituted: `Mean = ${fmt(res.Mean)}, Median = ${fmt(res.Median)}`,
-      steps: [`Count n = ${res.Count}, Sum = ${fmt(res.Sum)}, Mean = ${fmt(res.Mean)}`, `Sample SD s = ${fmt(res['Sample standard deviation'])}, Population SD σ = ${fmt(res['Population standard deviation'])}`],
-      finalSummary: `Mean = ${fmt(res.Mean)}, Sample SD s = ${fmt(res['Sample standard deviation'])}`
+      steps: [`Count n = ${res.Count}, Sum = ${fmt(res.Sum)}, Mean = ${fmt(res.Mean)}`, `Sample SD s = ${fmt(res['Sample std. deviation'])}, Population SD σ = ${fmt(res['Population std. deviation'])}`],
+      finalSummary: `Mean = ${fmt(res.Mean)}, Sample SD s = ${fmt(res['Sample std. deviation'])}`
     });
   });
   bind(calc);
@@ -2941,7 +3086,7 @@ function binomial() {
     updateResults([
       { label: `Exact Binomial PMF P(X = ${k})`, value: exact },
       { label: `Cumulative P(X ≤ ${k}) & Upper Tail P(X ≥ ${k})`, value: `P(X ≤ ${k}) = ${fmt(cdf, 6)},  P(X ≥ ${k}) = ${fmt(1 - cdf + exact, 6)}` },
-      { label: 'Mean μ = np & Standard Deviation σ = √(np(1−p))', value: `μ = ${fmt(mean)},  σ = ${fmt(sd)}` }
+      { label: 'Mean (μ = np), Variance (σ² = np(1−p)) & SD (σ)', value: `μ = ${fmt(mean)},  σ² = ${fmt(n * p * (1 - p))},  σ = ${fmt(sd)}` }
     ], {
       inputs: [{ label: 'n, k, p', rawVal: `${n}, ${k}, ${p}` }],
       formula: 'P(X = k) = C(n, k) · p^k · (1 − p)^(n − k)',
@@ -3813,7 +3958,16 @@ function random() {
     evalSafe(() => {
       const { min, max } = nums(['min', 'max']);
       if (!Number.isSafeInteger(min) || !Number.isSafeInteger(max) || max < min) throw Error('Use valid integers with min ≤ max');
-      const v = Math.floor(min + Math.random() * (max - min + 1));
+      const bound = max - min + 1;
+      let v;
+      if (typeof crypto !== 'undefined' && crypto.getRandomValues && bound <= 4294967295) {
+        const arr = new Uint32Array(1);
+        const range = 2 ** 32, cut = range - (range % bound);
+        do { crypto.getRandomValues(arr); v = arr[0]; } while (v >= cut);
+        v = min + (v % bound);
+      } else {
+        v = Math.floor(min + Math.random() * bound);
+      }
       updateResults([
         { label: 'Your random number', value: v },
         { label: 'Interval Mean', value: 0.5 * (min + max) }

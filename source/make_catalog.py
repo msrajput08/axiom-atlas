@@ -885,7 +885,8 @@ s('Geometry & Trigonometry', 'Trigonometry', 'trigonometry-calculator', 'Trigono
   'Compute sin, cos, tan, cot, sec, csc and inverse trig functions (arcsin, arccos, arctan) in Degrees or Radians.',
   'trig', 'Forward ratios sin, cos, tan, cot, sec, csc and inverse functions sin⁻¹, cos⁻¹, tan⁻¹.',
   'Angles can be in Degrees or Radians; exact asymptotes are guarded.',
-  'trigonometry sin cos tan cot sec csc arcsin arccos arctan')
+  'trigonometry sin cos tan cot sec csc arcsin arccos arctan',
+  is_alias=True, canonical_slug='triangle-trigonometry-solver', default_mode='trig_ratios')
 
 alias_mode('Geometry & Trigonometry', 'Triangles', 'pythagorean-calculator', 'Pythagorean Theorem Calculator',
            'Find the hypotenuse or missing leg of a right triangle.', 'triangle-trigonometry-solver', 'pythagorean',
@@ -899,9 +900,13 @@ alias_mode('Geometry & Trigonometry', 'Triangles', 'law-of-cosines', 'Law of Cos
 alias_mode('Geometry & Trigonometry', 'Triangles', 'law-of-sines', 'Law of Sines Calculator',
            'Find unknown triangle sides or angles using the Law of Sines.', 'triangle-trigonometry-solver', 'sine_rule',
            'a|Known side a|7|m;A|Angle A|30|°;B|Angle B|45|°', 'Side b|a*sin(B*pi/180)/sin(A*pi/180)|m', 'a/sin(A) = b/sin(B)')
-alias_mode('Geometry & Trigonometry', 'Mensuration', 'arc-length', 'Arc Length Calculator',
-           'Find circle arc length, sector area and chord length from radius and angle.', '2d-geometry-calculator', 'sector',
-           'r|Radius|7|m;deg|Angle|90|°', 'Arc length|r*pi*deg/180|m;Sector area|pi*r^2*deg/360|m²;Chord length|2*r*sin(deg*pi/360)|m', 's=rθ with θ in radians')
+f('Geometry & Trigonometry', 'Mensuration', 'arc-length', 'Arc Length & Circular Mensuration Calculator',
+  'Find circular arc length, sector area, chord length, and segment area from radius and central angle.',
+  'r|Radius|7|m;angle|Central angle|90|°',
+  'Arc length|r*pi*angle/180|m;Sector area|pi*r^2*angle/360|m²;Chord length|2*r*sin(angle*pi/360)|m;Segment area|r^2*(angle*pi/180-sin(angle*pi/180))/2|m²',
+  's = r·θ (θ in rad);  A_sector = ½r²θ;  c = 2r·sin(θ/2)',
+  'Requires radius r > 0 and central angle 0° < θ ≤ 360°.',
+  'arc length calculator circular mensuration sector chord segment')
 
 f('Geometry & Trigonometry', 'Trigonometry', 'degree-radian', 'Angle & Degree-Radian Converter',
   'Convert angles between degrees, radians, turns, gradians, arcminutes and arcseconds.',
@@ -1326,7 +1331,7 @@ f('Physics & Engineering', 'Electronics', 'decibel-change-calculator', 'Decibel 
   'Net cascaded gain|db1+db2|dB;Output power P_out|Pin*10^((db1+db2)/10)|W;Output voltage V_out (equal Z)|Vin*10^((db1+db2)/20)|V;Power multiplier|10^((db1+db2)/10);Voltage multiplier|10^((db1+db2)/20)',
   'dB_total = dB₁ + dB₂;  P_out = P_in × 10^(dB/10);  V_out = V_in × 10^(dB/20)', '', 'decibel change calculator gain attenuation cascade')
 
-m('Physics & Engineering', 'Electricity', 'three-phase-power-calculator', 'Three-Phase Power Calculator (Wye & Delta)',
+m('Physics & Engineering', 'Engineering Calculations', 'three-phase-power-calculator', 'Three-Phase Power Calculator (Wye & Delta)',
   'Calculate Real (P), Reactive (Q), and Apparent (S) power plus phase voltages and currents for balanced 3-phase Wye (Y) and Delta (Δ) loads.',
   [
       {'id': 'wye', 'label': 'Balanced Wye (Star / Y) Connection', 'fields': 'VL|Line-to-Line Voltage V_L|400|V;IL|Line Current I_L|25|A;pf|Power Factor cos(φ)|0.85',
@@ -1338,7 +1343,7 @@ m('Physics & Engineering', 'Electricity', 'three-phase-power-calculator', 'Three
   ],
   'P = √3 V_L I_L cos(φ);  S = √3 V_L I_L', '', 'three phase power calculator wye star delta kVA kW')
 
-f('Physics & Engineering', 'Electricity', 'wire-resistance-calculator', 'Wire Resistance & Voltage Drop Calculator',
+f('Physics & Engineering', 'Engineering Calculations', 'wire-resistance-calculator', 'Wire Resistance & Voltage Drop Calculator',
   'Calculate conductor electrical resistance R = ρL/A, conductance, and 2-wire round-trip voltage drop.',
   'rho|Resistivity ρ (Copper = 1.68e-8)|1.68e-8|Ω·m;L|One-way wire length L|50|m;d|Wire diameter d|2.053|mm;I|Load current I|15|A',
   'Cross-sectional area A|pi*(d/2)^2|mm²;One-way wire resistance R|rho*L/(pi*(d/2000)^2)|Ω;Round-trip (2-wire) resistance|2*rho*L/(pi*(d/2000)^2)|Ω;Round-trip voltage drop ΔV|2*I*rho*L/(pi*(d/2000)^2)|V;Power dissipated in wire I²R|2*I^2*rho*L/(pi*(d/2000)^2)|W',
@@ -1464,13 +1469,13 @@ f('Physics & Engineering', 'Fluid Mechanics', 'flow-rate-calculator', 'Flow Rate
   'Cross-sectional area A|pi*(D/2)^2|m²;Volumetric flow rate Q (m³/s)|pi*(D/2)^2*v|m³/s;Volumetric flow rate (L/s)|pi*(D/2)^2*v*1000|L/s;Mass flow rate ṁ (ρ·Q)|rho*pi*(D/2)^2*v|kg/s',
   'Q = A · v = π(D/2)² · v;  ṁ = ρ · Q', '', 'flow rate calculator volumetric mass flow pipe velocity')
 
-f('Physics & Engineering', 'Fluid Mechanics', 'pipe-pressure-drop-calculator', 'Pipe Pressure Drop Calculator (Darcy-Weisbach)',
+f('Physics & Engineering', 'Engineering Calculations', 'pipe-pressure-drop-calculator', 'Pipe Pressure Drop Calculator (Darcy-Weisbach)',
   'Calculate frictional pressure drop ΔP and head loss h_f in a pipe using the Darcy-Weisbach equation.',
   'fD|Darcy friction factor f_D|0.02;L|Pipe length L|50|m;D|Pipe diameter D|0.1|m;rho|Fluid density ρ|1000|kg/m³;v|Flow velocity v|2|m/s',
   'Pressure drop ΔP|fD*(L/D)*0.5*rho*v^2|Pa;Pressure drop (kPa)|fD*(L/D)*0.5*rho*v^2/1000|kPa;Head loss h_f|fD*(L/D)*v^2/(2*9.80665)|m;Velocity head (v²/2g)|v^2/(2*9.80665)|m',
   'ΔP = f_D · (L / D) · (ρ v² / 2);  h_f = ΔP / (ρ g)', '', 'pipe pressure drop darcy weisbach head loss friction factor')
 
-f('Physics & Engineering', 'Fluid Mechanics', 'hydraulic-power-calculator', 'Hydraulic & Pump Power Calculator',
+f('Physics & Engineering', 'Engineering Calculations', 'hydraulic-power-calculator', 'Hydraulic & Pump Power Calculator',
   'Calculate fluid hydraulic power P_hyd = Q·ΔP = ρgQH and required pump shaft input power at efficiency η.',
   'Q|Volumetric flow rate Q|0.05|m³/s;H|Total dynamic head H|30|m;rho|Fluid density ρ|1000|kg/m³;eff|Pump efficiency η|80|%',
   'Hydraulic power P_hyd (ρgQH)|rho*9.80665*Q*H|W;Hydraulic power (kW)|rho*9.80665*Q*H/1000|kW;Required shaft power P_shaft|(rho*9.80665*Q*H)/(eff/100)|W;Pressure differential ΔP (ρgH)|rho*9.80665*H|Pa',

@@ -640,20 +640,20 @@ export function improperIntegral(exprStr, varName = 'x', aStr = '1', bStr = 'inf
       return { convergent: false, reason: 'Integrand does not decay to 0 as x → ∞ (Divergent).' };
     }
     const m = 40;
-    const eps = 1e-6;
-    const h = (1 - 2 * eps) / m;
+    const h = 1 / m;
     let sum = 0;
     for (let k = 0; k < m; k++) {
-      const tL = eps + k * h, tR = tL + h;
+      const tL = k * h, tR = tL + h;
       const mid = 0.5 * (tL + tR), half = 0.5 * h;
       for (let j = 0; j < 8; j++) {
         const t = mid + half * GL8_X[j];
         const x = low + dir * (t / (1 - t));
         const dxdt = 1 / ((1 - t) * (1 - t));
-        sum += half * GL8_W[j] * fAt(x) * dxdt;
+        const term = fAt(x) * dxdt;
+        if (Number.isFinite(term)) sum += half * GL8_W[j] * term;
       }
     }
-    return { convergent: true, value: sum, note: 'Evaluated via rational mapping x = a ± t/(1−t) with 320-point Gauss-Legendre quadrature' };
+    return { convergent: true, value: sum, note: 'Evaluated via rational mapping x = a ± t/(1−t) with 320-point open Gauss-Legendre quadrature' };
   }
 
   if (Number.isFinite(a) && b === Infinity) return integrateHalfInfinite(a, 1);
@@ -689,17 +689,30 @@ export function improperIntegral(exprStr, varName = 'x', aStr = '1', bStr = 'inf
       return { convergent: false, reason: `Divergent endpoint singularity at x = ${fmt(a)} (blows up as ~(x − a)^(−${pSlope.toFixed(2)}) with p ≥ 1).` };
     }
   }
-  // Use open Gauss-Legendre quadrature (which never evaluates exact endpoints a or b!)
+  const fb1 = Math.abs(fSafe(b - delta1)), fb2 = Math.abs(fSafe(b - delta2));
+  if (fb2 > 8 * fb1 && fb1 > 100) {
+    const pSlopeB = Math.log10(fb2 / fb1);
+    if (pSlopeB >= 0.98) {
+      return { convergent: false, reason: `Divergent endpoint singularity at x = ${fmt(b)} (blows up as ~(b − x)^(−${pSlopeB.toFixed(2)}) with p ≥ 1).` };
+    }
+  }
+  // Use 7th-degree Hermite endpoint-smoothing transformation phi(u) = u^4(35 - 84u + 70u^2 - 20u^3)
+  // with dphi/du = 140 u^3 (1-u)^3 on open Gauss-Legendre nodes
   const computeOpenGL = panels => {
-    const hm = (b - a) / panels;
+    const hm = 1 / panels;
     let glSum = 0;
     for (let k = 0; k < panels; k++) {
-      const xL = a + k * hm, xR = xL + hm;
-      const mid = 0.5 * (xL + xR), half = 0.5 * hm;
+      const uL = k * hm, uR = uL + hm;
+      const mid = 0.5 * (uL + uR), half = 0.5 * hm;
       for (let j = 0; j < 8; j++) {
-        const y = fSafe(mid + half * GL8_X[j]);
+        const u = mid + half * GL8_X[j];
+        const u2 = u * u, u3 = u2 * u, u4 = u2 * u2;
+        const phi = u4 * (35 - 84 * u + 70 * u2 - 20 * u3);
+        const dphi = 140 * u3 * (1 - u) * (1 - u) * (1 - u);
+        const x = a + (b - a) * phi;
+        const y = fSafe(x);
         if (!Number.isFinite(y)) throw Error('Divergent or undefined interior value');
-        glSum += half * GL8_W[j] * y;
+        glSum += half * GL8_W[j] * y * (b - a) * dphi;
       }
     }
     return glSum;

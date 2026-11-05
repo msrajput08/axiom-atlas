@@ -126,6 +126,32 @@ test('Suite 1: Inventory & Registry Reconciliation', '1.2 Verify 231 canonical c
   checkEqual(canon.length, 231, 'Canonical calculators must be 231');
   checkEqual(aliases.length, 69, 'Legacy compatibility aliases must be 69');
 
+  const expectedCategoryRouteBreakdown = [
+    ['Mathematics', 13, 16, 29],
+    ['Algebra', 21, 0, 21],
+    ['Calculus & Graphing', 38, 0, 38],
+    ['Geometry & Trigonometry', 8, 21, 29],
+    ['Physics & Engineering', 81, 11, 92],
+    ['Statistics & Probability', 20, 1, 21],
+    ['Finance', 23, 10, 33],
+    ['Converters & Everyday Tools', 27, 10, 37]
+  ];
+  let sumC = 0, sumA = 0, sumT = 0;
+  for (const [catName, expC, expA, expT] of expectedCategoryRouteBreakdown) {
+    const cTools = all.filter(t => t.category === catName);
+    const cCan = cTools.filter(t => !t.isAlias);
+    const cAli = cTools.filter(t => t.isAlias);
+    checkEqual(cCan.length, expC, `Canonical count for ${catName}`);
+    checkEqual(cAli.length, expA, `Alias count for ${catName}`);
+    checkEqual(cTools.length, expT, `Total route count for ${catName}`);
+    sumC += cCan.length;
+    sumA += cAli.length;
+    sumT += cTools.length;
+  }
+  checkEqual(sumC, 231, 'Sum of per-category canonical counts must equal 231');
+  checkEqual(sumA, 69, 'Sum of per-category alias counts must equal 69');
+  checkEqual(sumT, 300, 'Sum of per-category total route counts must equal 300');
+
   const slugSet = new Set();
   for (const t of all) {
     checkOk(!slugSet.has(t.slug), `Duplicate slug: ${t.slug}`);
@@ -276,8 +302,11 @@ test('Suite 2: Original 136 Calculators Regression', '2.3 All 23 original specia
 
 test('Suite 2: Original 136 Calculators Regression', '2.4 Verify all 7 intentional mathematical bug fixes over original main branch', () => {
   // 1. Scale-aware tolerance preserves small physical results < 1e-13
-  const grav = calculate('6.6743e-11 * 1 * 1 / 100^2');
-  approxEqual(grav, 6.6743e-15, 1e-9, 1e-22, 'Gravitational force < 1e-13 N must not be clamped to 0');
+  const gravTool = catalog.tools.find(t => t.slug === 'gravitational-force');
+  const grav100 = calculate(gravTool.outputs[0].expr, { m1: 1, m2: 1, r: 100 });
+  approxEqual(grav100, 6.6743e-15, 1e-12, 1e-25, 'Gravitational force for m1=1, m2=1, r=100 must be 6.6743e-15 N');
+  const gravDef = calculate(gravTool.outputs[0].expr, { m1: 10, m2: 10, r: 10 });
+  approxEqual(gravDef, 6.6743e-11, 1e-12, 1e-22, 'Gravitational force for default m1=10, m2=10, r=10 must be 6.6743e-11 N');
   // 2. Unary minus vs exponentiation precedence: -2^2 = -4
   checkEqual(calculate('-2^2'), -4);
   checkEqual(calculate('(-2)^2'), 4);
@@ -299,13 +328,31 @@ test('Suite 2: Original 136 Calculators Regression', '2.4 Verify all 7 intention
 // ============================================================================
 // SUITE 3: DEEP MATHEMATICAL ACCURACY & ALGORITHM BENCHMARKS
 // ============================================================================
-test('Suite 3: Mathematical Accuracy Benchmarks', '3.1 Symbolic differentiation (product, quotient, chain, inverse trig, hyperbolic, x^x)', () => {
+test('Suite 3: Mathematical Accuracy Benchmarks', '3.1 Symbolic differentiation (polynomial, trig, exp-log, product, quotient, chain, inverse trig, hyperbolic, x^x)', () => {
+  // Polynomial benchmark: f(x) = x^3 + 2x^2 - 5x + 1 at x = 2 => f'(2) = 3(4) + 4(2) - 5 = 15
+  const dPoly = diffSymbolic('x^3 + 2*x^2 - 5*x + 1', 'x', 1);
+  checkEqual(run(dPoly.ast, { x: 2 }), 15, 'f(x) = x^3 + 2x^2 - 5x + 1 at x=2 must equal 15');
+  approxEqual(numericalDerivative(compile('x^3 + 2*x^2 - 5*x + 1'), 'x', 2, 1).value, 15, 1e-8);
+
+  // Trig product benchmark: f(x) = sin(x)*cos(x) at x = 0.7 => f'(0.7) = cos(1.4)
+  const dTrig = diffSymbolic('sin(x)*cos(x)', 'x', 1);
+  approxEqual(run(dTrig.ast, { x: 0.7 }), Math.cos(1.4), 1e-12);
+
+  // Exponential-log benchmark: f(x) = e^(2x) * ln(x) at x = 2 => f'(2) = e^4 * (2*ln(2) + 0.5) = 102.98818253509774
+  const expectedExpLn = Math.exp(4) * (2 * Math.log(2) + 0.5);
+  approxEqual(expectedExpLn, 102.98818253509774, 1e-13);
+  const dExpLn1 = diffSymbolic('exp(2*x)*ln(x)', 'x', 1);
+  const dExpLn2 = diffSymbolic('e^(2*x)*ln(x)', 'x', 1);
+  approxEqual(run(dExpLn1.ast, { x: 2 }), expectedExpLn, 1e-12, 1e-12, 'exp(2x)*ln(x) derivative at x=2');
+  approxEqual(run(dExpLn2.ast, { x: 2 }), expectedExpLn, 1e-12, 1e-12, 'e^(2x)*ln(x) derivative at x=2');
+  approxEqual(numericalDerivative(compile('exp(2*x)*ln(x)'), 'x', 2, 1).value, expectedExpLn, 1e-7);
+
   approxEqual(run(diffSymbolic('x^3 * sin(x)', 'x', 1).ast, { x: 1.5 }), 3 * 1.5 ** 2 * Math.sin(1.5) + 1.5 ** 3 * Math.cos(1.5), 1e-9);
   approxEqual(run(diffSymbolic('(x^2 + 1)/(x - 3)', 'x', 1).ast, { x: 2 }), (2 * 2 * (2 - 3) - (4 + 1)) / ((-1) ** 2), 1e-9);
   approxEqual(run(diffSymbolic('asin(x)', 'x', 1).ast, { x: 0.5 }), 1 / Math.sqrt(1 - 0.25), 1e-9);
   approxEqual(run(diffSymbolic('atan(x)', 'x', 1).ast, { x: 2 }), 1 / 5, 1e-9);
   approxEqual(run(diffSymbolic('sinh(x)', 'x', 1).ast, { x: 1 }), Math.cosh(1), 1e-9);
-  approxEqual(run(diffSymbolic('x^x', 'x', 1).ast, { x: 2 }), (2 ** 2) * (Math.log(2) + 1), 1e-9);
+  approxEqual(run(diffSymbolic('x^x', 'x', 1).ast, { x: 2 }), (2 ** 2) * (Math.log(2) + 1), 1e-12);
 });
 
 test('Suite 3: Mathematical Accuracy Benchmarks', '3.2 Higher-order derivatives (orders 1..4) and non-differentiable corner detection', () => {
@@ -337,15 +384,19 @@ test('Suite 3: Mathematical Accuracy Benchmarks', '3.4 Double, Triple, and Impro
 
   const imp1 = improperIntegral('1/(1 + x^2)', 'x', '0', 'inf');
   checkEqual(imp1.convergent, true);
-  approxEqual(imp1.value, Math.PI / 2, 1e-3);
+  approxEqual(imp1.value, Math.PI / 2, 1e-9);
 
   const imp2 = improperIntegral('exp(-2*x)', 'x', '0', 'inf');
   checkEqual(imp2.convergent, true);
-  approxEqual(imp2.value, 0.5, 1e-3);
+  approxEqual(imp2.value, 0.5, 1e-9);
 
   const imp3 = improperIntegral('1/sqrt(x)', 'x', '0', '1');
   checkEqual(imp3.convergent, true);
-  approxEqual(imp3.value, 2, 1e-2);
+  approxEqual(imp3.value, 2, 1e-9);
+
+  const imp4 = improperIntegral('1/x^2', 'x', '1', 'inf');
+  checkEqual(imp4.convergent, true);
+  approxEqual(imp4.value, 1, 1e-9);
 
   const impDivTail = improperIntegral('1/x', 'x', '1', 'inf');
   checkEqual(impDivTail.convergent, false);

@@ -186,7 +186,7 @@ function buildExplainStepContent(exp) {
       '<article class="explain-step-card"><div class="explain-step-top"><span class="explain-step-number">' +
       (index + 1) + '</span><h5>' + esc(label) + '</h5><span class="explain-step-count">' +
       examples.length + (examples.length === 1 ? ' application' : ' applications') +
-      '</span></div><p class="explain-step-preview">Related operations are grouped here to make the derivation easier to follow.</p></article>'
+      '</span></div><p class="explain-step-preview">' + esc(examples.slice(0, 2).join(' · ')) + '</p></article>'
     ).join('');
     return { guided: '<div class="explain-guided-grid">' + guided + '</div>', detailed };
   }

@@ -54,7 +54,9 @@ input,select,textarea{color:var(--ink)}
 
 /* Layout & Sidebar */
 .site{min-height:100vh}
-.sidebar{width:var(--nav-w);position:fixed;left:0;top:0;bottom:0;z-index:31;background:var(--panel);border-right:1px solid var(--stroke);display:flex;flex-direction:column;padding:22px 14px 18px;overflow-y:auto;scrollbar-width:thin}
+.sidebar{width:var(--nav-w);position:fixed;left:0;top:0;bottom:0;z-index:31;background:var(--panel);border-right:1px solid var(--stroke);display:flex;flex-direction:column;padding:22px 14px 18px;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.sidebar>*{flex-shrink:0}
+#sidebar-cats{flex:0 0 auto;min-height:min-content}
 .brand-wrap{display:flex;align-items:center;gap:11px;padding:0 10px 20px}
 .brand-mark{width:37px;height:37px;border-radius:12px;background:linear-gradient(135deg,#7469ff,#4134b6);display:flex;justify-content:center;align-items:center;color:#fff;box-shadow:0 8px 18px #6658ed38;flex-shrink:0}
 .brand-mark svg{width:24px;height:24px}

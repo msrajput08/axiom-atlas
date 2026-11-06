@@ -26,6 +26,7 @@ import {
 } from './astronomy.js';
 
 let data, tool, currentExplanation = null, explainOpen = false;
+const ASSET_VERSION = new URL(import.meta.url).searchParams.get('v') || 'dev';
 const $ = (s, r = document) => (typeof r === 'string' ? document.querySelector(r) : r)?.querySelector(s);
 const $$ = (s, r = document) => [...((typeof r === 'string' ? document.querySelector(r) : r)?.querySelectorAll(s) || [])];
 const url = t => `/tools/${t.slug}/`;
@@ -4884,7 +4885,7 @@ function shell() {
 
 async function init() {
   try {
-    const res = await fetch('/assets/catalog.json');
+    const res = await fetch(`/assets/catalog.json?v=${encodeURIComponent(ASSET_VERSION)}`, { cache: 'no-cache' });
     if (!res.ok) throw Error('Data unavailable');
     data = await res.json();
     if (document.body.dataset.page === 'tool') renderTool();

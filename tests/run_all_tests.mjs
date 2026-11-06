@@ -620,9 +620,9 @@ test('Suite 4: Mathematical Input Parser & Live Preview', '4.1 Verify all 21 req
 });
 
 // ============================================================================
-// SUITE 5: CALCULATOR-LEVEL DOM EXECUTION & EXPLAIN CALCULATION AUDIT (ALL 300 ROUTES)
+// SUITE 5: CALCULATOR-LEVEL DOM EXECUTION & EXPLAIN CALCULATION AUDIT (ALL 383 ROUTES)
 // ============================================================================
-test('Suite 5: Calculator-Level DOM & Explain Calculation Audit', '5.1 Execute all 300 calculators and all modes in DOM harness, verifying results, mode switching, unit switching, invalid input handling, and Explain Calculation traces', () => {
+test('Suite 5: Calculator-Level DOM & Explain Calculation Audit', '5.1 Execute all 383 calculators and all modes in DOM harness, verifying results, mode switching, unit switching, invalid input handling, and Explain Calculation traces', () => {
   // Lightweight in-process DOM harness for site/assets/app.js
   class MockElement {
     constructor(tag = 'DIV') {
@@ -757,7 +757,7 @@ test('Suite 5: Calculator-Level DOM & Explain Calculation Audit', '5.1 Execute a
     return el.tagName === sel.toUpperCase();
   }
 
-  // Test every single tool in catalog.tools (300 routes) + all modes of multimode tools!
+  // Test every single tool in catalog.tools (383 routes) + all modes of multimode tools!
   let toolsVerified = 0;
   let modesVerified = 0;
 
@@ -951,7 +951,7 @@ vRoot.children.push(vCalcApp, vResDisp, vResStat, vFBlock, vToast, vRelTools, vS
 
 globalThis.window = { devicePixelRatio: 1 };
 globalThis.localStorage = { getItem: () => null, setItem: () => {} };
-globalThis.navigator = { clipboard: { writeText: async () => {} } };
+Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { clipboard: { writeText: async () => {} } } });
 globalThis.location = { href: 'https://axiomatlas.netlify.app/', hash: '' };
 globalThis.getComputedStyle = () => ({ getPropertyValue: () => '#ffffff' });
 globalThis.document = {
@@ -972,7 +972,7 @@ fs.writeFileSync(tmpAppPath, appSrc);
 const appMod = await import(tmpAppPath);
 fs.unlinkSync(tmpAppPath);
 
-test('Suite 5: Calculator-Level DOM & Explain Calculation Audit', '5.3 Execute renderTool(), mode switching, unit switching, and Explain Calculation drawer across all 300 tools in app.js DOM harness', () => {
+test('Suite 5: Calculator-Level DOM & Explain Calculation Audit', '5.3 Execute renderTool(), mode switching, unit switching, and Explain Calculation drawer across all 383 tools in app.js DOM harness', () => {
   for (const t of catalog.tools) {
     vRoot.dataset.page = 'tool';
     vRoot.dataset.tool = t.slug;
@@ -1023,7 +1023,7 @@ test('Suite 5: Calculator-Level DOM & Explain Calculation Audit', '5.3 Execute r
 // ============================================================================
 // SUITE 6: STATIC SITE HTML, SEO, CANONICALS, SITEMAP & REDIRECTS AUDIT
 // ============================================================================
-test('Suite 6: Static Site, SEO & URL Compatibility', '6.1 Verify all 325 generated HTML files exist and contain valid metadata, canonical links, and 8-category navigation', () => {
+test('Suite 6: Static Site, SEO & URL Compatibility', '6.1 Verify generated HTML pages exist and contain valid metadata, canonical links, and 9-category navigation', () => {
   const indexHtml = fs.readFileSync(path.join(rootDir, 'site/index.html'), 'utf8');
   checkOk(!indexHtml.includes('adsbygoogle'), 'AdSense script must be removed');
   checkOk(!indexHtml.includes('"url": null'), 'JSON-LD url must not be null');
@@ -1052,7 +1052,7 @@ test('Suite 6: Static Site, SEO & URL Compatibility', '6.1 Verify all 325 genera
     checkOk(txt.includes(`https://axiomatlas.netlify.app${newPath}`), `Legacy category ${oldSlug} must canonicalize to ${newPath}`);
   }
 
-  // Verify all 300 tool pages
+  // Verify all 383 tool pages
   for (const t of catalog.tools) {
     const p = path.join(rootDir, 'site/tools', t.slug, 'index.html');
     checkOk(fs.existsSync(p), `Missing tool page: ${t.slug}`);
@@ -1178,6 +1178,53 @@ test('Suite 7: Astronomy & Astrophysics Benchmarks', '7.5 Black Holes, Relativit
   checkEqual(sep0.sepDeg, 0);
   const sepPoles = computeCelestialSeparation(0, 90, 0, -90);
   approxEqual(sepPoles.sepDeg, 180, 1e-12);
+});
+
+
+ 
+// ============================================================================
+// SUITE 8: MOBILE CATEGORY VISIBILITY & CACHE VERSIONING REGRESSION
+// ============================================================================
+test('Suite 8: Mobile Category Visibility & Cache Versioning', '8.1 Preserve all 9 categories in generated and runtime navigation across mobile layouts', () => {
+  const indexHtml = fs.readFileSync(path.join(rootDir, 'site/index.html'), 'utf8');
+  const appJs = fs.readFileSync(path.join(rootDir, 'site/assets/app.js'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(rootDir, 'site/assets/styles.css'), 'utf8');
+  const headers = fs.readFileSync(path.join(rootDir, 'site/_headers'), 'utf8');
+  const buildPy = fs.readFileSync(path.join(rootDir, 'source/build.py'), 'utf8');
+
+  checkEqual(catalog.categories.length, 9, 'Catalog must contain all 9 primary categories');
+  checkEqual((indexHtml.match(/class="category-card"/g) || []).length, 9, 'Generated homepage must contain 9 category cards');
+  checkEqual((indexHtml.match(/class="cat-nav-group/g) || []).length, 9, 'Generated homepage must contain 9 sidebar category groups');
+  checkOk(indexHtml.includes('/categories/astronomy-astrophysics/'), 'Astronomy category route must be present in generated homepage/sidebar');
+  checkOk(indexHtml.includes('/assets/app.js?v=') && indexHtml.includes('/assets/styles.css?v='), 'Generated pages must reference versioned app and stylesheet URLs');
+
+  // Exercise the same runtime renderers that replace static markup after catalog load.
+  vRoot.dataset.page = 'home';
+  delete vRoot.dataset.category;
+  appMod.renderHome();
+  appMod.shell();
+  checkEqual((vCatGrid.innerHTML.match(/class="category-card"/g) || []).length, 9, 'Runtime homepage renderer must retain all 9 category cards');
+  checkEqual((vSideCats.innerHTML.match(/class="cat-nav-group/g) || []).length, 9, 'Runtime sidebar renderer must retain all 9 category groups');
+  checkOk(vCatGrid.innerHTML.includes('Astronomy &amp; Astrophysics') || vCatGrid.innerHTML.includes('Astronomy & Astrophysics'), 'Runtime homepage must include Astronomy');
+  checkOk(vSideCats.innerHTML.includes('astronomy-astrophysics'), 'Runtime sidebar must include Astronomy route');
+
+  checkOk(appJs.includes("new URL(import.meta.url).searchParams.get('v')"), 'Runtime app must read its generated asset version');
+  checkOk(appJs.includes('/assets/catalog.json?v=${encodeURIComponent(ASSET_VERSION)}'), 'Catalog fetch must use the same asset version');
+  checkOk(appJs.includes("{ cache: 'no-cache' }"), 'Catalog fetch must revalidate instead of trusting a long-lived stale entry');
+  checkOk(buildPy.includes("hashlib.sha256()") && buildPy.includes("('catalog.json', 'app.js', 'styles.css')"), 'Asset version must be content-derived so future catalog edits automatically bust cache');
+
+  checkOk(stylesCss.includes('.sidebar>*{flex-shrink:0}'), 'Sidebar groups must not flex-shrink out of the scroll area');
+  checkOk(stylesCss.includes('#sidebar-cats{flex:0 0 auto;min-height:min-content}'), 'Category navigation must retain its natural height');
+  checkOk(stylesCss.includes('overflow-y:auto') && stylesCss.includes('overscroll-behavior-y:contain'), 'Mobile sidebar must remain vertically scrollable');
+  checkOk(/\.categories-grid\{[^}]*grid-template-columns:1fr/.test(stylesCss), 'Mobile category grid must use a visible single-column layout');
+  checkOk(!/\.category-card\s*\{[^}]*display\s*:\s*none/i.test(stylesCss), 'Category cards must not be hidden by the category-card rule');
+
+  const cacheRules = ['/assets/app.js', '/assets/catalog.json', '/assets/styles.css'];
+  const headerBlocks = headers.split(/\n(?=\/)/).map(block => block.trim()).filter(Boolean);
+  for (const route of cacheRules) {
+    const block = headerBlocks.find(item => item.split(/\r?\n/)[0].trim() === route) || '';
+    checkOk(/max-age=0,\s*must-revalidate/.test(block), `${route} must not remain stale in mobile browser cache`);
+  }
 });
 
 console.log('\n====================================================================');

@@ -1265,6 +1265,41 @@ test('Suite 9: Verified guide content and responsive UX', '9.3 Catalog makes cro
   checkOk(fs.readFileSync(path.join(rootDir, 'site/assets/app.js'), 'utf8').includes('links.addEventListener(\'toggle\''), 'Sidebar accordion should collapse other expanded groups');
 });
 
+
+test('Suite 10: Editorial guide quality', '10.1 Curated guides show independent numerical cases and honest limitations', () => {
+  const expected = [
+    ['kinetic-energy','180 J'],
+    ['ohms-law','24 W'],
+    ['pythagorean-calculator','5 m'],
+    ['compound-interest','14,898.457083'],
+    ['rlc-resonance-calculator','503.292121 Hz'],
+    ['schwarzschild-radius-calculator','2,953.339382 m'],
+    ['lorentz-factor-calculator','1.666666667'],
+    ['gcd-calculator','GCD = 6'],
+    ['projectile-range','40.78864852 m'],
+    ['quadratic-equation','x = 2 or x = 3'],
+    ['normal-distribution-calculator','0.3989422804']
+  ];
+  for (const [slug, result] of expected) {
+    const html = fs.readFileSync(path.join(rootDir, 'site/tools', slug, 'index.html'), 'utf8');
+    checkOk(html.includes('When to use this calculator'), slug + ' missing editorial use-case');
+    checkOk(html.includes('How to check the answer'), slug + ' missing independent consistency check');
+    checkOk(html.includes('Important limitation'), slug + ' missing domain-specific limitation');
+    checkOk(html.includes(result), slug + ' missing verifiable worked result');
+  }
+  approxEqual(0.5*10*6*6,180,1e-12);
+  approxEqual(10000 * Math.pow(1 + 0.08 / 12, 60),14898.45708301605,1e-10);
+  approxEqual(1/(2*Math.PI*Math.sqrt(.01*.00001)),503.2921210448704,1e-10);
+});
+test('Suite 10: Editorial guide quality', '10.2 About page documents limits and reproducibility without false guarantees', () => {
+  const about = fs.readFileSync(path.join(rootDir, 'site/about/index.html'), 'utf8');
+  for (const section of ['How calculations and explanations work','Reproducibility and automated checks','Known limitations and safe use','Corrections and maintenance']) {
+    checkOk(about.includes(section), 'About page missing '+section);
+  }
+  checkOk(about.includes('github.com/msrajput08/axiom-atlas/issues'), 'Correction channel must link to real repository issues');
+  checkOk(about.includes('does not certify'), 'Must disclose limits of automated tests');
+});
+
 console.log('\n====================================================================');
 console.log('AXIOMATLAS 2.0 FINAL RELEASE-BLOCKING QA & REGRESSION TEST SUMMARY');
 console.log('====================================================================');

@@ -2546,10 +2546,10 @@ f('Astronomy & Astrophysics', 'Cosmology', 'cosmological-redshift-calculator', '
   'cosmological redshift calculator wavelength shift scale factor doppler')
 
 s('Astronomy & Astrophysics', 'Cosmology', 'redshift-distance-calculator', 'Redshift-Distance Calculator',
-  'Compute exact ΛCDM Comoving, Transverse, Luminosity, Angular Diameter, and Light-Travel distances via numerical Gauss–Legendre integration over configurable (H₀, Ω_m, Ω_Λ) parameters.',
+  'Numerically estimate ΛCDM comoving, transverse, luminosity, angular-diameter, and light-travel distances using composite Gauss–Legendre integration over configurable (H₀, Ω_m, Ω_Λ) parameters.',
   'astro_cosmology',
   'D_C(z) = (c/H₀) ∫₀ᶻ dz′ / E(z′);  E(z) = √[Ω_r(1+z)⁴ + Ω_m(1+z)³ + Ω_k(1+z)² + Ω_Λ]',
-  'Uses 8-point composite Gauss–Legendre quadrature in logarithmic redshift coordinates. Contrasts exact ΛCDM distances against the linear cz/H₀ approximation.',
+  'Uses 8-point composite Gauss–Legendre quadrature in logarithmic redshift coordinates. Compares model-based numerical ΛCDM distances with the low-redshift linear cz/H₀ approximation.',
   'redshift distance calculator cosmology lcdm comoving luminosity angular diameter')
 
 s('Astronomy & Astrophysics', 'Cosmology', 'lookback-time-estimator', 'Lookback Time Estimator',

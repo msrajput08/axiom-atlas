@@ -101,7 +101,7 @@ def document(title, desc, path, body, attrs='', schema='', canonical_override=''
     canonical = f'<link rel="canonical" href="{e(canon_href)}">' if canon_href else ''
     crumb = 'Dashboard' if path == '/' else e(title)
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151530"><meta name="description" content="{e(desc)}"><meta name="robots" content="{e(robots)}"><title>{full_title}</title>{canonical}<meta property="og:type" content="website"><meta property="og:title" content="{full_title}"><meta property="og:description" content="{e(desc)}"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/assets/styles.css?v={ASSET_VERSION}">{schema}{GA4_TAG}</head><body {attrs}>
-<div class="site"><aside class="sidebar" id="sidebar"><a class="brand-wrap" href="/"><span class="brand-mark"><svg viewBox="0 0 40 40" fill="none" stroke="white" stroke-width="3.4" stroke-linecap="round"><circle cx="20" cy="20" r="7"/><ellipse cx="20" cy="20" rx="17" ry="8" transform="rotate(-38 20 20)"/><circle cx="32.7" cy="8.3" r="3" fill="#f4cc74" stroke="none"/></svg></span><span><span class="brand">Axiom<em>Atlas</em></span><div class="brand-subtitle">ONE UNIVERSE OF CALCULATIONS</div></span></a><div class="side-section-title">EXPLORE</div><a class="side-link {'active' if path == '/' else ''}" href="/"><span>⌂</span> Overview</a><a class="side-link" href="/#featured"><span>⚡</span> Popular tools</a><a class="side-link" href="/#all-calculators"><span>▤</span> All calculators</a><div class="side-section-title">{len(cats)} PRIMARY CATEGORIES</div><nav id="sidebar-cats">{sidebar_nav_html(active_cat_slug)}</nav><div class="side-section-title">SAVED TOOLS</div><div id="saved-links"><span class="side-empty">Your favorites will appear here.</span></div><div class="side-bottom"><strong>Everything adds up.</strong><br>100% free. No account. Step-by-step explanations on every tool.<br><span>© 2026 AxiomAtlas</span></div></aside><div class="mobile-shade" id="mobile-shade"></div><div class="main-frame"><header class="topbar"><div class="header-crumb"><button class="icon-btn mobile-only" id="mobile-menu" aria-label="Open navigation">☰</button><a href="/">Home</a> <span>›</span> <strong>{crumb}</strong></div><div class="top-actions"><button class="search-trigger" id="open-search" aria-label="Search calculators"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></svg><span>Search any calculator or formula...</span><kbd>⌘ K</kbd></button><button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode">☾</button></div></header><main class="content">{body}<footer class="footer"><span>© 2026 AxiomAtlas · Built for students, engineers, scientists, astronomers & analysts.</span><span>Free tools · No sign-in · Client-side calculations · <a href="/about/">About & accuracy</a> · <a href="/privacy/">Privacy</a></span></footer></main></div></div>
+<div class="site"><aside class="sidebar" id="sidebar"><a class="brand-wrap" href="/"><span class="brand-mark"><svg viewBox="0 0 40 40" fill="none" stroke="white" stroke-width="3.4" stroke-linecap="round"><circle cx="20" cy="20" r="7"/><ellipse cx="20" cy="20" rx="17" ry="8" transform="rotate(-38 20 20)"/><circle cx="32.7" cy="8.3" r="3" fill="#f4cc74" stroke="none"/></svg></span><span><span class="brand">Axiom<em>Atlas</em></span><div class="brand-subtitle">ONE UNIVERSE OF CALCULATIONS</div></span></a><div class="side-section-title">EXPLORE</div><a class="side-link {'active' if path == '/' else ''}" href="/"><span>⌂</span> Overview</a><a class="side-link" href="/#featured"><span>⚡</span> Popular tools</a><a class="side-link" href="/#all-calculators"><span>▤</span> All calculators</a><div class="side-section-title">{len(cats)} PRIMARY CATEGORIES</div><nav id="sidebar-cats">{sidebar_nav_html(active_cat_slug)}</nav><div class="side-section-title">SAVED TOOLS</div><div id="saved-links"><span class="side-empty">Your favorites will appear here.</span></div><div class="side-bottom"><strong>Everything adds up.</strong><br>100% free. No account. Step-by-step explanations on every tool.<br><span>© 2026 AxiomAtlas</span></div></aside><div class="mobile-shade" id="mobile-shade"></div><div class="main-frame"><header class="topbar"><div class="header-crumb"><button class="icon-btn mobile-only" id="mobile-menu" aria-label="Open navigation">☰</button><a href="/">Home</a> <span>›</span> <strong>{crumb}</strong></div><div class="top-actions"><button class="search-trigger" id="open-search" aria-label="Search calculators"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></svg><span>Search any calculator or formula...</span><kbd id="search-hotkey">Ctrl K</kbd></button><button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode">☾</button></div></header><main class="content">{body}<footer class="footer"><span>© 2026 AxiomAtlas · Built for students, engineers, scientists, astronomers & analysts.</span><span>Free tools · No sign-in · Client-side calculations · <a href="/about/">About & accuracy</a> · <a href="/privacy/">Privacy</a></span></footer></main></div></div>
 <div class="search-modal" id="search-modal" hidden role="dialog" aria-modal="true" aria-label="Search calculators"><div class="search-box"><div class="search-box-header"><span>⌕</span><input id="global-search" type="search" placeholder="Search calculus, linear algebra, astronomy, circuits, physics, statistics, finance..." aria-label="Search all calculators"><button id="search-close">ESC</button></div><div class="search-results" id="search-results"></div><div class="search-foot">Start typing to search {len(canonical_tools)}+ calculators & {len(T)} total routes · Use ↑/↓ and Enter</div></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div><script type="module" src="/assets/app.js?v={ASSET_VERSION}"></script></body></html>'''
 
 def jsonld(d):
@@ -162,6 +162,27 @@ SPECIALIZED_VARIABLES = {
     ]
 }
 
+SPECIALIZED_VARIABLES.update({
+    'finance_npv': [
+        ('r', 'Discount rate per period', '%'),
+        ('CF₀', 'Cash flow at the initial period (typically negative)', 'Currency'),
+        ('CFₜ', 'Cash flow received or paid at period t', 'Currency'),
+        ('t', 'Number of periods after the initial investment', 'Periods'),
+        ('NPV', 'Sum of discounted cash flows', 'Currency')
+    ],
+    'finance_irr': [
+        ('CFₜ', 'Cash flow at period t, including initial investment CF₀', 'Currency'),
+        ('t', 'Number of periods since the initial cash flow', 'Periods'),
+        ('IRR', 'Discount rate at which NPV equals zero', '% per period')
+    ],
+    'linalg_eigen': [
+        ('A', 'Input square matrix', 'Dimensionless unless specified'),
+        ('λ', 'Eigenvalue satisfying det(A − λI) = 0', 'Same as matrix entries'),
+        ('v', 'Nonzero eigenvector satisfying Av = λv', 'Normalized vector'),
+        ('I', 'Identity matrix of the same dimension as A', 'Dimensionless')
+    ]
+})
+
 CONSTANT_INFO = {
     'G': ('G', 'Newtonian gravitational constant (6.67430 × 10⁻¹¹)', 'N·m²/kg²'),
     'c': ('c', 'Speed of light in vacuum (299,792,458)', 'm/s'),
@@ -215,8 +236,8 @@ def build_edu_guide_html(t, target_tool, pre_fields):
         var_rows = SPECIALIZED_VARIABLES[target_tool['type']]
     else:
         var_rows = [
-            ('x, y, …', f'Primary input parameters for {t["title"]}', 'Domain / SI units'),
-            ('f(x)', 'Governing mathematical or physical relation', 'Canonical output unit')
+            ('Inputs', 'Values entered into the expression, matrix, dataset, or model controls above', 'Depends on input'),
+            ('Outputs', 'Labeled results and diagnostics produced for the current inputs', 'Shown per result')
         ]
 
     var_tbody_html = ''.join(
@@ -264,6 +285,26 @@ def build_edu_guide_html(t, target_tool, pre_fields):
             f'<div class="edu-example-box"><small>Governing Relation</small><div>{e(formula_str)}</div></div>'
             f'<div class="edu-example-box"><small>Interactive Verification</small><div>Click <b>Explain Calculation</b> in the results panel to inspect the full worked steps for the current inputs.</div></div>'
             f'</div>'
+        )
+
+    # Show reproducible reference values for high-traffic specialized solvers.
+    if target_tool.get('type') == 'finance_npv':
+        example_body = (
+            '<p>Using the initial cash flow and four annual cash flows preloaded in the calculator:</p>'
+            '<div class="edu-example-grid">'
+            '<div class="edu-example-box"><small>Reference Inputs</small><div>r = 10%; CF = [−1000, 300, 400, 500, 600]</div></div>'
+            '<div class="edu-example-box"><small>Substitution</small><div>NPV = −1000 + 300/1.1 + 400/1.1² + 500/1.1³ + 600/1.1⁴</div></div>'
+            '<div class="edu-example-box"><small>Expected NPV</small><div>388.77125879 currency units</div></div>'
+            '</div>'
+        )
+    elif target_tool.get('type') == 'linalg_eigen':
+        example_body = (
+            '<p>The preloaded 2×2 matrix has two distinct real eigenvalues:</p>'
+            '<div class="edu-example-grid">'
+            '<div class="edu-example-box"><small>Reference Matrix</small><div>A = [[4, 1], [2, 3]]</div></div>'
+            '<div class="edu-example-box"><small>Characteristic Equation</small><div>det(A − λI) = λ² − 7λ + 10 = 0</div></div>'
+            '<div class="edu-example-box"><small>Expected Results</small><div>λ₁ = 5; λ₂ = 2; tr(A) = 7; det(A) = 10</div></div>'
+            '</div>'
         )
 
     # 6. Assumptions & Limitations
@@ -383,9 +424,10 @@ for out_root in [site_root]:
             f'<button type="button" class="filter-pill" data-sub="{e(slug(s))}">{e(s)} ({sum(1 for x in items if tool_matches_subcat(x, s))})</button>'
             for s in c.get('subcategories', [])
         )
+        cross_list_note = ('<p class="filter-note">Some calculators belong to multiple subcategories. The category total counts each calculator once.</p>' if any(x.get('secondarySubcategories') for x in items) else '')
         bod = f'''<div class="breadcrumbs"><a href="/">Home</a><span>›</span><strong>{e(c['name'])}</strong></div>
 <div class="category-top"><span class="cat-glyph">{e(icon.get(c['name'], '#'))}</span><span class="eyebrow">{len(items)} FREE CALCULATORS · {len(c.get("subcategories", []))} SUBCATEGORIES</span><h1>{e(c['name'])} Calculators</h1><p>{e(c['description'])}. Every calculator includes live updates, structured explanations, and step-by-step derivations.</p></div>
-<section class="section" style="margin-top:15px"><div class="section-heading library-header"><h2>Browse {len(items)} calculators</h2><label class="search-field"><input type="search" data-page-search placeholder="Filter in {e(c['name'])}..." aria-label="Filter calculators"></label></div><div id="subcat-pills" class="filter-pills">{pills_html}</div><div class="tool-grid" id="category-tools">{cards(items)}</div></section>'''
+<section class="section" style="margin-top:15px"><div class="section-heading library-header"><h2>Browse {len(items)} calculators</h2><label class="search-field"><input type="search" data-page-search placeholder="Filter in {e(c['name'])}..." aria-label="Filter calculators"></label></div><div id="subcat-pills" class="filter-pills">{pills_html}</div>{cross_list_note}<div class="tool-grid" id="category-tools">{cards(items)}</div></section>'''
         dst = out_root / path.lstrip('/')
         dst.mkdir(parents=True, exist_ok=True)
         (dst / 'index.html').write_text(
@@ -464,7 +506,7 @@ for out_root in [site_root]:
         bod = f'''<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/categories/{cat_slug}/">{e(t['category'])}</a><span>›</span><a href="/categories/{cat_slug}/#{sub_slug}">{e(t.get('subcategory') or t['category'])}</a><span>›</span><strong>{e(t['title'])}</strong></div>
 <section class="tool-top"><div><span class="eyebrow">{e(t['category'].upper())} › {e((t.get('subcategory') or t['category']).upper())}</span><h1>{e(t['title'])}</h1><p>{e(t['description'])}</p></div><div class="tool-top-actions"><button class="outline-btn" id="favorite-toggle">☆ Save tool</button><button class="outline-btn" id="share-tool">↗ Share</button></div></section>
 {alias_banner}
-<div class="calculator-layout"><div><div class="calculator-card"><div class="calc-card-header"><h2>Input values</h2><span class="tiny-tag">✦ Live & Unit-Aware</span></div><div id="calculator-app">{pre_inputs_html}</div></div>{edu_guide_html}</div><aside class="answer-card"><div class="answer-heading"><h2>Your results</h2><span class="live-label"><i class="live-dot"></i> LIVE</span></div><div id="result-display" aria-live="polite"><p class="mini-help">Edit any field to calculate your result and view the step-by-step explanation.</p></div><p id="result-status">Calculated locally · verified single-pipeline trace</p></aside></div>
+<div class="calculator-layout"><div class="calculator-inputs"><div class="calculator-card"><div class="calc-card-header"><h2>Input values</h2><span class="tiny-tag">✦ Live & Unit-Aware</span></div><div id="calculator-app">{pre_inputs_html}</div></div></div><aside class="answer-card"><div class="answer-heading"><h2>Your results</h2><span class="live-label"><i class="live-dot"></i> LIVE</span></div><div id="result-display" aria-live="polite"><p class="mini-help">Edit any field to calculate your result and view the step-by-step explanation.</p></div><p id="result-status">Calculated locally · verified single-pipeline trace</p></aside><div class="calculator-guide-wrap">{edu_guide_html}</div></div>
 <section class="section"><div class="section-heading"><div><span class="eyebrow">RELATED IN {e((t.get('subcategory') or t['category']).upper())}</span><h2>More {e(t['category'])} calculators</h2></div><a class="plain-link" href="/categories/{cat_slug}/">View all {e(t['category'])} tools →</a></div><div class="related-grid" id="related-tools">{cards(related)}</div></section>'''
 
         canon_url = fullurl(f'/tools/{t.get("canonicalSlug") or t["slug"]}/')

@@ -4863,7 +4863,16 @@ function shell() {
         <div class="subcat-list">${subLinks}</div>
       </details>`;
     }).join('');
+    links.addEventListener('toggle', event => {
+      const opened = event.target;
+      if (!opened?.matches?.('details.cat-nav-group') || !opened.open) return;
+      links.querySelectorAll('details.cat-nav-group').forEach(item => {
+        if (item !== opened) item.open = false;
+      });
+    }, true);
   }
+  const shortcut = $('#search-hotkey');
+  if (shortcut) shortcut.textContent = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '') ? '⌘ K' : 'Ctrl K';
   const toggle = $('#theme-toggle');
   function setTheme(t) {
     document.documentElement.dataset.theme = t;

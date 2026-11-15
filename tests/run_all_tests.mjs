@@ -1227,6 +1227,44 @@ test('Suite 8: Mobile Category Visibility & Cache Versioning', '8.1 Preserve all
   }
 });
 
+
+test('Suite 9: Verified guide content and responsive UX', '9.1 Mobile/tablet calculator pages place live results before the educational reference', () => {
+  const styles = fs.readFileSync(path.join(rootDir, 'site/assets/styles.css'), 'utf8');
+  checkOk(styles.includes('grid-template-areas:"inputs results" "guide results"'), 'Desktop input/results/guide layout must use explicit named areas');
+  checkOk(styles.includes('grid-template-areas:"inputs" "results" "guide"'), 'Tablet and mobile layout must show results before educational guide');
+  for (const t of catalog.tools) {
+    const html = fs.readFileSync(path.join(rootDir, 'site/tools', t.slug, 'index.html'), 'utf8');
+    const inputs = html.indexOf('class="calculator-inputs"');
+    const results = html.indexOf('class="answer-card"');
+    const guide = html.indexOf('class="calculator-guide-wrap"');
+    checkOk(inputs >= 0 && inputs < results && results < guide, t.slug + ' DOM order must be inputs → results → guide');
+  }
+});
+test('Suite 9: Verified guide content and responsive UX', '9.2 Specialized guides use true domain variables and reproducible benchmark examples', () => {
+  const read = slug => fs.readFileSync(path.join(rootDir, 'site/tools', slug, 'index.html'), 'utf8');
+  const npv = read('npv-calculator');
+  checkOk(npv.includes('Discount rate per period') && npv.includes('Cash flow at the initial period'), 'NPV guide must list discount rate and cash flows');
+  checkOk(npv.includes('388.77125879'), 'NPV guide must include verifiable computed result for displayed defaults');
+  approxEqual(calcNpvIrr(10, [-1000, 300, 400, 500, 600]).npv, 388.771258793798, 1e-10);
+  const eigen = read('eigenvalues-eigenvectors-calculator');
+  checkOk(eigen.includes('Eigenvalue satisfying') && eigen.includes('λ₁ = 5; λ₂ = 2'), 'Eigen guide must show correct symbols and example');
+  checkOk(!npv.includes('Primary input parameters for NPV'), 'NPV must not show meaningless x/y placeholders');
+});
+test('Suite 9: Verified guide content and responsive UX', '9.3 Catalog makes cross-listed totals clear and numerical precision honest', () => {
+  const astro = catalog.tools.filter(x => !x.isAlias && x.category === 'Astronomy & Astrophysics');
+  checkEqual(astro.length, 86);
+  const exoplanets = astro.filter(t => t.subcategory === 'Exoplanets' || (t.secondarySubcategories || []).includes('Exoplanets'));
+  checkEqual(exoplanets.length, 8, 'Six primary tools and two cross-listed tools');
+  checkEqual(exoplanets.filter(t => t.subcategory === 'Exoplanets').length, 6);
+  const astroHtml = fs.readFileSync(path.join(rootDir, 'site/categories/astronomy-astrophysics/index.html'), 'utf8');
+  checkOk(astroHtml.includes('category total counts each calculator once'), 'Cross-listing note must prevent false inconsistency');
+  const redshift = catalog.tools.find(t => t.slug === 'redshift-distance-calculator');
+  checkOk(redshift.description.includes('Numerically estimate') && !redshift.description.includes('exact ΛCDM'), 'Numerical quadrature must not be labeled exact output');
+  const index = fs.readFileSync(path.join(rootDir, 'site/index.html'), 'utf8');
+  checkOk(index.includes('id="search-hotkey"'), 'Accessible search shortcut should be explicit in site shell');
+  checkOk(fs.readFileSync(path.join(rootDir, 'site/assets/app.js'), 'utf8').includes('links.addEventListener(\'toggle\''), 'Sidebar accordion should collapse other expanded groups');
+});
+
 console.log('\n====================================================================');
 console.log('AXIOMATLAS 2.0 FINAL RELEASE-BLOCKING QA & REGRESSION TEST SUMMARY');
 console.log('====================================================================');

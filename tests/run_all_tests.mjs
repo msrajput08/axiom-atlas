@@ -1068,7 +1068,7 @@ test('Suite 6: Static Site, SEO & URL Compatibility', '6.1 Verify generated HTML
   // Verify sitemap.xml and _redirects
   const sitemap = fs.readFileSync(path.join(rootDir, 'site/sitemap.xml'), 'utf8');
   const locCount = (sitemap.match(/<loc>/g) || []).length;
-  checkEqual(locCount, 326, 'Sitemap must contain 326 canonical indexable URLs (3 core + 9 categories + 314 canonical tools)');
+  checkEqual(locCount, 328, 'Sitemap must contain 328 canonical indexable URLs (5 core routes, 9 categories and 314 canonical tools)');
   for (const t of catalog.tools) {
     const p = path.join(rootDir, 'site/tools', t.slug, 'index.html');
     const txt = fs.readFileSync(p, 'utf8');

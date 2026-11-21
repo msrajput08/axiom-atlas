@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "build": "python3 scripts/rebuild.py",
-    "test": "npm run build && node tests/run_all_tests.mjs && node tests/saas_foundation.test.mjs"
+    "test": "npm run build && node tests/run_all_tests.mjs && node tests/saas_foundation.test.mjs && node tests/seo_integrity.test.mjs"
   }
 }

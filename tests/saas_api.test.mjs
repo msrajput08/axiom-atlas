@@ -14,7 +14,7 @@ globalThis.fetch = async (url) => {
   jwksRequests++;
   return new Response(JSON.stringify({keys: [publicJwk]}), {status: 200});
 };
-const b64 = value => Buffer.from(typeof value === "string" ? value : JSON.stringify(value)).toString("base64url");
+const b64 = value => Buffer.from(typeof value === "string" || value instanceof Uint8Array ? value : JSON.stringify(value)).toString("base64url");
 async function access(userId, modify = {}) {
   const now = Math.floor(Date.now() / 1000);
   const head = {alg: "ES256", typ: "JWT", kid: "test-key-1"};

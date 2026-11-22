@@ -117,3 +117,45 @@
 @media(max-width:800px){.brain-game-layout{grid-template-columns:1fr}.brain-sidebar{order:2}.brain-game-grid{grid-template-columns:1fr}.brain-hero::after{opacity:.04}}
 @media(max-width:520px){.brain-hero{border-radius:18px;padding:23px}.brain-player{padding:18px}.brain-choice-grid{grid-template-columns:1fr 1fr}.brain-choice{padding:13px 9px}.brain-verify-inputs{grid-template-columns:1fr}.brain-game-card{padding:19px}.brain-related-inline{flex-direction:column;align-items:flex-start}.brain-promo-head{align-items:flex-start;flex-direction:column}.brain-promo-grid{grid-template-columns:1fr}.brain-round-top{flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){.brain-game-card,.brain-button,.brain-progress-track span{transition:none!important}}
+
+
+
+/* 20-level mastery progression with four visually distinct learning stages. */
+.brain-level-select{display:grid;gap:22px}
+.brain-level-overview{border:1px solid var(--stroke);border-radius:18px;padding:clamp(20px,3vw,29px);background:radial-gradient(circle at 85% 8%,rgba(110,94,247,.13),transparent 48%),var(--panel2)}
+.brain-level-overview h2{font-size:clamp(22px,2.8vw,32px);letter-spacing:-.9px;margin:8px 0}
+.brain-level-overview>p{font-size:13px;color:var(--muted);line-height:1.75;margin:0 0 22px;max-width:600px}
+.brain-total-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin:6px 0;font-size:12px;color:var(--muted)}
+.brain-total-row strong{color:var(--ink)}
+.brain-stage-block{border:1px solid var(--stroke);border-radius:18px;padding:clamp(16px,2vw,22px);background:var(--panel)}
+.brain-stage-block:nth-of-type(2){border-top:3px solid #5d65e6}
+.brain-stage-block:nth-of-type(3){border-top:3px solid #0c978c}
+.brain-stage-block:nth-of-type(4){border-top:3px solid #b37732}
+.brain-stage-block:nth-of-type(5){border-top:3px solid #8545b8}
+.brain-stage-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.brain-stage-icon{height:41px;width:41px;flex:0 0 41px;display:grid;place-items:center;border-radius:12px;background:var(--purple-bg);color:var(--indigo);font-size:17px;font-weight:850}
+.brain-stage-head h3{font-size:17px;margin:1px 0 2px}
+.brain-stage-head p{font-size:12px;line-height:1.5;color:var(--muted);margin:0}
+.brain-level-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.brain-level-tile{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;min-width:0;min-height:119px;text-align:center;border:1px solid var(--stroke);border-radius:12px;background:var(--panel2);color:var(--ink);padding:12px 7px;transition:transform .15s,border-color .15s,box-shadow .15s}
+.brain-level-tile:not(:disabled):hover{transform:translateY(-2px);border-color:var(--purple);box-shadow:var(--shadow)}
+.brain-level-tile:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.brain-level-tile.is-locked{opacity:.57;cursor:not-allowed;background:var(--bg)}
+.brain-level-tile.is-earned{border-color:var(--success);background:color-mix(in srgb,var(--success) 7%,var(--panel))}
+.brain-level-number{font-size:21px;font-weight:850;line-height:1.1;color:var(--indigo)}
+.brain-level-name{font-size:10.5px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}
+.brain-level-award{font-size:10px;color:var(--muted);font-weight:700}
+.brain-level-tile.is-earned .brain-level-award{color:var(--success)}
+.brain-game-levels{display:block;font-size:11px;color:var(--purple);font-weight:800;letter-spacing:.2px}
+.brain-daily-panel{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 24px;background:var(--panel2);border:1px solid var(--stroke);border-radius:15px}
+.brain-daily-panel h3{font-size:16px;margin:6px 0}
+.brain-daily-panel p{font-size:12px;color:var(--muted);line-height:1.6;margin:0}
+.brain-daily-panel>.brain-button{flex-shrink:0}
+.brain-question-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.brain-text-button{background:transparent;border:0;color:var(--indigo);font-size:12px;font-weight:800;padding:7px 0}
+.brain-text-button:hover{text-decoration:underline}
+.brain-next-actions{display:flex;gap:9px;flex-wrap:wrap}
+.brain-next-actions>.brain-button{flex:1}
+@media(max-width:1080px){.brain-level-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.brain-level-tile{min-height:104px}}
+@media(max-width:610px){.brain-level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brain-stage-block{padding:16px}.brain-level-tile{min-height:95px}.brain-daily-panel{flex-direction:column;align-items:stretch}.brain-daily-panel>.brain-button{width:100%}.brain-next-actions{flex-direction:column}.brain-next-actions>.brain-button{width:100%}}
+@media(prefers-reduced-motion:reduce){.brain-level-tile{transition:none}}

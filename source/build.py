@@ -25,7 +25,7 @@ URL = os.environ.get('SITE_URL', 'https://axiomatlas.netlify.app').strip().rstri
 
 # A content-derived version keeps browsers from reusing old mobile catalog/app assets.
 _ASSET_HASH = hashlib.sha256()
-for _asset_name in ('catalog.json', 'app.js', 'styles.css', 'brain-games-catalog.json', 'brain-games.mjs', 'games-engine.mjs', 'brain-games.css'):
+for _asset_name in ('catalog.json', 'app.js', 'styles.css', 'brain-games-catalog.json', 'brain-games.mjs', 'games-engine.mjs', 'games-levels.mjs', 'games-progress.mjs', 'brain-games.css'):
     _asset_path = site_root / 'assets' / _asset_name
     _ASSET_HASH.update(_asset_name.encode('utf-8'))
     _ASSET_HASH.update(_asset_path.read_bytes())
@@ -467,6 +467,7 @@ def game_card(g):
         f'{e(next((c["icon"] for c in GAME_CATEGORIES if c["name"] == g["category"]), "✦"))}'
         f'</span><span class="brain-game-difficulty">{e(g["difficulty"])}</span></span>'
         f'<h3>{e(g["title"])}</h3><p>{e(g["description"])}</p>'
+        '<span class="brain-game-levels">20 levels · 5 marks each · 100 total</span>'
         f'<span class="brain-game-link">Play this game →</span></a>'
     )
 
@@ -497,7 +498,7 @@ quicklinks_html = ''.join(
 home = f'''<section class="hero"><div class="hero-copy"><span class="eyebrow">THE ALL-IN-ONE STEM, ASTRONOMY & FINANCIAL CALCULATION STUDIO</span><h1>Everything adds up.<br><span>With step-by-step clarity.</span></h1><p>From symbolic calculus, linear algebra, and engineering circuits to orbital mechanics, numerical ΛCDM cosmology, black hole relativity, exoplanet transits, statistics, and quantitative finance.</p><div class="hero-buttons"><a class="main-button" href="/tools/scientific-calculator/">Start calculating <span>↗</span></a><a class="secondary-button" href="#all-calculators">Explore all calculators ↓</a></div></div><div class="hero-orbit" aria-hidden="true"><span class="orbit-circle one"></span><span class="orbit-circle two"></span><span class="orbit-circle three"></span><span class="orbit-planet">∑</span><span class="float-equation a">R_s = 2GM/c²</span><span class="float-equation b">∫ f(x) dx</span><span class="float-equation c">PA = LU</span></div></section>
 <section class="metrics"><div class="metric"><span class="metric-icon">∑</span><div><strong id="total-tools">{len(canonical_tools)}+</strong><small> Interactive calculators</small></div></div><div class="metric"><span class="metric-icon">◈</span><div><strong>{len(cats)}</strong><small>Primary STEM, Astronomy & Finance categories</small></div></div><div class="metric"><span class="metric-icon">✦</span><div><strong>100% Explained</strong><small>Step-by-step derivation on every tool</small></div></div></section>
 <section class="section quick-tools-section" id="quick-tools"><div class="section-heading"><div><span class="eyebrow">USEFUL EVERYDAY CALCULATIONS</span><h2>Find a quick answer</h2><p>Jump directly to a free calculator for numbers, coordinates, study, screen displays, recipes and home projects.</p></div></div><nav class="quick-tool-grid" aria-label="Quick access to everyday calculators">{quicklinks_html}</nav></section>
-<section class="brain-promo section" id="brain-games"><div class="brain-promo-head"><div><span class="eyebrow">PLAY, THINK &amp; VERIFY</span><h2>Learn it by playing it.</h2><p>18 free STEM brain games across 9 subjects. Every wrong answer links to a relevant calculator.</p></div><a href="/games/">Explore all 18 games →</a></div><nav class="brain-promo-grid" aria-label="Brain games">{''.join(f'<a href="/games/{e(g["id"])}/"><span class="brain-game-symbol" aria-hidden="true">✦</span><span>{e(g["title"])}</span></a>' for g in GAMES if g['id'] in ('prime-detective','equation-escape','energy-quest','star-distance'))}</nav></section>
+<section class="brain-promo section" id="brain-games"><div class="brain-promo-head"><div><span class="eyebrow">PLAY, THINK &amp; VERIFY</span><h2>Learn it by playing it.</h2><p>18 free STEM brain games across 9 subjects, each with 20 levels worth 5 marks. Every wrong answer links to a relevant calculator.</p></div><a href="/games/">Explore all 18 games →</a></div><nav class="brain-promo-grid" aria-label="Brain games">{''.join(f'<a href="/games/{e(g["id"])}/"><span class="brain-game-symbol" aria-hidden="true">✦</span><span>{e(g["title"])}</span></a>' for g in GAMES if g['id'] in ('prime-detective','equation-escape','energy-quest','star-distance'))}</nav></section>
 <section class="section" id="featured"><div class="section-heading"><div><span class="eyebrow">FLAGSHIP SOLVERS</span><h2>Featured calculators</h2><p>Symbolic & numerical calculus, linear algebra, astronomy & cosmology, engineering circuits, statistics, and finance.</p></div><a class="plain-link" href="#all-calculators">View complete library →</a></div><div class="tool-grid" id="featured-tools">{cards(featured)}</div></section>
 <section class="section" id="categories"><div class="section-heading"><div><span class="eyebrow">STRUCTURED TAXONOMY</span><h2>Explore {len(cats)} primary categories</h2><p>Organized into {sum(len(c.get('subcategories', [])) for c in cats)} domain-specific subcategories for rapid discovery.</p></div></div><div class="categories-grid" id="categories-grid">{catshtml}</div></section>
 <section class="section" id="recent-section" hidden><div class="section-heading"><div><h2>Pick up where you left off</h2><p>Recently used tools, saved only on this device.</p></div></div><div class="tool-grid" id="recent-tools"></div></section>
@@ -691,11 +692,12 @@ for out_root in [site_root]:
         '<div class="brain-page"><div class="breadcrumbs"><a href="/">Home</a><span>›</span><strong>Games &amp; Activities</strong></div>'
         '<section class="brain-hero"><span class="brain-kicker">AXIOMATLAS BRAIN LAB</span>'
         '<h1>Think deeper. <span>Play smarter.</span></h1>'
-        '<p>18 free brain games and interactive challenges across mathematics, algebra, calculus, geometry, physics, statistics, finance, everyday tools and astronomy. '
+        '<p>18 free 20-level brain games and interactive challenges across mathematics, algebra, calculus, geometry, physics, statistics, finance, everyday tools and astronomy. '
         'When you miss an answer, learn the method and open a matching calculator to independently verify it.</p>'
         '<div class="brain-hero-stats"><span class="brain-stat-pill"><b>18</b> games</span>'
         '<span class="brain-stat-pill"><b>9</b> subjects</span>'
-        '<span class="brain-stat-pill"><b>5</b> rounds per game</span>'
+        '<span class="brain-stat-pill"><b>20</b> levels per game</span>'
+        '<span class="brain-stat-pill"><b>5</b> marks per level</span>'
         '<span class="brain-stat-pill">Free · No account</span></div></section>'
         + game_links + '</div>'
     )
@@ -704,11 +706,11 @@ for out_root in [site_root]:
     (game_dir / 'index.html').write_text(
         game_page_document(
             'Free Math, Science & Brain Games',
-            'Play 18 free math, logic, physics, finance, statistics and astronomy games. Check wrong answers with AxiomAtlas calculators. No login needed.',
+            'Play 18 free STEM brain games with 20 progressive levels each, 5 marks per level, four learning stages and matching calculators to verify wrong answers.',
             '/games/', game_hub, 'data-page="games"',
             jsonld({'@context': 'https://schema.org', '@type': 'CollectionPage',
                     'name': 'AxiomAtlas Brain Lab — Free Math and Science Games',
-                    'url': fullurl('/games/'), 'description': '18 educational brain games in 9 STEM and everyday subjects'})
+                    'url': fullurl('/games/'), 'description': '18 educational games with 20 progressive levels and 100 possible marks each across 9 subjects'})
         ), encoding='utf8'
     )
     for g in GAMES:
@@ -719,9 +721,10 @@ for out_root in [site_root]:
             f'<a class="brain-breadcrumb" href="/games/">← All brain games</a>'
             '<section class="brain-hero brain-detail-hero">'
             f'<span class="brain-kicker">{e(g["category"])} · {e(g["difficulty"])}</span>'
-            f'<h1>{e(g["title"])}</h1><p>{e(g["description"])} Solve five problems, learn from every answer, '
+            f'<h1>{e(g["title"])}</h1><p>{e(g["description"])} Progress through 20 levels in four stages, learn from every answer, '
             f'and verify your work with the {e(g["calculatorName"])}.</p>'
-            '<div class="brain-hero-stats"><span class="brain-stat-pill">5 puzzles per round</span>'
+            '<div class="brain-hero-stats"><span class="brain-stat-pill">20 levels · 4 stages</span>'
+            '<span class="brain-stat-pill">5 marks per level · 100 total</span>'
             '<span class="brain-stat-pill">Free · No sign-in</span><span class="brain-stat-pill">Personal best saved locally</span></div>'
             '</section><div class="brain-game-layout">'
             f'<div class="brain-player" id="game-player" data-game-id="{e(g["id"])}"'
@@ -731,10 +734,10 @@ for out_root in [site_root]:
             '<p>Loading your challenge…</p><noscript>Enable JavaScript to play this interactive challenge. '
             'The calculator and reference pages remain accessible without JavaScript.</noscript></div>'
             '<aside class="brain-sidebar"><h2>How this challenge works</h2>'
-            '<ol><li>Answer 5 questions using your reasoning.</li>'
-            '<li>Use hints if you need them; a correct answer with a hint earns 7 rather than 10 points.</li>'
+            '<ol><li>Progress through 20 levels across Discovery, Application, Reasoning and Mastery.</li>'
+            '<li>Each correct level earns 5 marks, even when you use a hint. Earn up to 100 marks.</li>'
             '<li>After every answer, inspect the explanation and use the corresponding calculator to verify it.</li>'
-            '<li>Play again to improve your personal best, saved on this device.</li></ol>'
+            '<li>Complete or retry levels to earn 100 marks; your unlocked progress is saved on this device.</li></ol>'
             '<div class="brain-side-note"><strong>Check your calculation</strong>'
             f'<p>Use <a href="/tools/{e(g["calculatorSlug"])}/">{e(g["calculatorName"])}</a> to reproduce any challenge result.</p>'
             '<p>No account, public leaderboard or real-money rewards are involved.</p></div></aside></div>'
@@ -799,7 +802,7 @@ for out_root in [site_root]:
     (out_root / 'assets/favicon.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72"><rect width="72" height="72" rx="18" fill="#5f50ed"/><circle cx="36" cy="36" r="12" fill="none" stroke="white" stroke-width="5"/><ellipse cx="36" cy="36" rx="30" ry="15" fill="none" stroke="white" stroke-width="4" transform="rotate(-38 36 36)"/><circle cx="58" cy="16" r="6" fill="#ffdb8a"/></svg>', encoding='utf8')
     (out_root / 'manifest.webmanifest').write_text(json.dumps({'name': 'AxiomAtlas - STEM, Astronomy & Finance Calculators', 'short_name': 'AxiomAtlas', 'description': 'Free mathematical, scientific, engineering, astronomy, statistics and finance calculators', 'start_url': '/', 'display': 'standalone', 'background_color': '#f8f9fd', 'theme_color': '#151530', 'icons': [{'src': '/assets/favicon.svg', 'sizes': 'any', 'type': 'image/svg+xml', 'purpose': 'any'}]}), encoding='utf8')
     (out_root / 'robots.txt').write_text('User-agent: *\nAllow: /\n' + (f'Sitemap: {URL}/sitemap.xml\n' if URL else ''), encoding='utf8')
-    (out_root / '_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n\n/assets/app.js\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/catalog.json\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/styles.css\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/brain-games.mjs\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/games-engine.mjs\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/brain-games-catalog.json\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/brain-games.css\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/*\n  Cache-Control: public, max-age=604800\n', encoding='utf8')
+    (out_root / '_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n\n/assets/app.js\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/catalog.json\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/styles.css\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/brain-games.mjs\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/games-levels.mjs\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/games-progress.mjs\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/games-engine.mjs\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/brain-games-catalog.json\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/brain-games.css\n  Cache-Control: public, max-age=0, must-revalidate\n\n/assets/*\n  Cache-Control: public, max-age=604800\n', encoding='utf8')
 
     redirect_lines = [
         f'/categories/{old_s}/* /categories/{new_s}/ 301'

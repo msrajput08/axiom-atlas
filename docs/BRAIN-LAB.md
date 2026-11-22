@@ -1,12 +1,14 @@
 # AxiomAtlas Brain Lab — 18 cross-subject games and calculator verification
 
-## Experience
-- 9 subject hubs and 18 playable activities, two for each existing primary category.
-- 5 independently seeded puzzle rounds per activity, unlimited free practice, a date-seeded daily run, optional hints, and local personal-best scores.
-- Every submitted answer reveals a readable step-by-step explanation and a **canonical calculator link** with the exact input values a user can re-enter to verify the result. Incorrect answers emphasize the verification action.
-- All games are browser-local. There is no sign-in, cloud save, shared leaderboard, monetary reward, artificial urgency or external question-generation service.
-- Scores are stored in the browser's own `localStorage`; the existing privacy policy discloses this. Game questions and calculator inputs are not sent to a server.
-- Links use existing calculator pages; canonical calculator URLs and numerical calculation engines are unchanged.
+## Experience — 20 levels per activity
+
+- **18 games × 20 levels = 360 distinct learning stages**, across nine existing calculator categories.
+- Each correct level awards **exactly 5 marks**. A full game gives **100/100**; using a hint does not reduce the score. Incorrect answers award zero, explain the math and reveal exact calculator inputs. Retrying can recover the 5 marks.
+- Four progressive tiers of five levels: **Discovery (1–5)**, **Application (6–10)**, **Reasoning (11–15)** and **Mastery (16–20)**. Level mechanics are varied: direct solving, answer selection, truth checks, error audits, missing values, scenario duels, differences, totals, averages, estimation, ranking, median, ranges, percent errors, threshold reasoning, weighted outcomes, ratios, multi-step chains, team comparisons and final-boss challenges.
+- Prime Detective has domain-specific levels about prime factors, gaps, twin primes and divisor counts; Quadratic Code covers discriminants, root properties, vertices and factorizations. Other subjects combine and compare real, calculator-verifiable scenarios.
+- The **level map unlocks the next level after any attempted answer**, so mistakes don't trap learners. Each correctly completed level gets a permanent five-mark credit saved locally; retrying a previously earned level cannot erase it. Browser storage is the only persistence mechanism.
+- **Daily 20-level mode** uses a repeatable device-date seed, and is separate from the saved campaign. The daily result is not a cloud leaderboard.
+- Everything is client-side, without account, paid server, third-party puzzle generation or login. Calculator pages and their routes are unchanged.
 
 ## Subject coverage
 
@@ -30,16 +32,16 @@ A new game should only be added if it has a distinct educational purpose, indepe
 
 ## Accuracy, limitations, and QA
 
-The central module `site/assets/games-engine.mjs` uses deterministic seeded randomness and known formulas. The test suite `tests/brain_games.test.mjs` independently recomputes 150 questions per game (2,700 total), validates answer grading, all 18 calculator link mappings, all 9 category groupings and game HTML. Errors are explained; the displayed answer is the intended result, not a formally certified solution.
+- `site/assets/games-engine.mjs`: original audited one-step formula generators and strict answer grader.
+- `site/assets/games-levels.mjs`: twenty named mechanisms per activity, with four stages and subject-specific Prime/Quadratic variations.
+- `site/assets/games-progress.mjs`: pure functions for unlock, retry and five-mark scoring; malformed local data is normalized safely.
+- `tests/brain_games.test.mjs`: original 2,700 deterministic base-game numerical checks (150 per activity).
+- `tests/brain_levels.test.mjs`: **6,480 deterministically seeded level scenarios (18 games × 20 levels × 18 seeds)** covering all formula transformations, special prime and quadratic cases, stages, scoring, URL output and browser-only constraints.
+- `npm test` reruns the full pre-existing calculator and SEO tests as well as the game engine and progression suite.
 
-Some games deliberately use simplified educational models:
-- Simple interest instead of compounding, and gross profit margin instead of markup
-- Classical non-relativistic kinetic energy and ideal Ohm's law
-- Equal-probability spinner sectors
-- The exact IAU nominal solar radius and elementary stellar parallax geometry
-- Simple power-rule derivatives and definite integrals over positive intervals
+**Important:** Cross-scenario levels may ask for arithmetic on several calculator outputs. Verification displays separate scenario inputs and tells learners to combine the individual results; it does not silently claim that the calculator has a built-in multi-scenario solver.
 
-The engine does not automatically prefill existing calculators: the verification panel shows the input names and values to enter manually. Scores are local and can reset with browser storage. Date-based daily puzzles follow the user's device date and cannot support a secure global ranking.
+Limitations: results use standard educational assumptions, e.g. classical kinetic energy, Ohm's law with ideal resistance, simple interest (not compound), gross margin (not markup), fair spinners, nominal solar radius and elementary stellar parallax. Scores are saved only on the current browser/device and can be reset when storage is cleared. Daily challenges follow the user's local device date, not a globally enforced tournament day.
 
 ## Measurement
 Track page-level game discoverability, first-game starts, completed five-round runs, return visits, link clicks back to calculators, and device-specific usability **without** sending answer values to analytics. Before adding more activities, verify mobile gameplay and user interest. Adding new URLs alone does not guarantee search rankings or traffic.

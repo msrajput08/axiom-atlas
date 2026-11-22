@@ -83,7 +83,7 @@ function independentlyVerify(gameId, q) {
   }
 }
 
-eq(ROUNDS,5,'game length');
+eq(ROUNDS,20,'20 progression levels per game');
 eq(catalog.games.length,18,'exactly 18 educational games');
 eq(catalog.categories.length,9,'one set of games for every original category');
 const oldCats=JSON.parse(read('site/assets/catalog.json')).categories.map(c=>c.name);
@@ -148,8 +148,8 @@ const stylesheet=read('site/assets/brain-games.css');
 ok(stylesheet.includes('@media(max-width:520px)'),'responsive mobile play layout');
 ok(stylesheet.includes('brain-verify'),'wrong answer verification UI is styled');
 const script=read('site/assets/brain-games.mjs');
-ok(script.includes('gradeAnswer(puzzle, userInput)'),'game grades submitted answers');
-ok(script.includes("correct?'NICE WORK':'LET’S FIGURE IT OUT'"),'wrong answers show teaching outcome');
+ok(script.includes('gradeAnswer(puzzle,response)'),'game grades submitted answers');
+ok(script.includes("correct?'LEVEL CLEARED':'LEARNING OPPORTUNITY'"),'wrong answers show teaching outcome');
 ok(script.includes('puzzle.verifyGuide'),'shows calculator usage instructions');
 ok(script.includes('puzzle.verifyInputs'),'shows exact reproduction inputs');
 ok(script.includes('href="/tools/'),'opens related calculator');

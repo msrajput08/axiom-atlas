@@ -3,7 +3,8 @@
  * Every answer uses the same mathematical relationship as the linked canonical calculator.
  * No network, subscription, identity or leaderboard required.
  */
-export const ROUNDS = 5;
+export const ROUNDS = 20;
+export const POINTS_PER_LEVEL = 5;
 
 function generator(seed) {
   let state = (Number(seed) >>> 0) || 0x91e10da5;

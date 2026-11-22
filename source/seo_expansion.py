@@ -48,8 +48,8 @@ SEO_EXPANSION = json.loads(r'''{
     "title": "Torque Calculator – Force, Lever Arm & Angle",
     "heading": "Torque Calculator",
     "description": "Calculate torque in newton-metres from lever arm length, applied force and angle. Learn τ = rF sin θ with precise worked examples.",
-    "intro": "Calculate the magnitude of torque produced by a force acting at a distance from a pivot. Enter the lever arm, force and their relative angle.",
-    "answer": "Torque magnitude τ = r × F × sin(θ), where r is the lever arm in metres, F is applied force in newtons, and θ is the angle between the two vectors.",
+    "intro": "Calculate torque produced by a force acting at a distance from a pivot. Enter the lever arm, force and their relative angle.",
+    "answer": "Torque τ = r × F × sin(θ), where r is the lever arm in metres, F is applied force in newtons, and θ is the angle between the two vectors.",
     "steps": [
       "Enter the pivot-to-force distance (lever arm) in metres.",
       "Enter the force in newtons and the angle in degrees relative to the lever arm.",

@@ -143,4 +143,4 @@ equal(4 + (12-1)*3, 37, "AP 12th term");
 equal(12 * (4 + 37)/2, 246, "AP 12-term sum");
 equal(10/(1-0.5), 20, "Infinite geometric series example");
 ok(!load("source/build.py").includes("'@type': 'FAQPage'"), "Schema fix must live in generator");
-console.log("Targeted SEO audit passed (" + assertions + " assertions across 383 routes, 9 focused guides).");
+console.log("Targeted SEO audit passed (" + assertions + " assertions across 383 routes, " + Object.keys(focus).length + " focused guides).");

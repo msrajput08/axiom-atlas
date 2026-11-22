@@ -77,7 +77,7 @@ async function verifyJWT(authHeader, env) {
     jwksCache.set(issuer, keys);
   }
   const jwk = keys.keys.find(k => k.kid === header.kid &&
-    k.use !== "enc" && (k.key_ops === undefined || k.key_ops.includes("verify")) &&
+    (k.alg === undefined || k.alg === header.alg) && k.use !== "enc" && (k.key_ops === undefined || k.key_ops.includes("verify")) &&
     ((header.alg === "ES256" && k.kty === "EC" && k.crv === "P-256") ||
      (header.alg === "RS256" && k.kty === "RSA")));
   if (!jwk) throw httpError(401, "Untrusted authentication key");
@@ -269,7 +269,17 @@ export default {
     } catch (e) {
       const status = Number.isInteger(e.status) && e.status >= 400 && e.status < 600 ? e.status : 500;
       // Do not return SQL, secrets or stack traces to clients.
-      return json({error: status === 500 ? "Internal server error" : e.message}, status);
+      const allowed = typeof env.APP_ORIGIN === "string" ? env.APP_ORIGIN.replace(/\/$/, "") : "";
+      const origin = request.headers.get("Origin");
+      const cors = allowed && origin === allowed ?
+        {"Access-Control-Allow-Origin": allowed, "Vary": "Origin"} : {};
+      return json({error: status === 500 ? "Internal server error" : e.message}, status, cors);
     }
+  },
+  async scheduled(_event, env) {
+    if (!env.DB) return;
+    // Remove rate-limit counters older than two days (configure a daily cron trigger).
+    await env.DB.prepare("DELETE FROM saas_rate_limits WHERE window_minute < ?")
+      .bind(Math.floor(Date.now() / 60000) - 2880).run();
   }
 };

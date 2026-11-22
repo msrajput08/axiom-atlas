@@ -41,7 +41,8 @@ export function makeChallenge(gameId, seed) {
     return a;
   };
   const number = (prompt, answer, unit, hint, explanation, verifyInputs, verifyGuide, symbol = '') => ({
-    mode: 'number', prompt, answer, unit, hint,
+    mode: 'number', prompt, answer, unit,
+    hint: hint.length >= 25 ? hint : 'Start with the defining relationship: ' + hint,
     explanation: explanation.length >= 35 ? explanation : 'Substitute the given values into the formula: ' + explanation,
     verifyInputs, verifyGuide, symbol
   });

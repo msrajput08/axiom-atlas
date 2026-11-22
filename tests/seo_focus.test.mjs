@@ -110,7 +110,7 @@ ok(load("site/assets/styles.css").includes(".quick-tool-grid{"), "Responsive qui
 ok(load("source/build.py").includes("SEO_FOCUS.update(SEO_EXPANSION)"), "Expansion guides must be included in generator");
 
 const map = load("site/sitemap.xml");
-equal((map.match(/<loc>/g) || []).length, 326, "Canonical sitemap count must stay at 326");
+equal((map.match(/<loc>/g) || []).length, 345, "Canonical sitemap includes 19 new games pages");
 ok(map.includes("<loc>" + origin + "/tools/prime-checker/</loc>"), "Existing prime canonical remains discoverable");
 ok(!map.includes("<loc>" + origin + "/tools/pixel-density/</loc>"), "Alias must not enter sitemap");
 const robots = load("site/robots.txt");

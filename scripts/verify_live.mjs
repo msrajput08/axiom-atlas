@@ -43,6 +43,10 @@ assert.ok(midpoint.includes('<h1>Midpoint Calculator</h1>'), "Midpoint route is 
 const robots = await get("/robots.txt", "text/plain");
 assert.ok(robots.includes("Sitemap: " + base + "/sitemap.xml"), "robots.txt sitemap reference missing");
 const sitemap = await get("/sitemap.xml", "application/xml");
-assert.equal((sitemap.match(/<loc>/g) || []).length, 326, "Canonical sitemap count changed");
+assert.equal((sitemap.match(/<loc>/g) || []).length, 345, "Canonical sitemap count changed");
 console.log("Production deployment verified: " + info.revision);
-console.log("Home, prime, midpoint, robots.txt and 326 canonical sitemap URLs checked.");
+const hub = await get("/games/", "text/html");
+assert.ok(hub.includes("Think deeper."), "Game hub missing on production");
+const primeGame = await get("/games/prime-detective/", "text/html");
+assert.ok(primeGame.includes('data-game-id="prime-detective"'), "Prime Detective is not deployed");
+console.log("Home, calculators, 18 games and 345 sitemap URLs verified.");

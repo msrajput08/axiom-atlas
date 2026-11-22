@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "python3 scripts/rebuild.py",
-    "test": "npm run build && node tests/run_all_tests.mjs && node tests/seo_focus.test.mjs && node tests/category_navigation.test.mjs && node tests/deploy_metadata.test.mjs",
+    "test": "npm run build && node tests/run_all_tests.mjs && node tests/seo_focus.test.mjs && node tests/category_navigation.test.mjs && node tests/deploy_metadata.test.mjs && node tests/brain_games.test.mjs",
     "verify:live": "node scripts/verify_live.mjs"
   }
 }

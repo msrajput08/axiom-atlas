@@ -1,0 +1,119 @@
+/* AxiomAtlas Brain Lab — responsive games, challenges, and calculator verification. */
+.brain-page{max-width:1280px;margin:auto}
+.brain-kicker{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:1.9px;text-transform:uppercase;color:var(--purple)}
+.brain-hero{position:relative;overflow:hidden;isolation:isolate;border:1px solid var(--stroke);border-radius:24px;padding:clamp(25px,4.4vw,55px);background:radial-gradient(circle at 95% 8%,rgba(126,111,255,.19),transparent 45%),radial-gradient(circle at 2% 88%,rgba(72,180,196,.09),transparent 53%),var(--panel);box-shadow:var(--shadow)}
+.brain-hero::after{content:"∑  ∆  ∫";position:absolute;right:5%;top:8%;font-size:clamp(55px,8vw,135px);font-weight:800;letter-spacing:15px;opacity:.075;color:var(--purple);transform:rotate(-12deg);z-index:-1;pointer-events:none}
+.brain-hero h1{font-size:clamp(28px,4.2vw,51px);font-weight:800;letter-spacing:-1.6px;line-height:1.17;max-width:775px;margin:14px 0}
+.brain-hero h1 span{color:var(--purple)}
+.brain-hero p{font-size:clamp(13.5px,1.25vw,16px);line-height:1.8;max-width:730px;color:var(--muted);margin:0}
+.brain-hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:27px}
+.brain-stat-pill{display:inline-flex;align-items:center;gap:9px;padding:9px 13px;background:var(--panel2);border:1px solid var(--stroke);border-radius:100px;font-size:12px;font-weight:700}
+.brain-stat-pill b{color:var(--purple);font-weight:800}
+.brain-category-block{margin-top:36px;scroll-margin-top:110px}
+.brain-category-heading{display:flex;align-items:center;gap:14px;margin-bottom:17px}
+.brain-category-icon{flex:0 0 46px;width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:var(--purple-bg);color:var(--purple);font-size:22px;font-weight:800}
+.brain-category-heading h2{font-size:clamp(17px,2vw,23px);letter-spacing:-.5px;margin:1px 0 2px}
+.brain-category-heading p{margin:0;color:var(--muted);font-size:12px}
+.brain-category-heading a{margin-left:auto;font-weight:700;font-size:12px;color:var(--purple);white-space:nowrap}
+.brain-game-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.brain-game-card{min-width:0;display:flex;flex-direction:column;gap:12px;position:relative;background:var(--panel);border:1px solid var(--stroke);border-radius:18px;padding:23px;transition:border-color .18s,transform .18s,box-shadow .18s;box-shadow:var(--shadow)}
+.brain-game-card:hover{border-color:var(--purple);transform:translateY(-3px);box-shadow:0 12px 34px rgba(60,50,140,.12)}
+.brain-game-card-head{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.brain-game-symbol{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;font-size:22px;background:var(--purple-bg);color:var(--indigo);font-weight:800}
+.brain-game-difficulty{display:inline-flex;border:1px solid var(--stroke);background:var(--panel2);border-radius:100px;padding:5px 9px;font-size:10px;color:var(--muted);font-weight:750}
+.brain-game-card h3{font-size:18px;letter-spacing:-.35px;line-height:1.3;margin:3px 0 0}
+.brain-game-card p{font-size:13px;line-height:1.7;color:var(--muted);margin:0;flex:1}
+.brain-game-link{font-size:12px;font-weight:800;color:var(--purple);margin-top:4px;display:inline-flex;align-items:center;gap:6px}
+.brain-related-inline{margin:27px 0 2px;border:1px solid var(--stroke);background:var(--panel2);border-radius:16px;padding:18px 21px;display:flex;align-items:center;gap:18px;justify-content:space-between}
+.brain-related-inline h3{font-size:16px;margin:0 0 4px}
+.brain-related-inline p{font-size:12px;color:var(--muted);margin:0}
+.brain-related-inline a{border:1px solid var(--purple);background:var(--purple-bg);color:var(--indigo);font-weight:800;font-size:12px;padding:9px 14px;border-radius:10px;white-space:nowrap}
+.brain-breadcrumb{display:inline-flex;gap:6px;align-items:center;font-weight:750;color:var(--purple);font-size:12px;margin-bottom:15px}
+.brain-detail-hero{padding:clamp(23px,3.5vw,38px)}
+.brain-detail-hero h1{font-size:clamp(29px,3.7vw,43px)}
+.brain-game-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.75fr);gap:20px;margin-top:21px;align-items:start}
+.brain-player{min-width:0;border:1px solid var(--stroke);border-radius:20px;background:var(--panel);padding:clamp(20px,3vw,31px);box-shadow:var(--shadow)}
+.brain-sidebar{background:var(--panel);border:1px solid var(--stroke);border-radius:19px;padding:22px;box-shadow:var(--shadow)}
+.brain-sidebar h2{font-size:16px;margin:0 0 11px}
+.brain-sidebar p,.brain-sidebar li{font-size:12.5px;color:var(--muted);line-height:1.8}
+.brain-sidebar ol{padding-left:19px;margin-bottom:18px}
+.brain-sidebar a{color:var(--indigo);font-weight:800}
+.brain-side-note{padding:13px;border-radius:11px;background:var(--panel2);border:1px solid var(--stroke)}
+.brain-side-note strong{font-size:12px}
+.brain-side-note p{margin:5px 0 0}
+.brain-start{text-align:center;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.brain-start h2,.brain-finish h2{font-size:clamp(23px,3vw,32px);letter-spacing:-.9px;margin:12px 0}
+.brain-start>p,.brain-finish>p{color:var(--muted);font-size:14px;line-height:1.8;max-width:550px}
+.brain-start-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin:13px 0}
+.brain-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border-radius:11px;border:1px solid var(--stroke);text-decoration:none;font-size:12.5px;font-weight:800;line-height:1.4;transition:filter .15s,transform .15s;background:var(--panel)}
+.brain-button:hover:not(:disabled){filter:brightness(.95);transform:translateY(-1px)}
+.brain-button.primary{color:#fff;background:linear-gradient(120deg,#675af0,#5042ce);border-color:transparent}
+.brain-button.secondary{color:var(--indigo);background:var(--purple-bg);border-color:var(--stroke)}
+.brain-button:disabled{cursor:not-allowed;opacity:.5}
+.brain-fine{font-size:11px!important;color:var(--muted);line-height:1.6}
+.brain-best-overview{display:flex;align-items:center;gap:14px;margin-top:12px;padding:9px 14px;border:1px solid var(--stroke);background:var(--panel2);border-radius:10px;font-size:12px;color:var(--muted)}
+.brain-best-overview strong{font-size:17px;color:var(--ink)}
+.brain-round-top{display:flex;justify-content:space-between;gap:10px;font-size:10px;letter-spacing:1px;font-weight:800;color:var(--muted)}
+.brain-round-top strong{color:var(--indigo)}
+.brain-progress-track{height:8px;background:var(--panel2);border-radius:100px;overflow:hidden;margin:12px 0}
+.brain-progress-track span{display:block;height:100%;background:linear-gradient(90deg,#675af0,#2fc5b2);border-radius:100px;transition:width .2s}
+.brain-score-line{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);padding-bottom:22px;border-bottom:1px solid var(--stroke)}
+.brain-score-line strong{color:var(--ink)}
+.brain-question-head{display:flex;align-items:center;gap:12px;margin-top:27px}
+.brain-challenge-icon{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;border-radius:13px;background:var(--purple-bg);color:var(--purple);font-size:19px;font-weight:800}
+.brain-round-type{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.brain-question h2{font-size:clamp(20px,2.65vw,29px);line-height:1.4;letter-spacing:-.6px;margin:19px 0 25px;overflow-wrap:anywhere}
+.brain-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:20px}
+.brain-choice{border:1px solid var(--stroke);background:var(--panel2);border-radius:12px;color:var(--ink);font-weight:800;font-size:17px;padding:18px 13px;transition:background .15s,border-color .15s;overflow-wrap:anywhere}
+.brain-choice:hover:not(:disabled),.brain-choice.is-selected{background:var(--purple-bg);border-color:var(--purple);color:var(--indigo)}
+.brain-choice:disabled{cursor:default}
+#brain-answer-form{display:flex;flex-direction:column;gap:8px;margin-bottom:19px}
+#brain-answer-form label{font-size:12px;font-weight:800}
+.brain-answer-unit{color:var(--muted);font-weight:600}
+#brain-answer{width:100%;max-width:400px;padding:13px 14px;border:1px solid var(--stroke);background:var(--panel2);color:var(--ink);font-size:19px;border-radius:12px;outline:0}
+#brain-answer:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(95,80,237,.14)}
+.brain-question-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:17px 0}
+.brain-required{color:var(--danger);font-size:12px;font-weight:700}
+.brain-hint{background:var(--purple-bg);color:var(--ink);border:1px solid var(--stroke);border-radius:12px;font-size:12.5px;line-height:1.75;padding:13px 15px;margin:11px 0}
+.brain-result{margin:24px 0 0;padding:21px;border:1px solid var(--stroke);border-radius:16px;background:var(--panel2)}
+.brain-result.is-right{border-left:4px solid var(--success)}
+.brain-result.is-wrong{border-left:4px solid #db9842}
+.brain-result-heading{display:flex;align-items:center;gap:12px}
+.brain-result-mark{height:37px;width:37px;display:grid;place-items:center;border-radius:50%;font-weight:900;font-size:19px;background:var(--panel);color:var(--purple)}
+.brain-result h3{font-size:17px;letter-spacing:-.3px;margin:2px 0 0}
+.brain-correct-answer{font-size:14px;margin:16px 0 8px}
+.brain-correct-answer strong{color:var(--ink)}
+.brain-explanation{color:var(--muted);font-size:13px;line-height:1.85;margin:0 0 18px}
+.brain-verify{border-radius:13px;border:1px solid var(--stroke);background:var(--panel);padding:17px;margin-bottom:17px}
+.brain-verify-title{display:flex;gap:10px;align-items:flex-start}
+.brain-verify-title>span{font-size:23px;color:var(--purple);font-weight:800}
+.brain-verify-title strong{font-size:13px;line-height:1.5}
+.brain-verify-title p{color:var(--muted);font-size:12px;line-height:1.7;margin:5px 0 12px}
+.brain-verify-inputs{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0;margin:0 0 17px}
+.brain-verify-inputs li{border:1px solid var(--stroke);border-radius:8px;padding:9px 11px;display:flex;flex-direction:column;gap:3px;min-width:0;overflow-wrap:anywhere}
+.brain-verify-inputs span{font-size:10.5px;color:var(--muted)}
+.brain-verify-inputs strong{font-size:12px}
+.brain-verify-link{color:var(--indigo);font-size:12.5px;font-weight:800;display:inline-flex;gap:7px;align-items:center;text-decoration:underline;text-underline-offset:3px}
+.brain-result #brain-next{width:100%}
+.brain-finish{text-align:center;padding:30px 8px;display:flex;align-items:center;flex-direction:column}
+.brain-finish-icon{height:73px;width:73px;display:grid;place-items:center;border-radius:22px;background:var(--purple-bg);color:var(--purple);font-size:38px;margin-bottom:18px}
+.brain-finish-stats{display:grid;grid-template-columns:1fr 1fr;gap:13px;width:min(430px,100%);margin:15px 0}
+.brain-finish-stats>div{border-radius:14px;border:1px solid var(--stroke);padding:14px;background:var(--panel2);display:flex;flex-direction:column;gap:4px}
+.brain-finish-stats small{color:var(--muted);font-weight:700}
+.brain-finish-stats strong{font-size:23px}
+.brain-more{margin-top:27px}
+.brain-more h2{font-size:20px;margin:0 0 14px}
+.brain-more .brain-game-grid{max-width:100%}
+.brain-promo{background:var(--panel);border:1px solid var(--stroke);border-radius:21px;padding:clamp(20px,3vw,30px);margin:30px 0;box-shadow:var(--shadow)}
+.brain-promo-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:15px}
+.brain-promo h2{font-size:clamp(19px,2.4vw,26px);letter-spacing:-.5px;margin:6px 0}
+.brain-promo p{font-size:13px;color:var(--muted);margin:0}
+.brain-promo-head>a{color:var(--indigo);font-weight:800;font-size:12px;white-space:nowrap}
+.brain-promo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.brain-promo-grid>a{min-width:0;display:flex;gap:9px;align-items:center;border-radius:12px;border:1px solid var(--stroke);background:var(--panel2);padding:12px;font-size:12px;font-weight:800}
+.brain-promo-grid>a:hover{border-color:var(--purple);color:var(--indigo)}
+.brain-promo-grid .brain-game-symbol{height:30px;width:30px;flex:0 0 30px;font-size:17px;border-radius:8px}
+@media(max-width:1100px){.brain-game-layout{grid-template-columns:minmax(0,1.3fr) minmax(225px,.8fr)}.brain-promo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){.brain-game-layout{grid-template-columns:1fr}.brain-sidebar{order:2}.brain-game-grid{grid-template-columns:1fr}.brain-hero::after{opacity:.04}}
+@media(max-width:520px){.brain-hero{border-radius:18px;padding:23px}.brain-player{padding:18px}.brain-choice-grid{grid-template-columns:1fr 1fr}.brain-choice{padding:13px 9px}.brain-verify-inputs{grid-template-columns:1fr}.brain-game-card{padding:19px}.brain-related-inline{flex-direction:column;align-items:flex-start}.brain-promo-head{align-items:flex-start;flex-direction:column}.brain-promo-grid{grid-template-columns:1fr}.brain-round-top{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.brain-game-card,.brain-button,.brain-progress-track span{transition:none!important}}

@@ -13,7 +13,9 @@ slug = lambda x: re.sub(r'(^-|-$)', '', re.sub(r'[^a-z0-9]+', '-', str(x).lower(
 primary_cat_paths = [f"/categories/{slug(c['name'])}/" for c in catalog["categories"]]
 tool_paths = [f"/tools/{t['slug']}/" for t in catalog["tools"] if not t.get("isAlias")]
 all_tool_paths = [f"/tools/{t['slug']}/" for t in catalog["tools"]]
-urls = ["/", "/about/", "/privacy/"] + primary_cat_paths + tool_paths
+games = json.loads((root / 'assets/brain-games-catalog.json').read_text(encoding='utf8'))['games']
+game_paths = ['/games/'] + [f"/games/{g['id']}/" for g in games]
+urls = ["/", "/about/", "/privacy/"] + primary_cat_paths + tool_paths + game_paths
 
 urlset = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 for path in urls:

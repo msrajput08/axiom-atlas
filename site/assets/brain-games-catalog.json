@@ -1,0 +1,268 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "name": "Mathematics",
+      "slug": "mathematics",
+      "tagline": "Number puzzles",
+      "description": "Prime or composite? Percent intuition.",
+      "icon": "∑"
+    },
+    {
+      "name": "Algebra",
+      "slug": "algebra",
+      "tagline": "Unknowns & equations",
+      "description": "Break equations and unlock hidden roots.",
+      "icon": "x"
+    },
+    {
+      "name": "Calculus & Graphing",
+      "slug": "calculus-graphing",
+      "tagline": "Rates & areas",
+      "description": "Derivatives, curves and definite areas.",
+      "icon": "∫"
+    },
+    {
+      "name": "Geometry & Trigonometry",
+      "slug": "geometry-trigonometry",
+      "tagline": "Shapes & coordinates",
+      "description": "See the geometry hiding inside the numbers.",
+      "icon": "△"
+    },
+    {
+      "name": "Physics & Engineering",
+      "slug": "physics-engineering",
+      "tagline": "Build & experiment",
+      "description": "Apply energy and circuit physics.",
+      "icon": "⚡"
+    },
+    {
+      "name": "Statistics & Probability",
+      "slug": "statistics-probability",
+      "tagline": "Data & chance",
+      "description": "Think with averages, chance and risk.",
+      "icon": "▥"
+    },
+    {
+      "name": "Finance",
+      "slug": "finance",
+      "tagline": "Money decisions",
+      "description": "Calculate returns, interest and margins.",
+      "icon": "$"
+    },
+    {
+      "name": "Converters & Everyday Tools",
+      "slug": "converters-everyday-tools",
+      "tagline": "Life skills",
+      "description": "Put everyday math to work.",
+      "icon": "✦"
+    },
+    {
+      "name": "Astronomy & Astrophysics",
+      "slug": "astronomy-astrophysics",
+      "tagline": "Space reasoning",
+      "description": "Explore stellar scales and distances.",
+      "icon": "✧"
+    }
+  ],
+  "games": [
+    {
+      "id": "prime-detective",
+      "title": "Prime Detective",
+      "description": "Spot the one prime hidden among impostors.",
+      "category": "Mathematics",
+      "calculatorSlug": "prime-checker",
+      "calculatorName": "Prime Number Checker",
+      "answerMode": "multiple-choice",
+      "difficulty": "Beginner",
+      "skill": "number"
+    },
+    {
+      "id": "percent-hunt",
+      "title": "Percent Hunt",
+      "description": "Solve real-life percentage puzzles before the reveal.",
+      "category": "Mathematics",
+      "calculatorSlug": "percentage-calculator",
+      "calculatorName": "Percentage Calculator",
+      "answerMode": "number",
+      "difficulty": "Beginner",
+      "skill": "percentage"
+    },
+    {
+      "id": "equation-escape",
+      "title": "Equation Escape",
+      "description": "Crack the missing x to open the next lock.",
+      "category": "Algebra",
+      "calculatorSlug": "linear-equation",
+      "calculatorName": "Linear Equation Calculator",
+      "answerMode": "number",
+      "difficulty": "Intermediate",
+      "skill": "equation"
+    },
+    {
+      "id": "quadratic-code",
+      "title": "Quadratic Code",
+      "description": "Choose the secret roots behind a quadratic equation.",
+      "category": "Algebra",
+      "calculatorSlug": "quadratic-equation",
+      "calculatorName": "Quadratic Equation Solver",
+      "answerMode": "multiple-choice",
+      "difficulty": "Intermediate",
+      "skill": "roots"
+    },
+    {
+      "id": "derivative-dash",
+      "title": "Derivative Dash",
+      "description": "Find instant rates of change at a given x.",
+      "category": "Calculus & Graphing",
+      "calculatorSlug": "derivative-calculator",
+      "calculatorName": "Derivative Calculator",
+      "answerMode": "number",
+      "difficulty": "Advanced",
+      "skill": "derivative"
+    },
+    {
+      "id": "integral-hunt",
+      "title": "Integral Hunt",
+      "description": "Recover the signed area beneath a simple line.",
+      "category": "Calculus & Graphing",
+      "calculatorSlug": "definite-integral-calculator",
+      "calculatorName": "Definite Integral Calculator",
+      "answerMode": "number",
+      "difficulty": "Advanced",
+      "skill": "integral"
+    },
+    {
+      "id": "slope-run",
+      "title": "Slope Run",
+      "description": "Read the rise and run between two coordinates.",
+      "category": "Geometry & Trigonometry",
+      "calculatorSlug": "slope-calculator",
+      "calculatorName": "Slope Calculator",
+      "answerMode": "number",
+      "difficulty": "Beginner",
+      "skill": "slope"
+    },
+    {
+      "id": "shape-builder",
+      "title": "Shape Builder",
+      "description": "Predict a rectangle's area before building it.",
+      "category": "Geometry & Trigonometry",
+      "calculatorSlug": "2d-geometry-calculator",
+      "calculatorName": "2D Geometry Calculator",
+      "answerMode": "number",
+      "difficulty": "Beginner",
+      "skill": "shape"
+    },
+    {
+      "id": "energy-quest",
+      "title": "Energy Quest",
+      "description": "Turn mass and speed into kinetic energy.",
+      "category": "Physics & Engineering",
+      "calculatorSlug": "kinetic-energy",
+      "calculatorName": "Kinetic Energy Calculator",
+      "answerMode": "number",
+      "difficulty": "Intermediate",
+      "skill": "energy"
+    },
+    {
+      "id": "circuit-lab",
+      "title": "Circuit Lab",
+      "description": "Decode current from voltage and resistance.",
+      "category": "Physics & Engineering",
+      "calculatorSlug": "circuit-calculator",
+      "calculatorName": "Circuit Calculator",
+      "answerMode": "number",
+      "difficulty": "Intermediate",
+      "skill": "circuit"
+    },
+    {
+      "id": "mean-machine",
+      "title": "Mean Machine",
+      "description": "Recover the average from a shuffled dataset.",
+      "category": "Statistics & Probability",
+      "calculatorSlug": "statistics-calculator",
+      "calculatorName": "Statistics Calculator",
+      "answerMode": "number",
+      "difficulty": "Beginner",
+      "skill": "mean"
+    },
+    {
+      "id": "probability-lab",
+      "title": "Probability Lab",
+      "description": "Predict the odds of events on equal sectors.",
+      "category": "Statistics & Probability",
+      "calculatorSlug": "probability-calculator-basic",
+      "calculatorName": "Probability Calculator",
+      "answerMode": "number",
+      "difficulty": "Beginner",
+      "skill": "chance"
+    },
+    {
+      "id": "interest-builder",
+      "title": "Interest Builder",
+      "description": "Calculate simple interest earned over time.",
+      "category": "Finance",
+      "calculatorSlug": "interest-calculator",
+      "calculatorName": "Interest Calculator",
+      "answerMode": "number",
+      "difficulty": "Intermediate",
+      "skill": "interest"
+    },
+    {
+      "id": "margin-master",
+      "title": "Margin Master",
+      "description": "Find the true profit margin—not the markup.",
+      "category": "Finance",
+      "calculatorSlug": "profit-margin",
+      "calculatorName": "Profit Margin Calculator",
+      "answerMode": "number",
+      "difficulty": "Intermediate",
+      "skill": "margin"
+    },
+    {
+      "id": "attendance-rescue",
+      "title": "Attendance Rescue",
+      "description": "Work out how close you are to your target.",
+      "category": "Converters & Everyday Tools",
+      "calculatorSlug": "attendance-planner",
+      "calculatorName": "Attendance Planner",
+      "answerMode": "number",
+      "difficulty": "Beginner",
+      "skill": "attendance"
+    },
+    {
+      "id": "recipe-remix",
+      "title": "Recipe Remix",
+      "description": "Scale an ingredient without wasting a serving.",
+      "category": "Converters & Everyday Tools",
+      "calculatorSlug": "recipe-scaler",
+      "calculatorName": "Recipe Scaling Calculator",
+      "answerMode": "number",
+      "difficulty": "Beginner",
+      "skill": "recipe"
+    },
+    {
+      "id": "solar-scale",
+      "title": "Solar Scale",
+      "description": "Convert stars from solar radii to kilometres.",
+      "category": "Astronomy & Astrophysics",
+      "calculatorSlug": "solar-radius-converter",
+      "calculatorName": "Solar Radius Converter",
+      "answerMode": "number",
+      "difficulty": "Intermediate",
+      "skill": "sun"
+    },
+    {
+      "id": "star-distance",
+      "title": "Star Distance",
+      "description": "Estimate parsecs from a star's parallax.",
+      "category": "Astronomy & Astrophysics",
+      "calculatorSlug": "stellar-parallax-calculator",
+      "calculatorName": "Stellar Parallax Calculator",
+      "answerMode": "number",
+      "difficulty": "Intermediate",
+      "skill": "star"
+    }
+  ]
+}

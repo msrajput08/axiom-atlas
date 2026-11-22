@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#101224">
+<title>Account Access — AxiomAtlas</title><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>
+:root{font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#eff0ff;background:#0f1024}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 80% 10%,#3e3470 0%,transparent 45%),#0e1024}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #c1b8ff;outline-offset:2px}.page{display:grid;grid-template-columns:minmax(0,1fr) minmax(370px,.92fr);min-height:100vh}.visual{padding:clamp(28px,6vw,92px);display:flex;flex-direction:column;justify-content:space-between;min-height:640px}.brand{display:inline-flex;align-items:center;gap:11px;font-size:21px;font-weight:850;letter-spacing:-1px}.brand span{display:grid;place-items:center;background:#7463d7;color:#fff;border-radius:12px;width:38px;height:38px}.brand b{color:#bfb5ff}.eyebrow{color:#aaa2ec;text-transform:uppercase;font-size:12px;letter-spacing:2px;font-weight:800}.visual h1{font-size:clamp(36px,4.2vw,61px);letter-spacing:-2.7px;line-height:1.1;max-width:610px;margin:17px 0}.visual h1 em{font-style:normal;color:#bfb5ff}.visual p{max-width:510px;line-height:1.8;color:#a4a4c4;font-size:15px}.tiny{font-size:12px;color:#8c8cac;line-height:1.7}.access{display:grid;place-items:center;padding:40px 24px;background:#17172e;border-left:1px solid #30304e}.card{width:min(100%,450px);border:1px solid #363653;background:#20203b;border-radius:24px;padding:clamp(22px,3vw,38px);box-shadow:0 28px 85px #0706114d}.label{font-size:11px;text-transform:uppercase;letter-spacing:1.8px;color:#aca1ef;font-weight:850}.card h2{font-size:29px;letter-spacing:-1px;margin:11px 0}.subtitle{color:#acabc6;font-size:13px;line-height:1.7;margin:0 0 22px}.mode{display:flex;background:#16172c;border-radius:11px;padding:4px;gap:4px;margin-bottom:22px}.mode button{border:0;background:transparent;color:#a4a4be;flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:800}.mode button[aria-selected=true]{background:#37305c;color:#fff}.field{display:block;margin-bottom:17px}.field span{font-size:12px;color:#cbcae0;font-weight:750;display:block;margin-bottom:8px}.field input{width:100%;padding:14px 13px;border-radius:11px;background:#121429;border:1px solid #41405e;color:#f4f2ff;min-width:0}.field input:focus{border-color:#a899f2}.submit{width:100%;background:linear-gradient(120deg,#9d8bff,#6e56df);color:#fff;font-weight:800;border:0;border-radius:11px;padding:14px;margin-top:6px}.submit:disabled{opacity:.5;cursor:not-allowed}.secondary{margin-top:18px;background:none;border:0;color:#bdadff;font-size:12px;font-weight:700;text-decoration:underline}.message{margin:16px 0 0;padding:12px 13px;background:#2b2947;color:#e9e0ff;border:1px solid #4b4278;border-radius:10px;font-size:12px;line-height:1.65}.message[hidden],.field[hidden],.mode[hidden],.submit[hidden]{display:none}.message.error{color:#ffc0c5;background:#3c2535;border-color:#6e3f54}.message.success{color:#bbf2d3;background:#20382f;border-color:#416756}.back{display:block;margin-top:22px;font-size:12px;color:#9d9dbb;text-align:center}.back:hover{color:#fff}
+@media(max-width:850px){.page{grid-template-columns:1fr}.visual{min-height:0;padding:30px 23px;gap:20px}.visual h1{font-size:30px;letter-spacing:-1px}.access{border-left:0;border-top:1px solid #383653;padding:28px 16px 50px}.card{max-width:490px}.visual .tiny{display:none}}
+</style></head>
+<body><div class="page"><section class="visual"><a href="/" class="brand"><span>◈</span><div>Axiom<b>Atlas</b></div></a><div><div class="eyebrow">Professional calculation workspace</div><h1>Your scientific projects.<br><em>Securely connected.</em></h1><p>Keep the existing calculator library free. For optional cloud storage, use a verified account to save your engineering projects across devices. This feature requires an enabled authentication service.</p></div><div class="tiny">The 314 original calculators do not require an account. No payment processing is enabled.</div></section>
+<main class="access"><div class="card"><div class="label">AxiomAtlas Cloud</div><h2 id="heading">Sign in</h2><p class="subtitle" id="description">Use your email and password to access your cloud projects.</p><div class="mode" id="modes" role="tablist" aria-label="Account options"><button type="button" data-mode="login" role="tab" aria-selected="true">Sign in</button><button type="button" data-mode="signup" role="tab" aria-selected="false">Create account</button></div><form id="account-form"><label class="field" id="email-row"><span>Email address</span><input type="email" name="email" id="email" autocomplete="email" required maxlength="254" placeholder="you@example.com"></label><label class="field" id="password-row"><span id="password-label">Password</span><input type="password" name="password" id="password" autocomplete="current-password" required minlength="8" maxlength="128" placeholder="Enter your password"></label><button class="submit" id="submit" type="submit">Sign in</button></form><button class="secondary" id="secondary" type="button">Forgot your password?</button><div class="message" id="message" role="status" aria-live="polite" hidden></div><a href="/studio/" class="back">← Return to Studio</a></div></main></div>
+<script type="module">
+import {isCloudConfigured,signIn,signUp,sendRecovery,completeRecovery,useAuthRedirect,hasSession,apiRequest,signOut,clearSession} from "/assets/saas-client.mjs";
+const $ = id => document.getElementById(id);
+const modes = ["login","signup","recovery","update","signed-in"];
+let mode = "login",busy = false;
+function message(text,kind=""){const box=$("message");box.hidden=!text;box.textContent=text;box.className="message "+kind}
+function choose(next) {
+  if(!modes.includes(next))return;
+  mode=next;
+  const map={login:["Sign in","Use your email and password to access cloud projects.","Sign in"],
+    signup:["Create account","We'll send a verification email if confirmation is required.","Create account"],
+    recovery:["Reset your password","Enter your email to request a password reset link.","Send reset link"],
+    update:["Choose a new password","Enter a new password after opening your recovery link.","Update password"],
+    "signed-in":["Account connected","Your account can access permitted cloud projects.","Continue to Studio"]};
+  const labels=map[next];
+  $("heading").textContent=labels[0];$("description").textContent=labels[1];
+  $("submit").textContent=labels[2];
+  $("email-row").hidden=next==="update"||next==="signed-in";
+  $("password-row").hidden=next==="recovery"||next==="signed-in";
+  $("password").autocomplete=next==="login"?"current-password":"new-password";
+  $("email").required=!$("email-row").hidden;$("password").required=!$("password-row").hidden;
+  $("modes").hidden=next==="recovery"||next==="update"||next==="signed-in";
+  $("secondary").textContent=next==="signed-in"?"Sign out":next==="recovery"?"Back to sign in":next==="signup"?"Already have an account? Sign in":"Forgot your password?";
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.mode===next)));
+}
+document.querySelectorAll("[data-mode]").forEach(btn=>btn.addEventListener("click",()=>{message("");choose(btn.dataset.mode)}));
+$("secondary").addEventListener("click",async()=>{
+  if(mode==="signed-in"){await signOut();choose("login");message("Signed out.","success");return}
+  choose(mode==="login"?"recovery":"login");message("")
+});
+$("account-form").addEventListener("submit",async event=>{
+  event.preventDefault();if(busy)return;
+  if(!isCloudConfigured()){message("Cloud accounts are not configured on this build.","error");return}
+  busy=true;$("submit").disabled=true;message("");
+  const email=$("email").value.trim().toLowerCase(),password=$("password").value;
+  try{
+    if(mode==="login"){await signIn(email,password);await apiRequest("GET","/api/me");choose("signed-in");message("Signed in successfully.","success")}
+    else if(mode==="signup"){await signUp(email,password);message("If this address can be registered, follow the confirmation instructions sent by email. Then sign in.","success")}
+    else if(mode==="recovery"){await sendRecovery(email);message("If the account exists, a recovery email has been sent.","success")}
+    else if(mode==="update"){await completeRecovery(password);choose("signed-in");message("Password updated.","success")}
+    else if(mode==="signed-in")location.assign("/studio/");
+  }catch(e){if(mode==="login")clearSession();message(e.message||"Account request failed.","error")}
+  finally{busy=false;$("submit").disabled=false;$("password").value=""}
+});
+(async()=>{
+  choose("login");
+  if(!isCloudConfigured()){
+    $("submit").disabled=true;$("secondary").disabled=true;
+    message("Cloud accounts are disabled until backend and email verification are configured and tested. All free calculators still work.","error");
+    return;
+  }
+  try{
+    const type=await useAuthRedirect();
+    if(type==="recovery"){choose("update");message("Recovery link accepted. Set a new password.","success");return}
+    if(hasSession()){await apiRequest("GET","/api/me");choose("signed-in");message("Your cloud session is active.","success")}
+    else if(type){message("Email verified. Sign in to continue.","success")}
+  }catch(e){message(e.message||"Unable to restore account session.","error");clearSession()}
+})();
+</script></body></html>

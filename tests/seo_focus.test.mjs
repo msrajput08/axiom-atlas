@@ -7,10 +7,17 @@ import {isPrime, primeFactors} from "../site/assets/engine.js";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const load = file => fs.readFileSync(path.join(root, file), "utf8");
 const catalog = JSON.parse(load("site/assets/catalog.json"));
-const source = load("source/seo_focus.py");
-const payload = source.match(/SEO_FOCUS = json\.loads\(r'''([\s\S]*?)'''\)/);
-assert.ok(payload, "Curated SEO content must be data-only JSON");
-const focus = JSON.parse(payload[1]);
+const parseGuides = (file, symbol) => {
+  const source = load(file);
+  const pattern = new RegExp(symbol + " = json\\.loads\\(r'''([\\s\\S]*?)'''\\)");
+  const match = source.match(pattern);
+  assert.ok(match, "Curated SEO content must be data-only JSON: " + file);
+  return JSON.parse(match[1]);
+};
+const focus = {
+  ...parseGuides("source/seo_focus.py", "SEO_FOCUS"),
+  ...parseGuides("source/seo_expansion.py", "SEO_EXPANSION")
+};
 const all = catalog.tools;
 const canonical = all.filter(t => !t.isAlias);
 const bySlug = new Map(all.map(t => [t.slug, t]));
@@ -23,7 +30,7 @@ function equal(x, y, reason) { assert.equal(x, y, reason); assertions++; }
 
 equal(all.length, 383, "All existing 383 routes must remain");
 equal(canonical.length, 314, "All original 314 free tools must remain");
-equal(Object.keys(focus).length, 9, "Nine human-authored, targeted search-intent guides");
+equal(Object.keys(focus).length, 14, "Fourteen canonical pages with hand-verified search-intent guides");
 
 const seenTitles = new Set();
 const visited = new Set();
@@ -80,6 +87,28 @@ for (const t of all) {
   if (t.isAlias) ok(!html.includes('class="seo-focus section"'), "Aliases must not duplicate focused guides: " + t.slug);
   else if (!visited.has(t.slug)) ok(!html.includes('class="seo-focus section"'), "Non-target routes remain unchanged: " + t.slug);
 }
+const home = load("site/index.html");
+const quickPaths = [
+  "prime-checker", "slope-calculator", "percentage-calculator",
+  "attendance-planner", "recipe-scaler", "paint-coverage",
+  "midpoint-calculator", "image-resolution-calculator"
+];
+const categoryCount = (home.match(/class="category-card"/g) || []).length;
+equal(categoryCount, 9, "Home still contains precisely 9 primary category cards");
+for (const slug of quickPaths) {
+  ok(bySlug.get(slug) && !bySlug.get(slug).isAlias,
+    "Quick-link must lead to a canonical tool " + slug);
+  ok(home.includes('<a class="quick-tool-card" href="/tools/' + slug + '/">'),
+    "Search-led quick access must be in static HTML " + slug);
+}
+ok(home.includes('id="quick-tools"'), "Homepage quick-access section is present");
+ok(home.includes('rel="preconnect" href="https://fonts.gstatic.com"'), "Font server is preconnected");
+ok(home.includes('fonts.googleapis.com/css2?family=DM+Sans'), "Fonts stylesheet loads in the document head");
+ok(!load("site/assets/styles.css").includes("@import url('https://fonts.googleapis.com"),
+  "External font CSS must not be serially imported by site CSS");
+ok(load("site/assets/styles.css").includes(".quick-tool-grid{"), "Responsive quick-link grid must exist");
+ok(load("source/build.py").includes("SEO_FOCUS.update(SEO_EXPANSION)"), "Expansion guides must be included in generator");
+
 const map = load("site/sitemap.xml");
 equal((map.match(/<loc>/g) || []).length, 326, "Canonical sitemap count must stay at 326");
 ok(map.includes("<loc>" + origin + "/tools/prime-checker/</loc>"), "Existing prime canonical remains discoverable");
@@ -101,5 +130,17 @@ equal((20 - 5) / 3, 5, "Linear equation example");
 ok(Math.abs(7 * Math.PI / 2 - 10.9956) < 0.0001, "Arc length example");
 ok(Math.abs(Math.hypot(1920, 1080) / 15.6 - 141.21) < 0.01, "PPI example");
 ok(Math.abs(200 * Math.abs(64 - 80) / (Math.abs(64) + Math.abs(80)) - 22.222222) < 0.0001, "Percent difference example");
+equal((2 + 8)/2, 5, "Midpoint x worked example");
+equal((6 + 10)/2, 8, "Midpoint y worked example");
+ok(Math.abs(Math.hypot(8-2,10-6) - 7.2111) < 0.0001, "Midpoint distance worked example");
+equal(0.5 * 80 * Math.sin(Math.PI/2), 40, "Torque 90-degree example");
+ok(Math.abs(0.5 * 80 * Math.sin(Math.PI/6) - 20) < 0.00001, "Torque 30-degree example");
+equal(695700 * 2, 1391400, "Solar radius converted to kilometres");
+ok(Math.abs(695700/6371 - 109.20) < 0.01, "Solar to Earth radius conversion");
+equal(0.5 * 10 * 6 * 6, 180, "Kinetic energy example");
+equal(10 * 6, 60, "Momentum example");
+equal(4 + (12-1)*3, 37, "AP 12th term");
+equal(12 * (4 + 37)/2, 246, "AP 12-term sum");
+equal(10/(1-0.5), 20, "Infinite geometric series example");
 ok(!load("source/build.py").includes("'@type': 'FAQPage'"), "Schema fix must live in generator");
 console.log("Targeted SEO audit passed (" + assertions + " assertions across 383 routes, 9 focused guides).");

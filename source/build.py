@@ -1,6 +1,8 @@
 from pathlib import Path
 from editorial_cases import EDITORIAL_CASES
 from seo_focus import SEO_FOCUS
+from seo_expansion import SEO_EXPANSION
+SEO_FOCUS.update(SEO_EXPANSION)
 import hashlib
 import json, html, re, os, sys, math
 
@@ -102,7 +104,7 @@ def document(title, desc, path, body, attrs='', schema='', canonical_override=''
     canon_href = canonical_override or fullurl(path)
     canonical = f'<link rel="canonical" href="{e(canon_href)}">' if canon_href else ''
     crumb = 'Dashboard' if path == '/' else e(title)
-    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151530"><meta name="description" content="{e(desc)}"><meta name="robots" content="{e(robots)}"><title>{full_title}</title>{canonical}<meta property="og:type" content="website"><meta property="og:url" content="{e(canon_href)}"><meta property="og:title" content="{full_title}"><meta property="og:description" content="{e(desc)}"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/assets/styles.css?v={ASSET_VERSION}">{schema}{GA4_TAG}</head><body {attrs}>
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151530"><meta name="description" content="{e(desc)}"><meta name="robots" content="{e(robots)}"><title>{full_title}</title>{canonical}<meta property="og:type" content="website"><meta property="og:url" content="{e(canon_href)}"><meta property="og:title" content="{full_title}"><meta property="og:description" content="{e(desc)}"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="manifest" href="/manifest.webmanifest"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"><link rel="stylesheet" href="/assets/styles.css?v={ASSET_VERSION}">{schema}{GA4_TAG}</head><body {attrs}>
 <div class="site"><aside class="sidebar" id="sidebar"><a class="brand-wrap" href="/"><span class="brand-mark"><svg viewBox="0 0 40 40" fill="none" stroke="white" stroke-width="3.4" stroke-linecap="round"><circle cx="20" cy="20" r="7"/><ellipse cx="20" cy="20" rx="17" ry="8" transform="rotate(-38 20 20)"/><circle cx="32.7" cy="8.3" r="3" fill="#f4cc74" stroke="none"/></svg></span><span><span class="brand">Axiom<em>Atlas</em></span><div class="brand-subtitle">ONE UNIVERSE OF CALCULATIONS</div></span></a><div class="side-section-title">EXPLORE</div><a class="side-link {'active' if path == '/' else ''}" href="/"><span>⌂</span> Overview</a><a class="side-link" href="/#featured"><span>⚡</span> Popular tools</a><a class="side-link" href="/#all-calculators"><span>▤</span> All calculators</a><div class="side-section-title">{len(cats)} PRIMARY CATEGORIES</div><nav id="sidebar-cats">{sidebar_nav_html(active_cat_slug)}</nav><div class="side-section-title">SAVED TOOLS</div><div id="saved-links"><span class="side-empty">Your favorites will appear here.</span></div><div class="side-bottom"><strong>Everything adds up.</strong><br>100% free. No account. Step-by-step explanations on every tool.<br><span>© 2026 AxiomAtlas</span></div></aside><div class="mobile-shade" id="mobile-shade"></div><div class="main-frame"><header class="topbar"><div class="header-crumb"><button class="icon-btn mobile-only" id="mobile-menu" aria-label="Open navigation">☰</button><a href="/">Home</a> <span>›</span> <strong>{crumb}</strong></div><div class="top-actions"><button class="search-trigger" id="open-search" aria-label="Search calculators"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></svg><span>Search any calculator or formula...</span><kbd id="search-hotkey">Ctrl K</kbd></button><button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode">☾</button></div></header><main class="content">{body}<footer class="footer"><span>© 2026 AxiomAtlas · Built for students, engineers, scientists, astronomers & analysts.</span><span>Free tools · No sign-in · Client-side calculations · <a href="/about/">About & accuracy</a> · <a href="/privacy/">Privacy</a></span></footer></main></div></div>
 <div class="search-modal" id="search-modal" hidden role="dialog" aria-modal="true" aria-label="Search calculators"><div class="search-box"><div class="search-box-header"><span>⌕</span><input id="global-search" type="search" placeholder="Search calculus, linear algebra, astronomy, circuits, physics, statistics, finance..." aria-label="Search all calculators"><button id="search-close">ESC</button></div><div class="search-results" id="search-results"></div><div class="search-foot">Start typing to search {len(canonical_tools)}+ calculators & {len(T)} total routes · Use ↑/↓ and Enter</div></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div><script type="module" src="/assets/app.js?v={ASSET_VERSION}"></script></body></html>'''
 
@@ -450,8 +452,30 @@ catshtml = ''.join(
     for c in cats
 )
 
+
+# Prominent, evergreen links to verified everyday calculators with observed search demand.
+# All destinations are existing canonical calculator URLs, not legacy aliases.
+quick_tool_links = [
+    ('prime-checker', 'Prime Number Checker', 'Prime tests, factors and divisors', 'P'),
+    ('slope-calculator', 'Slope Calculator', 'Rise, run, distance and midpoint', 'm'),
+    ('percentage-calculator', 'Percentage Calculator', 'Change, difference and percentages', '%'),
+    ('attendance-planner', 'Attendance Calculator', 'Target attendance and classes to skip', 'A'),
+    ('recipe-scaler', 'Recipe Scaling Calculator', 'Adjust ingredients for any serving count', '×'),
+    ('paint-coverage', 'Paint Coverage Calculator', 'Estimate litres, wall area and coats', 'L'),
+    ('midpoint-calculator', 'Midpoint Calculator', 'Find a line segment midpoint', 'M'),
+    ('image-resolution-calculator', 'PPI Calculator', 'Pixel density and screen resolution', 'px')
+]
+quicklinks_html = ''.join(
+    f'<a class="quick-tool-card" href="/tools/{e(tool_slug)}/">'
+    f'<span class="quick-tool-icon" aria-hidden="true">{e(symbol)}</span>'
+    f'<span class="quick-tool-body"><b>{e(label)}</b><small>{e(description)}</small></span>'
+    f'<span class="quick-tool-arrow" aria-hidden="true">↗</span></a>'
+    for tool_slug, label, description, symbol in quick_tool_links
+)
+
 home = f'''<section class="hero"><div class="hero-copy"><span class="eyebrow">THE ALL-IN-ONE STEM, ASTRONOMY & FINANCIAL CALCULATION STUDIO</span><h1>Everything adds up.<br><span>With step-by-step clarity.</span></h1><p>From symbolic calculus, linear algebra, and engineering circuits to orbital mechanics, numerical ΛCDM cosmology, black hole relativity, exoplanet transits, statistics, and quantitative finance.</p><div class="hero-buttons"><a class="main-button" href="/tools/scientific-calculator/">Start calculating <span>↗</span></a><a class="secondary-button" href="#all-calculators">Explore all calculators ↓</a></div></div><div class="hero-orbit" aria-hidden="true"><span class="orbit-circle one"></span><span class="orbit-circle two"></span><span class="orbit-circle three"></span><span class="orbit-planet">∑</span><span class="float-equation a">R_s = 2GM/c²</span><span class="float-equation b">∫ f(x) dx</span><span class="float-equation c">PA = LU</span></div></section>
 <section class="metrics"><div class="metric"><span class="metric-icon">∑</span><div><strong id="total-tools">{len(canonical_tools)}+</strong><small> Interactive calculators</small></div></div><div class="metric"><span class="metric-icon">◈</span><div><strong>{len(cats)}</strong><small>Primary STEM, Astronomy & Finance categories</small></div></div><div class="metric"><span class="metric-icon">✦</span><div><strong>100% Explained</strong><small>Step-by-step derivation on every tool</small></div></div></section>
+<section class="section quick-tools-section" id="quick-tools"><div class="section-heading"><div><span class="eyebrow">USEFUL EVERYDAY CALCULATIONS</span><h2>Find a quick answer</h2><p>Jump directly to a free calculator for numbers, coordinates, study, screen displays, recipes and home projects.</p></div></div><nav class="quick-tool-grid" aria-label="Quick access to everyday calculators">{quicklinks_html}</nav></section>
 <section class="section" id="featured"><div class="section-heading"><div><span class="eyebrow">FLAGSHIP SOLVERS</span><h2>Featured calculators</h2><p>Symbolic & numerical calculus, linear algebra, astronomy & cosmology, engineering circuits, statistics, and finance.</p></div><a class="plain-link" href="#all-calculators">View complete library →</a></div><div class="tool-grid" id="featured-tools">{cards(featured)}</div></section>
 <section class="section" id="categories"><div class="section-heading"><div><span class="eyebrow">STRUCTURED TAXONOMY</span><h2>Explore {len(cats)} primary categories</h2><p>Organized into {sum(len(c.get('subcategories', [])) for c in cats)} domain-specific subcategories for rapid discovery.</p></div></div><div class="categories-grid" id="categories-grid">{catshtml}</div></section>
 <section class="section" id="recent-section" hidden><div class="section-heading"><div><h2>Pick up where you left off</h2><p>Recently used tools, saved only on this device.</p></div></div><div class="tool-grid" id="recent-tools"></div></section>

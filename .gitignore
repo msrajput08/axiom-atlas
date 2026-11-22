@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .DS_Store
 *.log
+
+# Never commit a configured staging/production Worker deployment manifest
+saas/wrangler.toml

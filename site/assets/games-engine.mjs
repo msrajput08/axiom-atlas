@@ -162,7 +162,7 @@ export function makeChallenge(gameId, seed) {
         'A rectangular garden is ' + l + ' m long and ' + w + ' m wide. What is its area?',
         l*w, 'm²',
         'Rectangle area = length × width.',
-        'Area = ' + l + ' m × ' + w + ' m = ' + (l*w) + ' m².',
+        'Multiply the rectangle length by its width: Area = ' + l + ' m × ' + w + ' m = ' + (l*w) + ' m².',
         { 'Mode': 'Rectangle', 'Length l': l + ' m', 'Width w': w + ' m' },
         'Select Rectangle mode in the 2D Geometry Calculator and enter l and w.',
         '▱'
@@ -174,7 +174,7 @@ export function makeChallenge(gameId, seed) {
         'A ' + m + ' kg object travels at ' + v + ' m/s. How much kinetic energy does it have?',
         answer, 'J',
         'The classical kinetic-energy formula is KE = ½mv².',
-        'KE = ½ × ' + m + ' × ' + v + '² = ' + answer + ' joules.',
+        'Square the speed, then multiply by half the mass: KE = ½ × ' + m + ' × ' + v + '² = ' + answer + ' joules.',
         { 'Mass m': m + ' kg', 'Speed v': v + ' m/s' },
         'Enter mass and speed in the Kinetic Energy Calculator. This is non-relativistic.',
         '½mv²'
@@ -186,7 +186,7 @@ export function makeChallenge(gameId, seed) {
         'A resistor is ' + R + ' Ω and the voltage is ' + V + ' V. Find the current.',
         I, 'A',
         'Use Ohm’s law: I = V/R.',
-        'Current I = ' + V + ' V / ' + R + ' Ω = ' + I + ' A.',
+        'Ohm’s law divides voltage by resistance: Current I = ' + V + ' V / ' + R + ' Ω = ' + I + ' A.',
         { 'Mode': 'Current & Power (from V & R)', 'Voltage V': V + ' V', 'Resistance R': R + ' Ω' },
         'Choose Find Current & Power (from V & R) in the Circuit Calculator.',
         'Ω'
@@ -200,7 +200,7 @@ export function makeChallenge(gameId, seed) {
         'Dataset: ' + numbers.join(', ') + '. Find its arithmetic mean.',
         mean, '',
         'Add all values, then divide by the number of observations.',
-        'Sum = ' + (mean*5) + '; count = 5; mean = ' + (mean*5) + '/5 = ' + mean + '.',
+        'Sum the five equally weighted observations to get ' + (mean*5) + ', then divide by 5: mean = ' + (mean*5) + '/5 = ' + mean + '.',
         { 'Dataset': numbers.join(', ') },
         'Paste the comma-separated dataset into the Statistics Calculator and locate the mean.',
         'x̄'
@@ -212,7 +212,7 @@ export function makeChallenge(gameId, seed) {
         'A fair spinner has 10 equal sectors, ' + red + ' red. What is the chance of red, as a percentage?',
         answer, '%',
         'Favourable equally likely outcomes ÷ total outcomes × 100.',
-        'P(red) = ' + red + '/10 = ' + (red/10) + ', which is ' + answer + '%.',
+        'There are ' + red + ' favourable sectors out of 10 equally likely ones: P(red) = ' + red + '/10 = ' + (red/10) + ' = ' + answer + '%.',
         { 'Event probability p': red + '/10 = ' + (red/10) },
         'Enter probability p = ' + (red/10) + ' in the Basic Probability & Odds Calculator to get the percentage.',
         'P'
@@ -249,7 +249,7 @@ export function makeChallenge(gameId, seed) {
         'You attended ' + attended + ' of ' + held + ' classes. What is your current attendance?',
         (attended/held)*100, '%',
         'Attendance % = attended classes ÷ classes held × 100.',
-        attended + '/' + held + ' × 100 = ' + (attended/held*100) + '%.',
+        'Divide attended classes by classes held and multiply by 100: ' + attended + '/' + held + ' × 100 = ' + (attended/held*100) + '%.',
         { 'Classes attended': attended, 'Classes held': held, 'Target': '75%' },
         'Enter attended, total held and any valid target in Attendance Planner. Read Current Attendance.',
         'A'
@@ -262,7 +262,7 @@ export function makeChallenge(gameId, seed) {
         'A recipe uses ' + quantity + ' g of flour for ' + old + ' servings. How much for ' + target + ' servings?',
         answer, 'g',
         'Scale the ingredient by new servings / original servings.',
-        'New amount = ' + quantity + ' × (' + target + '/' + old + ') = ' + answer + ' g.',
+        'Scale the original flour quantity by the serving ratio: ' + quantity + ' × (' + target + '/' + old + ') = ' + answer + ' g.',
         { 'Ingredient amount q': quantity + ' g', 'Original servings': old, 'New servings': target },
         'Enter ingredient amount, original servings and target servings in Recipe Scaling Calculator.',
         '×'
@@ -274,7 +274,7 @@ export function makeChallenge(gameId, seed) {
         'A star has a nominal radius of ' + radius + ' R☉. What is that in kilometres?',
         answer, 'km',
         'One nominal solar radius is exactly 695,700 km.',
-        radius + ' × 695,700 km = ' + answer.toLocaleString('en-US') + ' km.',
+        'Multiply the star’s radius in R☉ by the exact nominal solar radius: ' + radius + ' × 695,700 km = ' + answer.toLocaleString('en-US') + ' km.',
         { 'Radius in solar radii': radius + ' R☉' },
         'Enter ' + radius + ' into the Solar Radius Converter and read the kilometres result.',
         '☉'
@@ -287,7 +287,7 @@ export function makeChallenge(gameId, seed) {
         'A star has annual parallax p = ' + p + ' arcseconds. What is its distance in parsecs?',
         answer, 'pc',
         'For annual trigonometric parallax, distance in parsecs is 1 / p in arcseconds.',
-        'd = 1 / ' + p + ' = ' + answer + ' pc.',
+        'For stellar parallax in arcseconds, take the reciprocal to find distance: d = 1 / ' + p + ' = ' + answer + ' pc.',
         { 'Parallax angle p': p + ' arcsec' },
         'Enter parallax angle p in the Stellar Parallax Calculator and read distance in parsecs.',
         '✦'

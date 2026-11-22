@@ -7,7 +7,7 @@ site=root/'site'; source=root/'source'
 with tempfile.TemporaryDirectory() as d:
     work=Path(d)
     shutil.copytree(site,work,dirs_exist_ok=True)
-    for name in ['make_catalog.py','build.py','generate_sitemap.py','editorial_cases.py']:
+    for name in ['make_catalog.py','build.py','generate_sitemap.py','editorial_cases.py','seo_focus.py']:
         shutil.copy2(source/name,work/name)
     for name in ['make_catalog.py','build.py']:
         subprocess.run([sys.executable,name],cwd=work,check=True)

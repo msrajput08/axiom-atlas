@@ -1,5 +1,6 @@
 from pathlib import Path
 from editorial_cases import EDITORIAL_CASES
+from seo_focus import SEO_FOCUS
 import hashlib
 import json, html, re, os, sys, math
 
@@ -96,12 +97,12 @@ def sidebar_nav_html(active_cat_slug=''):
         )
     return ''.join(parts)
 
-def document(title, desc, path, body, attrs='', schema='', canonical_override='', robots='index,follow,max-image-preview:large', active_cat_slug=''):
-    full_title = e(title) + ' | AxiomAtlas' if title != 'AxiomAtlas' else f'AxiomAtlas — {len(canonical_tools)}+ Scientific, Math, Engineering, Astronomy & Finance Calculators'
+def document(title, desc, path, body, attrs='', schema='', canonical_override='', robots='index,follow,max-image-preview:large', active_cat_slug='', seo_title=None):
+    full_title = (e(seo_title) + ' | AxiomAtlas') if seo_title else (e(title) + ' | AxiomAtlas' if title != 'AxiomAtlas' else f'AxiomAtlas — {len(canonical_tools)}+ Scientific, Math, Engineering, Astronomy & Finance Calculators')
     canon_href = canonical_override or fullurl(path)
     canonical = f'<link rel="canonical" href="{e(canon_href)}">' if canon_href else ''
     crumb = 'Dashboard' if path == '/' else e(title)
-    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151530"><meta name="description" content="{e(desc)}"><meta name="robots" content="{e(robots)}"><title>{full_title}</title>{canonical}<meta property="og:type" content="website"><meta property="og:title" content="{full_title}"><meta property="og:description" content="{e(desc)}"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/assets/styles.css?v={ASSET_VERSION}">{schema}{GA4_TAG}</head><body {attrs}>
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151530"><meta name="description" content="{e(desc)}"><meta name="robots" content="{e(robots)}"><title>{full_title}</title>{canonical}<meta property="og:type" content="website"><meta property="og:url" content="{e(canon_href)}"><meta property="og:title" content="{full_title}"><meta property="og:description" content="{e(desc)}"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/assets/styles.css?v={ASSET_VERSION}">{schema}{GA4_TAG}</head><body {attrs}>
 <div class="site"><aside class="sidebar" id="sidebar"><a class="brand-wrap" href="/"><span class="brand-mark"><svg viewBox="0 0 40 40" fill="none" stroke="white" stroke-width="3.4" stroke-linecap="round"><circle cx="20" cy="20" r="7"/><ellipse cx="20" cy="20" rx="17" ry="8" transform="rotate(-38 20 20)"/><circle cx="32.7" cy="8.3" r="3" fill="#f4cc74" stroke="none"/></svg></span><span><span class="brand">Axiom<em>Atlas</em></span><div class="brand-subtitle">ONE UNIVERSE OF CALCULATIONS</div></span></a><div class="side-section-title">EXPLORE</div><a class="side-link {'active' if path == '/' else ''}" href="/"><span>⌂</span> Overview</a><a class="side-link" href="/#featured"><span>⚡</span> Popular tools</a><a class="side-link" href="/#all-calculators"><span>▤</span> All calculators</a><div class="side-section-title">{len(cats)} PRIMARY CATEGORIES</div><nav id="sidebar-cats">{sidebar_nav_html(active_cat_slug)}</nav><div class="side-section-title">SAVED TOOLS</div><div id="saved-links"><span class="side-empty">Your favorites will appear here.</span></div><div class="side-bottom"><strong>Everything adds up.</strong><br>100% free. No account. Step-by-step explanations on every tool.<br><span>© 2026 AxiomAtlas</span></div></aside><div class="mobile-shade" id="mobile-shade"></div><div class="main-frame"><header class="topbar"><div class="header-crumb"><button class="icon-btn mobile-only" id="mobile-menu" aria-label="Open navigation">☰</button><a href="/">Home</a> <span>›</span> <strong>{crumb}</strong></div><div class="top-actions"><button class="search-trigger" id="open-search" aria-label="Search calculators"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></svg><span>Search any calculator or formula...</span><kbd id="search-hotkey">Ctrl K</kbd></button><button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode">☾</button></div></header><main class="content">{body}<footer class="footer"><span>© 2026 AxiomAtlas · Built for students, engineers, scientists, astronomers & analysts.</span><span>Free tools · No sign-in · Client-side calculations · <a href="/about/">About & accuracy</a> · <a href="/privacy/">Privacy</a></span></footer></main></div></div>
 <div class="search-modal" id="search-modal" hidden role="dialog" aria-modal="true" aria-label="Search calculators"><div class="search-box"><div class="search-box-header"><span>⌕</span><input id="global-search" type="search" placeholder="Search calculus, linear algebra, astronomy, circuits, physics, statistics, finance..." aria-label="Search all calculators"><button id="search-close">ESC</button></div><div class="search-results" id="search-results"></div><div class="search-foot">Start typing to search {len(canonical_tools)}+ calculators & {len(T)} total routes · Use ↑/↓ and Enter</div></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div><script type="module" src="/assets/app.js?v={ASSET_VERSION}"></script></body></html>'''
 
@@ -389,6 +390,42 @@ def build_edu_guide_html(t, target_tool, pre_fields):
   </div>
 </section>'''
 
+
+def build_seo_focus_html(focus):
+    """Human-readable, unique worked examples and guidance on selected canonical pages."""
+    if not focus:
+        return ''
+    steps = ''.join(f'<li>{e(step)}</li>' for step in focus['steps'])
+    examples = ''.join(
+        f'<div class="seo-example"><h3>{e(label)}</h3><p>{e(calculation)}</p></div>'
+        for label, calculation in focus['examples']
+    )
+    questions = ''.join(
+        f'<div class="seo-qa"><h3>{e(q)}</h3><p>{e(a)}</p></div>'
+        for q, a in focus['questions']
+    )
+    related = ''.join(
+        f'<a href="/tools/{e(target)}/">{e(label)} →</a>'
+        for label, target in focus['related']
+    )
+    return (
+        '<section class="seo-focus section" aria-labelledby="seo-focus-heading">'
+        '<div class="seo-focus-head"><span class="eyebrow">PRACTICAL EXAMPLES & DEFINITIONS</span>'
+        f'<h2 id="seo-focus-heading">{e(focus["heading"])}: explained</h2>'
+        f'<p>{e(focus["answer"])}</p></div>'
+        '<div class="seo-focus-grid"><div class="seo-focus-column">'
+        '<h3 class="seo-focus-subtitle">How to use the calculator</h3>'
+        f'<ol class="seo-focus-steps">{steps}</ol>'
+        '<h3 class="seo-focus-subtitle">Worked examples</h3>'
+        f'<div class="seo-examples">{examples}</div></div>'
+        '<div class="seo-focus-column"><h3 class="seo-focus-subtitle">Common questions</h3>'
+        f'<div class="seo-questions">{questions}</div>'
+        '<h3 class="seo-focus-subtitle">Related calculations</h3>'
+        f'<nav class="seo-related" aria-label="Related calculations">{related}</nav>'
+        '</div></div></section>'
+    )
+
+
 featured_slugs = [
     'scientific-calculator',
     'symbolic-derivative-calculator',
@@ -527,21 +564,25 @@ for out_root in [site_root]:
         )
 
         edu_guide_html = build_edu_guide_html(t, target_tool, pre_fields)
+        focus = SEO_FOCUS.get(t['slug']) if not t.get('isAlias') else None
+        focus_html = build_seo_focus_html(focus)
+        visible_heading = focus['heading'] if focus else t['title']
+        visible_intro = focus['intro'] if focus else t['description']
 
         bod = f'''<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/categories/{cat_slug}/">{e(t['category'])}</a><span>›</span><a href="/categories/{cat_slug}/#{sub_slug}">{e(t.get('subcategory') or t['category'])}</a><span>›</span><strong>{e(t['title'])}</strong></div>
-<section class="tool-top"><div><span class="eyebrow">{e(t['category'].upper())} › {e((t.get('subcategory') or t['category']).upper())}</span><h1>{e(t['title'])}</h1><p>{e(t['description'])}</p></div><div class="tool-top-actions"><button class="outline-btn" id="favorite-toggle">☆ Save tool</button><button class="outline-btn" id="share-tool">↗ Share</button></div></section>
+<section class="tool-top"><div><span class="eyebrow">{e(t['category'].upper())} › {e((t.get('subcategory') or t['category']).upper())}</span><h1>{e(visible_heading)}</h1><p>{e(visible_intro)}</p></div><div class="tool-top-actions"><button class="outline-btn" id="favorite-toggle">☆ Save tool</button><button class="outline-btn" id="share-tool">↗ Share</button></div></section>
 {alias_banner}
 <div class="calculator-layout"><div class="calculator-inputs"><div class="calculator-card"><div class="calc-card-header"><h2>Input values</h2><span class="tiny-tag">✦ Live & Unit-Aware</span></div><div id="calculator-app">{pre_inputs_html}</div></div></div><aside class="answer-card"><div class="answer-heading"><h2>Your results</h2><span class="live-label"><i class="live-dot"></i> LIVE</span></div><div id="result-display" aria-live="polite"><p class="mini-help">Edit any field to calculate your result and view the step-by-step explanation.</p></div><p id="result-status">Calculated locally · verified single-pipeline trace</p></aside><div class="calculator-guide-wrap">{edu_guide_html}</div></div>
+{focus_html}
 <section class="section"><div class="section-heading"><div><span class="eyebrow">RELATED IN {e((t.get('subcategory') or t['category']).upper())}</span><h2>More {e(t['category'])} calculators</h2></div><a class="plain-link" href="/categories/{cat_slug}/">View all {e(t['category'])} tools →</a></div><div class="related-grid" id="related-tools">{cards(related)}</div></section>'''
 
         canon_url = fullurl(f'/tools/{t.get("canonicalSlug") or t["slug"]}/')
-        formula_disp = t.get('formula') or target_tool.get('formula') or 'Deterministic mathematical evaluation'
         ld = [
             {
                 '@context': 'https://schema.org',
                 '@type': 'WebApplication',
-                'name': t['title'],
-                'description': t['description'],
+                'name': visible_heading,
+                'description': focus['description'] if focus else t['description'],
                 'url': canon_url,
                 'applicationCategory': 'EducationalApplication',
                 'operatingSystem': 'Any',
@@ -556,17 +597,6 @@ for out_root in [site_root]:
                     {'@type': 'ListItem', 'position': 2, 'name': t['category'], 'item': fullurl(f'/categories/{cat_slug}/')},
                     {'@type': 'ListItem', 'position': 3, 'name': t['title'], 'item': canon_url}
                 ]
-            },
-            {
-                '@context': 'https://schema.org',
-                '@type': 'FAQPage',
-                'mainEntity': [
-                    {
-                        '@type': 'Question',
-                        'name': f'What formula does the {t["title"]} use?',
-                        'acceptedAnswer': {'@type': 'Answer', 'text': f'{t["title"]} uses the governing relation: {formula_disp}. {t["description"]}'}
-                    }
-                ]
             }
         ]
         mode_attr = f' data-mode="{e(t["defaultMode"])}"' if t.get('defaultMode') else ''
@@ -575,13 +605,14 @@ for out_root in [site_root]:
         (dst / 'index.html').write_text(
             document(
                 t['title'],
-                t['description'] + ' Free online calculator with formula, variables table, and step-by-step explanation.',
+                focus['description'] if focus else t['description'] + ' Free online calculator with formula, variables table, and step-by-step explanation.',
                 path,
                 bod,
                 f'data-page="tool" data-tool="{e(t["slug"])}"{mode_attr}',
                 jsonld(ld),
                 canonical_override=canon_url,
-                active_cat_slug=cat_slug
+                active_cat_slug=cat_slug,
+                seo_title=focus['title'] if focus else None
             ),
             encoding='utf8'
         )

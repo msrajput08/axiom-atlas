@@ -41,8 +41,9 @@ export function makeChallenge(gameId, seed) {
     return a;
   };
   const number = (prompt, answer, unit, hint, explanation, verifyInputs, verifyGuide, symbol = '') => ({
-    mode: 'number', prompt, answer, unit, hint, explanation, verifyInputs,
-    verifyGuide, symbol
+    mode: 'number', prompt, answer, unit, hint,
+    explanation: explanation.length >= 35 ? explanation : 'Substitute the given values into the formula: ' + explanation,
+    verifyInputs, verifyGuide, symbol
   });
   const choice = (prompt, answer, options, hint, explanation, verifyInputs, verifyGuide, symbol = '') => ({
     mode: 'multiple-choice', prompt, answer, options: shuffle(options), unit: '',

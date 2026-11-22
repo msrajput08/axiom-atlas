@@ -2,8 +2,10 @@ name: Content and calculator regression tests
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, 'feature/saas-studio-foundation']
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -16,4 +18,5 @@ jobs:
         with:
           python-version: '3.12'
       - run: python3 -m py_compile source/build.py source/editorial_cases.py scripts/rebuild.py
+      - run: npm run test:saas
       - run: npm test

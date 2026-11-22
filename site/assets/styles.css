@@ -456,3 +456,11 @@ input,select,textarea{color:var(--ink)}
 .quick-tool-arrow{position:absolute;right:10px;top:10px;color:var(--purple);font-size:12px}
 @media(max-width:1120px){.quick-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:590px){.quick-tool-grid{grid-template-columns:1fr}.quick-tool-card{padding:13px 15px}}
+
+
+/* Shared site navigation: Brain Lab discoverability on every calculator route. */
+.top-games-link{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;border:1px solid var(--stroke);font-size:12px;line-height:1.3;color:var(--indigo);background:var(--purple-bg);font-weight:850;white-space:nowrap}
+.top-games-link:hover{border-color:var(--purple)}
+.top-games-link span:first-child{font-size:15px}
+@media(max-width:750px){.top-games-link{padding:8px 9px}}
+@media(max-width:460px){.top-games-text{display:none}.top-games-link{width:38px;height:40px;justify-content:center;padding:0}}

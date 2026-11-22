@@ -20,4 +20,14 @@ assert.ok(rebuild.includes("'build-info.json'"), "Manifest must be emitted by de
 const testSource = read("scripts/verify_live.mjs");
 assert.ok(testSource.includes("info.revision, expected"), "Live verifier must compare the exact Git commit");
 assert.ok(testSource.includes('id="quick-tools"'), "Live verifier must check the latest homepage");
-console.log("Production build provenance checks passed (7 assertions).");
+const netlify = read("netlify.toml");
+assert.ok(netlify.includes('command = "npm run build && npm run verify:publish"'),
+  "Netlify must perform a fast static smoke check, not the full math suite on every deploy");
+assert.ok(!netlify.includes('command = "npm test"'),
+  "Full regression suite must remain in GitHub CI to conserve Netlify build minutes");
+const pkg = JSON.parse(read("package.json"));
+assert.ok(pkg.scripts.test.includes("tests/sitemap_source.test.mjs"),
+  "CI must catch a stale committed sitemap before rebuilding");
+assert.ok(pkg.scripts.test.includes("scripts/verify_publish.mjs"),
+  "CI must run the same publishing smoke gate as Netlify");
+console.log("Production build provenance checks passed (11 assertions).");

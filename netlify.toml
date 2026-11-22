@@ -1,3 +1,5 @@
 [build]
-  command = "npm test"
+  # CI runs the full regression suite. Netlify only rebuilds and performs
+  # a fast production-file integrity check to conserve build minutes.
+  command = "npm run build && npm run verify:publish"
   publish = "site"

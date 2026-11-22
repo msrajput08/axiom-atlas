@@ -34,6 +34,12 @@ if (expected) {
 }
 const home = await get("/", "text/html");
 assert.ok(home.includes('id="quick-tools"'), "Search-led homepage shortcuts are absent");
+assert.ok(home.includes('<section class="hero hero-split">'), "Latest AxiomAtlas-and-Games shared hero is missing");
+assert.ok(home.indexOf('class="hero-copy hero-axiomatlas"') <
+  home.indexOf('class="hero-games-card" id="brain-games"'),
+  "AxiomAtlas brand must appear before the adjacent games feature");
+assert.ok(home.includes('class="top-games-link" href="/games/"'),
+  "Games must be reachable from top navigation");
 assert.ok(home.includes('<link rel="canonical" href="' + base + '/">'), "Home canonical URL mismatch");
 const prime = await get("/tools/prime-checker/", "text/html");
 assert.ok(prime.includes('<h1>Prime Number Checker</h1>'), "Latest Prime Checker content is missing");

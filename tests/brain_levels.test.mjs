@@ -206,29 +206,28 @@ ok(gameCode.includes('puzzle.verifyGuide'),'Verification instructions still visi
 ok(!gameCode.includes('fetch('),'No third-party API or backend');
 const home=read('site/index.html');
 ok(home.includes('id="brain-games"'),'Main homepage game feature remains');
-const highlight=home.indexOf('<section class="brain-front-feature" id="brain-games"');
-const calculatorHero=home.indexOf('<section class="hero">');
-ok(highlight>=0,'Premium Brain Lab promotion must render in static homepage HTML');
-ok(calculatorHero>highlight,'Games must be featured ABOVE the original homepage hero, visible immediately on entry');
-check((home.match(/id="brain-games"/g)||[]).length,1,'Exactly one Games section; no duplicate promotions');
-ok(home.includes('id="brain-front-title"'),'Featured games banner exposes an accessible heading');
-ok(home.includes('class="brain-front-primary" href="/games/"'),'Prominent primary CTA goes to the 18-game hub');
-for(const slug of ['prime-detective','equation-escape','energy-quest']) {
-  ok(home.includes('class="brain-front-preview-card" href="/games/'+slug+'/">') ||
-     (slug==='prime-detective'&&home.includes('class="brain-front-secondary" href="/games/'+slug+'/">')),
-     'Featured game link must open existing game: '+slug);
-}
-ok(home.includes('360</b> playable levels') && home.includes('100</b> marks per game'),
-  'Banner truthfully describes 18 games with 20 five-mark levels each');
-ok(!home.includes('class="brain-promo section" id="brain-games"'),
-  'Legacy below-the-fold promotion must not be duplicated');
+const hero=home.indexOf('<section class="hero hero-split">');
+const brand=home.indexOf('class="hero-copy hero-axiomatlas"');
+const games=home.indexOf('class="hero-games-card" id="brain-games"');
+ok(hero>=0,'Homepage starts with the AxiomAtlas primary hero');
+ok(brand>hero,'AxiomAtlas content comes before Brain Lab in document order');
+ok(games>brand && games<home.indexOf('</section>',hero),'Games card sits beside AxiomAtlas inside one hero');
+check((home.match(/id="brain-games"/g)||[]).length,1,'Exactly one homepage Games feature');
+ok(home.indexOf('<h1>',hero)>hero && home.indexOf('<h1>',hero)<games,'Calculator brand H1 precedes games secondary H2');
+ok(home.includes('class="hero-games-cta" href="/games/"'),'Games card has a prominent hub CTA');
+ok(home.includes('class="top-games-link" href="/games/"'),'Header exposes a shortcut to games');
+for (const slug of ['prime-detective','equation-escape','energy-quest'])
+  ok(home.includes('href="/games/'+slug+'/">'),'Featured game link is intact: '+slug);
+ok(home.includes('360 levels in total') && home.includes('100 marks per game'),
+  'Game teaser truthfully describes the latest progression');
+ok(!home.includes('class="brain-front-feature"'),'Old standalone banner must not displace the calculator brand');
+ok(read('site/assets/styles.css').includes('.top-games-link{display:inline-flex'),
+  'Global Games navigation works on all calculator routes');
 const pageCss=read('site/assets/brain-games.css');
-ok(pageCss.includes('.brain-front-feature{'),'First-screen banner has dedicated styling');
-ok(pageCss.includes('@media(max-width:790px){.brain-front-feature'),
-  'Featured banner adapts to narrow/mobile screens');
-ok(pageCss.includes('@media(max-width:480px){.brain-front-feature'),
-  'Featured buttons remain usable on small phones');
-ok(!home.includes('brain-front-feature" style='),'No inline positioning needed for banner layout');
+ok(pageCss.includes('.hero.hero-split{display:grid'),'Side-by-side desktop hero has grid layout');
+ok(pageCss.includes('@media(max-width:900px){.hero.hero-split{grid-template-columns:1fr'),
+  'Narrow screens keep AxiomAtlas first and stack the game teaser');
+ok(pageCss.includes('@media(max-width:460px)'),'Phone-specific controls remain available');
 const catalogHtml=read('site/games/index.html');
 ok(catalogHtml.includes('20</b> levels per game'),'Game hub describes twenty levels');
 const css=read('site/assets/brain-games.css');

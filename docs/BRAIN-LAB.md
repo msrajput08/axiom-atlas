@@ -44,4 +44,12 @@ A new game should only be added if it has a distinct educational purpose, indepe
 Limitations: results use standard educational assumptions, e.g. classical kinetic energy, Ohm's law with ideal resistance, simple interest (not compound), gross margin (not markup), fair spinners, nominal solar radius and elementary stellar parallax. Scores are saved only on the current browser/device and can be reset when storage is cleared. Daily challenges follow the user's local device date, not a globally enforced tournament day.
 
 ## Measurement
-Track page-level game discoverability, first-game starts, completed five-round runs, return visits, link clicks back to calculators, and device-specific usability **without** sending answer values to analytics. Before adding more activities, verify mobile gameplay and user interest. Adding new URLs alone does not guarantee search rankings or traffic.
+Track page-level game discoverability, first-game starts, completed 20-level runs, return visits, link clicks back to calculators, and device-specific usability **without** sending answer values to analytics. Before adding more activities, verify mobile gameplay and user interest. Adding new URLs alone does not guarantee search rankings or traffic.
+
+## Homepage discovery and deployment (22 November 2026)
+
+The homepage's first section is a shared two-column hero: **AxiomAtlas calculators and the main H1 first**, followed by a secondary Brain Lab promo on the right. At narrower widths the sections stack in the same accessible reading order. The global top navigation offers a compact Games link without replacing calculator search.
+
+The canonical sitemap has 345 URLs: 3 core + 9 categories + 314 calculators + 1 games hub + 18 playable games. All 19 games are crawlable. `robots.txt` points to `/sitemap.xml`; legacy alias tools are excluded to avoid canonical duplicates.
+
+To conserve deployment credits, Netlify runs `npm run build && npm run verify:publish` instead of the 100,000+-assertion suite. GitHub Actions still runs `npm test`, including a **prebuild check against the committed sitemap** and the full game/SEO/regression suites. Multiple small main commits were avoided for this release.

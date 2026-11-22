@@ -506,8 +506,8 @@ for out_root in [site_root]:
         c_slug = slug(c['name'])
         items = [x for x in canonical_tools if x['category'] == c['name']]
         path = f'/categories/{c_slug}/'
-        pills_html = f'<button type="button" class="filter-pill active" data-sub="all">All {e(c["name"])} ({len(items)})</button>' + ''.join(
-            f'<button type="button" class="filter-pill" data-sub="{e(slug(s))}">{e(s)} ({sum(1 for x in items if tool_matches_subcat(x, s))})</button>'
+        pills_html = f'<button type="button" class="filter-pill active" data-sub="all" aria-pressed="true">All {e(c["name"])} ({len(items)})</button>' + ''.join(
+            f'<button type="button" id="{e(slug(s))}" class="filter-pill" data-sub="{e(slug(s))}" aria-pressed="false">{e(s)} ({sum(1 for x in items if tool_matches_subcat(x, s))})</button>'
             for s in c.get('subcategories', [])
         )
         cross_list_note = ('<p class="filter-note">Some calculators belong to multiple subcategories. The category total counts each calculator once.</p>' if any(x.get('secondarySubcategories') for x in items) else '')

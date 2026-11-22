@@ -4724,8 +4724,9 @@ function renderCategory() {
     return;
   }
   const subcats = catObj.subcategories || [];
-  let activeSub = (location.hash || '').replace(/^#/, '') || 'all';
-  if (activeSub !== 'all' && !subcats.some(s => slugify(s) === activeSub)) activeSub = 'all';
+  const allowedSubs = new Set(subcats.map(slugify));
+  const normalizeSub = value => value && allowedSubs.has(value) ? value : 'all';
+  let activeSub = normalizeSub((location.hash || '').replace(/^#/, ''));
 
   let pillBar = $('#subcat-pills');
   if (!pillBar) {
@@ -4734,25 +4735,47 @@ function renderCategory() {
     pillBar.className = 'filter-pills';
     container.parentElement.insertBefore(pillBar, container);
   }
-  pillBar.innerHTML = `<button type="button" class="filter-pill ${activeSub === 'all' ? 'active' : ''}" data-sub="all">All ${esc(catObj.name)} (${tools.length})</button>` +
+  pillBar.innerHTML = `<button type="button" class="filter-pill" data-sub="all" aria-pressed="false">All ${esc(catObj.name)} (${tools.length})</button>` +
     subcats.map(s => {
       const sSlug = slugify(s);
       const cnt = tools.filter(t => slugify(t.subcategory) === sSlug || (t.secondarySubcategories || []).some(sec => slugify(sec) === sSlug)).length;
-      return `<button type="button" class="filter-pill ${activeSub === sSlug ? 'active' : ''}" data-sub="${esc(sSlug)}">${esc(s)} (${cnt})</button>`;
+      return `<button type="button" id="${esc(sSlug)}" class="filter-pill" data-sub="${esc(sSlug)}" aria-pressed="false">${esc(s)} (${cnt})</button>`;
     }).join('');
 
   function draw() {
     const list = activeSub === 'all' ? tools : tools.filter(t => slugify(t.subcategory) === activeSub || (t.secondarySubcategories || []).some(sec => slugify(sec) === activeSub));
     container.innerHTML = list.map(card).join('');
   }
+  function select(value) {
+    activeSub = normalizeSub(value);
+    $$('[data-sub]', pillBar).forEach(btn => {
+      const selected = btn.dataset.sub === activeSub;
+      btn.classList.toggle('active', selected);
+      if (typeof btn.setAttribute === 'function') btn.setAttribute('aria-pressed', String(selected));
+    });
+    draw();
+  }
+  const syncFromUrl = () => select((location.hash || '').replace(/^#/, '') || 'all');
+
   $$('[data-sub]', pillBar).forEach(btn => {
     btn.onclick = () => {
-      activeSub = btn.dataset.sub;
-      $$('[data-sub]', pillBar).forEach(b => b.classList.toggle('active', b === btn));
-      draw();
+      const next = normalizeSub(btn.dataset.sub);
+      if (next === activeSub) return;
+      const hash = next === 'all' ? '' : '#' + next;
+      if (typeof history !== 'undefined' && typeof history.pushState === 'function') {
+        history.pushState(null, '', (location.pathname || '') + (location.search || '') + hash);
+      } else if (typeof location !== 'undefined') {
+        location.hash = hash;
+      }
+      select(next);
     };
   });
-  draw();
+
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('hashchange', syncFromUrl);
+    window.addEventListener('popstate', syncFromUrl);
+  }
+  syncFromUrl();
 }
 
 function searchSetup() {

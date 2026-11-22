@@ -6,3 +6,7 @@
 
 /assets/*
   Cache-Control: public, max-age=604800
+
+/account/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  Cache-Control: no-store

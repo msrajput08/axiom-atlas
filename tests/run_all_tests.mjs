@@ -1211,7 +1211,7 @@ test('Suite 8: Mobile Category Visibility & Cache Versioning', '8.1 Preserve all
   checkOk(appJs.includes("new URL(import.meta.url).searchParams.get('v')"), 'Runtime app must read its generated asset version');
   checkOk(appJs.includes('/assets/catalog.json?v=${encodeURIComponent(ASSET_VERSION)}'), 'Catalog fetch must use the same asset version');
   checkOk(appJs.includes("{ cache: 'no-cache' }"), 'Catalog fetch must revalidate instead of trusting a long-lived stale entry');
-  checkOk(buildPy.includes("hashlib.sha256()") && buildPy.includes("('catalog.json', 'app.js', 'styles.css')"), 'Asset version must be content-derived so future catalog edits automatically bust cache');
+  checkOk(buildPy.includes("hashlib.sha256()") && ['catalog.json', 'app.js', 'styles.css', 'brain-games-catalog.json', 'games-engine.mjs', 'brain-games.mjs', 'brain-games.css'].every(name => buildPy.includes("'" + name + "'")), 'Calculator and game assets must contribute to content-derived cache versions');
 
   checkOk(stylesCss.includes('.sidebar>*{flex-shrink:0}'), 'Sidebar groups must not flex-shrink out of the scroll area');
   checkOk(stylesCss.includes('#sidebar-cats{flex:0 0 auto;min-height:min-content}'), 'Category navigation must retain its natural height');

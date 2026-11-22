@@ -1,0 +1,20 @@
+# Copy to saas/wrangler.toml for manual staging, and replace placeholders.
+# Do not configure a production route or set ENABLE_PAID_ENTITLEMENTS=true
+# until security, database, payment and email verification tests are complete.
+name = "axiomatlas-saas-staging"
+main = "worker.mjs"
+compatibility_date = "2026-11-22"
+workers_dev = true
+
+[vars]
+APP_ORIGIN = "https://YOUR-STAGING-NETLIFY-SITE.example"
+SUPABASE_URL = "https://YOUR-SUPABASE-PROJECT.supabase.co"
+ENABLE_PAID_ENTITLEMENTS = "false"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "axiomatlas-saas-staging"
+database_id = "REPLACE_WITH_REAL_D1_DATABASE_ID"
+
+[triggers]
+crons = ["0 3 * * *"]

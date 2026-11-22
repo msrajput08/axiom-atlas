@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "python3 scripts/rebuild.py",
-    "test": "npm run build && node tests/run_all_tests.mjs && node tests/saas_foundation.test.mjs && node tests/seo_integrity.test.mjs"
+    "test": "npm run build && node tests/run_all_tests.mjs && node tests/saas_foundation.test.mjs && node tests/seo_integrity.test.mjs && node tests/saas_api.test.mjs && node tests/saas_frontend.test.mjs",
+    "test:saas": "node --check saas/worker.mjs && node --check site/assets/saas-client.mjs && node --check site/assets/studio-cloud.mjs && node --check site/assets/account.mjs && node tests/saas_api.test.mjs && node tests/saas_frontend.test.mjs"
   }
 }

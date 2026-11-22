@@ -1,8 +1,6 @@
 import assert from "node:assert/strict";
-import {webcrypto} from "node:crypto";
 import worker from "../saas/worker.mjs";
 
-globalThis.crypto = webcrypto;
 const AUTH = "https://auth.axiomatlas.example";
 const APP = "https://axiomatlas.netlify.app";
 const keyPair = await crypto.subtle.generateKey({name: "ECDSA", namedCurve: "P-256"}, true, ["sign", "verify"]);
